@@ -1,10 +1,15 @@
 package com.gu.swiperefresh;
 
 import android.content.Context;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +20,16 @@ import android.view.ViewGroup;
 
 public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParent,
         NestedScrollingChild {
-    private NestedScrollingChildHelper nestedScrollingChildHelper;
-    private NestedScrollingParentHelper nestedScrollingParentHelper;
+    private final NestedScrollingChildHelper nestedScrollingChildHelper;
+    private final NestedScrollingParentHelper nestedScrollingParentHelper;
     private int REFRESH_MODE=1;
     private OnScrollListener onScrollListener;
     private View refreshView;
     private View loadMoreView;
     private View mTarget;
+    ProgressDrawable mProgress;
+    private boolean isRefresh;
+
 
     public SwipeRefreshPlush(Context context) {
         this(context,null);
@@ -29,6 +37,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     public SwipeRefreshPlush(Context context, AttributeSet attrs) {
         super(context, attrs);
+        nestedScrollingChildHelper=new NestedScrollingChildHelper(this);
+        nestedScrollingParentHelper=new NestedScrollingParentHelper(this);
     }
 
     @Override
@@ -116,12 +126,16 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     /**********************parent begin***************************************************************/
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        return false;
+        return REFRESH_MODE!=SwipeRefreshMode.MODE_NONE&&!isRefresh
+                && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
     public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
-
+        // Reset the counter of how much leftover scroll needs to be consumed.
+        nestedScrollingParentHelper.onNestedScrollAccepted(child, target, nestedScrollAxes);
+        // Dispatch up to the nested parent
+        startNestedScroll(nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL);
     }
 
     @Override
@@ -141,7 +155,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        return false;
+      return false;
     }
 
     @Override
@@ -155,12 +169,47 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     }
    /********************parent end************************************/
    /*********基本设置************/
+    /**
+     *
+     * @param onScrollListener
+     */
    public void setOnScrollListener(OnScrollListener onScrollListener){
        this.onScrollListener=onScrollListener;
    }
+
+    /**
+     * 模式设置
+     *
+     *  public static interface SwipeRefreshMode{
+     int MODE_BOTH=1;
+     int MODE_REFRESH_ONLY=2;
+     int MODE_LOADMODE=3;
+     int MODE_NONE=4;
+     }
+     * @param mode 模式
+     */
     public void setScrollMode(int mode){
         this.REFRESH_MODE=mode;
     }
+    public void setRefreshView(View view){
+        this.refreshView=view;
+    }
+    public void setLoadMoreView(View view){
+        this.loadMoreView=view;
+    }
+    public void setColorSchemeResources(@ColorRes int... colorResIds) {
+        final Context context = getContext();
+        int[] colorRes = new int[colorResIds.length];
+        for (int i = 0; i < colorResIds.length; i++) {
+            colorRes[i] = ContextCompat.getColor(context, colorResIds[i]);
+        }
+        setColorSchemeColors(colorRes);
+    }
+    public void setColorSchemeColors(@ColorInt int... colors) {
+        ensureTarget();
+        mProgress.setColorSchemeColors(colors);
+    }
+
     /*********************************************************************/
     private void ensureTarget() {
         // Don't bother getting the parent height if the parent hasn't been laid
@@ -176,14 +225,15 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         }
     }
     public static interface SwipeRefreshMode{
-       int MODE_BOTH=1;
-       int MODE_REFRESH_ONLY=2;
-       int MODE_LOADMODE=3;
-       int MODE_NONE=4;
+       int MODE_BOTH=1;//刷新和下拉加载更多模式
+       int MODE_REFRESH_ONLY=2;//刷新
+       int MODE_LOADMODE=3;//加载更多
+       int MODE_NONE=4;//即不能加载更多也不能下拉刷新
    }
 
     public interface OnScrollListener{
         void onRefresh();
         void onLoadMore();
     }
+
 }
