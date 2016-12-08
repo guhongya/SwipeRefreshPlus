@@ -8,6 +8,11 @@ public class LoadViewController {
 
     private int scroll;
     private int maxHeight;
+    private int parentHeight;
+
+    public LoadViewController(int maxHeight){
+        this.maxHeight=maxHeight;
+    }
 
     public boolean isShow() {
         return show;
@@ -29,7 +34,7 @@ public class LoadViewController {
         return maxHeight-scroll>0;
     }
     public void move(int y){
-        if(show)
+        if(show&&scroll<maxHeight)
         scroll+=y;
     }
     public int getCurrentPosition(){
@@ -38,5 +43,17 @@ public class LoadViewController {
         else
             return 0;
     }
+    public int getCurrentHeight(){
+        return scroll;
+    }
 
+    public int getParentHeight() {
+        return parentHeight;
+    }
+    public void reset(){
+        scroll=0;
+    }
+    public void setParentHeight(int parentHeight) {
+        this.parentHeight = parentHeight;
+    }
 }
