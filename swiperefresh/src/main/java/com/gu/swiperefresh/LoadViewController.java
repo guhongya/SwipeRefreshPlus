@@ -34,7 +34,6 @@ public class LoadViewController {
         return maxHeight-scroll>0;
     }
     public void move(int y){
-        if(show&&scroll<maxHeight)
         scroll+=y;
     }
     public int getCurrentPosition(){

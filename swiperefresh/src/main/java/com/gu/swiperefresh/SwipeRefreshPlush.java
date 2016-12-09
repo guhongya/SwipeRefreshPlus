@@ -108,7 +108,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     private ProgressDrawable mLoadProgress;
     private CircleImageView defaultLoadView;
-    private int defaultLoadSize = 60;
+    //默认loadView大小
+    private int defaultLoadSize = 40;
     private int mLoadDiameter;
     private boolean isLoad;
     private LoadViewController loadViewController;
@@ -144,7 +145,32 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             }
         }
     };
+    //loadmore动画结束，调用回调函数
+    private Animation.AnimationListener mLoadMoreListener=new Animation.AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) {
 
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            if(isLoad){
+                LogUtils.d("load begin");
+                mLoadProgress.setAlpha(MAX_ALPHA);
+              //  mLoadProgress.
+                mLoadProgress.start();
+                if(mListener!=null){
+                    mListener.onLoadMore();
+                }
+            }
+            else{}
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    };
     void reset() {
         mCircleView.clearAnimation();
         mProgress.stop();
@@ -174,12 +200,13 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         defaultLoadView = new CircleImageView(getContext(), CIRCLE_BG_LIGHT);
         mLoadProgress = new ProgressDrawable(getContext(), this);
         mLoadProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
-        mLoadProgress.setAlpha(MAX_ALPHA);
+        //  mLoadProgress.setAlpha(MAX_ALPHA);
         mLoadProgress.setRotation(MAX_PROGRESS_ANGLE);
         defaultLoadView.setImageDrawable(mLoadProgress);
         addView(defaultLoadView);
         this.loadMoreView = defaultLoadView;
         loadViewController = new LoadViewController(defaultLoadSize);
+        loadMoreView.setVisibility(View.GONE);
     }
 
     public SwipeRefreshPlush(Context context) {
@@ -215,7 +242,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         final int width = getMeasuredWidth();
         final int height = getMeasuredHeight();
         int loadViewWidth = loadMoreView.getMeasuredWidth();
-        int loadViewHeight = loadViewController.getCurrentHeight();
+        int loadViewHeight = loadMoreView.getMeasuredHeight();
         if (getChildCount() == 0)
             return;
         if (mTarget == null)
@@ -228,13 +255,13 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         final int childTop = getPaddingTop();
         final int childBottom = getPaddingBottom();
         final int childWidth = width - childLeft - childRight;
-        final int childHeight = height - childTop - childBottom - loadViewHeight;
+        final int childHeight = height - childTop - childBottom - loadViewController.getCurrentHeight();
         child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
         int circleWidth = mCircleView.getMeasuredWidth();
         int circleHeight = mCircleView.getMeasuredHeight();
         mCircleView.layout((width / 2 - circleWidth / 2), mCurrentTargetOffsetTop,
                 (width / 2 + circleWidth / 2), mCurrentTargetOffsetTop + circleHeight);
-        defaultLoadView.layout(width / 2 - loadViewWidth / 2, height - loadViewHeight - childBottom, width / 2 + loadViewWidth / 2, height - childBottom);
+        defaultLoadView.layout(width / 2 - loadViewWidth / 2, height - childBottom, width / 2 + loadViewWidth / 2, height +loadViewHeight- childBottom);
 
         // mScroller.startScroll(0,height,0,loadViewHeight);
     }
@@ -306,8 +333,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                 getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
         mCircleView.measure(MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY));
-        if (defaultLoadView.getVisibility() == VISIBLE)
-            defaultLoadView.measure(MeasureSpec.makeMeasureSpec(mLoadDiameter, MeasureSpec.EXACTLY),
+        defaultLoadView.measure(MeasureSpec.makeMeasureSpec(mLoadDiameter, MeasureSpec.EXACTLY),
                     MeasureSpec.makeMeasureSpec(mLoadDiameter, MeasureSpec.EXACTLY));
         circleViewIndex = -1;
         // Get the index of the circleview.
@@ -489,12 +515,12 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     public void fling(float velocityY) {
         //mPullState = STATE_FLING;
-        mScroller.abortAnimation();
-        mScroller.computeScrollOffset();
-//        mScroller.fling(0, mHeaderController.getScroll(), 0, velocityY, 0, 0,
-//                mHeaderController.getMinScroll(), mHeaderController.getMaxScroll(),
-//                0, 0);
-        ViewCompat.postInvalidateOnAnimation(this);
+//        mScroller.abortAnimation();
+//        mScroller.computeScrollOffset();
+////        mScroller.fling(0, mHeaderController.getScroll(), 0, velocityY, 0, 0,
+////                mHeaderController.getMinScroll(), mHeaderController.getMaxScroll(),
+////                0, 0);
+//        ViewCompat.postInvalidateOnAnimation(this);
     }
 
     /***
@@ -608,7 +634,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
      *
      * @param target
      * @param dx
-     * @param dy
+     * @param dy y方向的移动距离>0向上滑
      * @param consumed parent消耗的值
      */
     @Override
@@ -627,16 +653,11 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             if (dy + mDownTotalUnconsumed < 0) {
                 consumed[1] = dy + (int) mDownTotalUnconsumed;
                 mDownTotalUnconsumed = 0;
-                mLoadProgress.stop();
-                loadMoreView.setVisibility(GONE);
             } else {
                 mDownTotalUnconsumed += dy;
                 consumed[1] = dy;
             }
-        }
-        if (mDownTotalUnconsumed == 0) {
-            mLoadProgress.stop();
-            loadMoreView.setVisibility(GONE);
+            hideLoadMoreView(Math.abs(dy));
         }
     }
 
@@ -816,7 +837,33 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             mProgress.setArrowScale(1 - interpolatedTime);
         }
     };
+    //显示加载更多view
+    private void animateShowLoadMore(Animation.AnimationListener listener){
+        mAnimationShowLoadMore.reset();
+        mAnimationShowLoadMore.setDuration(ANIMATE_TO_TRIGGER_DURATION);
+        mAnimationShowLoadMore.setInterpolator(mDecelerateInterpolator);
+        if(listener!=null){
+            defaultLoadView.setAnimationListener(listener);
+        }
+        defaultLoadView.clearAnimation();
+        defaultLoadView.startAnimation(mAnimationShowLoadMore);
+    }
+    //加载更多动画
+    private final Animation mAnimationShowLoadMore=new Animation() {
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            int height=loadMoreView.getMeasuredHeight();
+            int offset=(int)((height-loadViewController.getCurrentHeight())*interpolatedTime);
+            loadViewController.move(offset);
+           // float offset=-loadMoreView.getMeasuredHeight()*interpolatedTime;
+            ViewCompat.offsetTopAndBottom(mTarget,-offset);
+            ViewCompat.offsetTopAndBottom(loadMoreView,-offset);
+//            mTarget.offsetTopAndBottom(-offset);
+//            loadMoreView.offsetTopAndBottom(-offset);
 
+            mLoadProgress.setArrowScale(1-interpolatedTime);
+        }
+    };
     /*******************************************************************/
     public boolean canChildScrollUp() {
         if (android.os.Build.VERSION.SDK_INT < 14) {
@@ -916,10 +963,18 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     }
 
     private void showLoadMoreView(int height) {
-        loadViewController.move(height);
-        mScroller.startScroll(0,this.getMeasuredHeight(),0,height);
-        if (loadViewController.getCurrentHeight() >= loadMoreView.getMeasuredHeight()) {
-            finishLoadMoreView();
+        LogUtils.i("height:"+height+"slop"+mTouchSlop);
+        if(!isLoad) {
+            isLoad=true;
+            if(loadMoreView.getVisibility()!=VISIBLE)
+                loadMoreView.setVisibility(VISIBLE);
+            animateShowLoadMore(mLoadMoreListener);
+//            loadViewController.move(defaultLoadSize);
+//            loadMoreView.offsetTopAndBottom(-defaultLoadSize);
+//            mTarget.offsetTopAndBottom(-defaultLoadSize);
+//            if (loadViewController.getCurrentHeight() >= loadMoreView.getMeasuredHeight()) {
+//                finishLoadMoreView();
+//            }
         }
     }
 
@@ -929,19 +984,24 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         mListener.onLoadMore();
     }
 
-    private void hideLoadMoreView() {
-        loadViewController.reset();
-        mLoadProgress.stop();
-        isLoad = false;
-
-
+    private void hideLoadMoreView(int height) {
+        if(isLoad) {
+            loadMoreView.offsetTopAndBottom(height);
+            mTarget.offsetTopAndBottom(height);
+            loadViewController.move(-height);
+        }
+        if(loadViewController.getCurrentHeight()<=0) {
+            mLoadProgress.stop();
+            isLoad = false;
+        }
     }
 
     public void setLoadMore(boolean show) {
         if (show) {
             showLoadMoreView(loadMoreView.getMeasuredHeight());
         } else {
-            hideLoadMoreView();
+           // hideLoadMoreView();
+            hideLoadMoreView(loadMoreView.getMeasuredHeight());
         }
     }
 
