@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ScrollView;
 
 import com.apkfuns.logutils.LogUtils;
 import com.gu.swiperefresh.SwipeRefreshPlush;
@@ -15,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recycleContent;
     private SimpleRecycleAdapter recycleAdapter;
     private SwipeRefreshPlush swipeRefreshPlush;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

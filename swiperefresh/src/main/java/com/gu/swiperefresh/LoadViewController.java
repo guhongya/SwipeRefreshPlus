@@ -1,58 +1,97 @@
 package com.gu.swiperefresh;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.support.annotation.ColorInt;
+import android.support.v4.view.ViewCompat;
+import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Transformation;
+
 /**
  * Created by Guhy on 2016/12/7.
  */
 
 public class LoadViewController {
+    private Context mContext;
 
-    private int scroll;
-    private int maxHeight;
-    private int parentHeight;
+    private View parent;
 
-    public LoadViewController(int maxHeight){
-        this.maxHeight=maxHeight;
-    }
+    private CircleImageView mCircleImageView;
 
-    public boolean isShow() {
-        return show;
-    }
+    private ProgressDrawable mProgress;
 
-    public void setShow(boolean show) {
-        this.show = show;
-    }
+    // Max amount of circle that can be filled by progress during swipe gesture,
+    // where 1.0 is a full circle
+    private static final float MAX_PROGRESS_ANGLE = .8f;
+    private static final int MAX_ALPHA = 255;
+    //默认circleimage大小
+    static final int CIRCLE_DIAMETER = 40;
+    // Default background for the progress spinner
+    private static final int CIRCLE_BG_LIGHT = 0xFFFAFAFA;
 
-    private boolean show;
-    public int getMaxHeight() {
-        return maxHeight;
-    }
+    private int currentHeight;
 
-    public void setMaxHeight(int maxHeight) {
-        this.maxHeight = maxHeight;
-    }
-    public boolean canScroll(){
-        return maxHeight-scroll>0;
-    }
-    public void move(int y){
-        scroll+=y;
-    }
-    public int getCurrentPosition(){
-        if(show)
-        return maxHeight-scroll;
-        else
-            return 0;
-    }
-    public int getCurrentHeight(){
-        return scroll;
+    //loadview 大小
+    private int mCircleDiameter;
+
+    final DisplayMetrics metrics ;
+
+    private boolean isLoading;
+
+    private SwipeRefreshPlush.OnScrollListener mListener;
+
+    public LoadViewController(Context context,View parent){
+        this.mContext=context;
+        this.parent=parent;
+
+        metrics = mContext.getResources().getDisplayMetrics();
+        mCircleDiameter = (int) (CIRCLE_DIAMETER * metrics.density);
     }
 
-    public int getParentHeight() {
-        return parentHeight;
+    protected View create(){
+        mCircleImageView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
+        mProgress = new ProgressDrawable(mContext, parent);
+        mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
+        //  mLoadProgress.setAlpha(MAX_ALPHA);
+        mProgress.setRotation(MAX_PROGRESS_ANGLE);
+        mCircleImageView.setImageDrawable(mProgress);
+        mCircleImageView.setVisibility(View.GONE);
+        return mCircleImageView;
     }
-    public void reset(){
-        scroll=0;
+    protected  void setScrollListener(SwipeRefreshPlush.OnScrollListener onScrollListener){
+        this.mListener=onScrollListener;
     }
-    public void setParentHeight(int parentHeight) {
-        this.parentHeight = parentHeight;
+    protected int getLoadViewSize(){
+        return mCircleDiameter;
     }
+    protected int getCurrentHeight(){
+        return currentHeight;
+    }
+    protected void setCurrentHeight(int height){
+        currentHeight=height;
+    }
+    protected void move(int distance){
+        currentHeight+=distance;
+    }
+    protected void showLoadAnimation(){
+        isLoading=true;
+        mProgress.setAlpha(MAX_ALPHA);
+        mProgress.start();
+    }
+    protected void reset(){
+        isLoading=false;
+        mProgress.stop();
+        currentHeight=0;
+    }
+    protected boolean isLoading(){
+        return isLoading;
+    }
+
+    protected void setProgressColors(@ColorInt int... colors){
+        mProgress.setColorSchemeColors(colors);
+    }
+
 }
