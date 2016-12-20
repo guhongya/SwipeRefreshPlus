@@ -37,21 +37,21 @@ public class LoadViewController {
     //loadview 大小
     private int mCircleDiameter;
 
-    final DisplayMetrics metrics ;
+    final DisplayMetrics metrics;
 
     private boolean isLoading;
 
     private SwipeRefreshPlush.OnScrollListener mListener;
 
-    public LoadViewController(Context context,View parent){
-        this.mContext=context;
-        this.parent=parent;
+    public LoadViewController(Context context, View parent) {
+        this.mContext = context;
+        this.parent = parent;
 
         metrics = mContext.getResources().getDisplayMetrics();
         mCircleDiameter = (int) (CIRCLE_DIAMETER * metrics.density);
     }
 
-    protected View create(){
+    protected View create() {
         mCircleImageView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
         mProgress = new ProgressDrawable(mContext, parent);
         mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
@@ -61,36 +61,50 @@ public class LoadViewController {
         mCircleImageView.setVisibility(View.GONE);
         return mCircleImageView;
     }
-    protected  void setScrollListener(SwipeRefreshPlush.OnScrollListener onScrollListener){
-        this.mListener=onScrollListener;
+
+    protected void setScrollListener(SwipeRefreshPlush.OnScrollListener onScrollListener) {
+        this.mListener = onScrollListener;
     }
-    protected int getLoadViewSize(){
-        return mCircleDiameter;
+
+    protected Size getLoadViewSize() {
+        return new Size(mCircleDiameter,mCircleDiameter);
     }
-    protected int getCurrentHeight(){
+
+    protected int getCurrentHeight() {
         return currentHeight;
     }
-    protected void setCurrentHeight(int height){
-        currentHeight=height;
+
+    protected void setCurrentHeight(int height) {
+        currentHeight = height;
     }
-    protected void move(int distance){
-        currentHeight+=distance;
+
+    protected void move(int distance) {
+        currentHeight += distance;
     }
-    protected void showLoadAnimation(){
-        isLoading=true;
+
+    protected void showLoadAnimation() {
         mProgress.setAlpha(MAX_ALPHA);
         mProgress.start();
+        if(!isLoading) {
+            isLoading = true;
+            mListener.onLoadMore();
+        }
     }
-    protected void reset(){
-        isLoading=false;
+
+    protected void reset() {
         mProgress.stop();
-        currentHeight=0;
+        currentHeight = 0;
     }
-    protected boolean isLoading(){
+    protected void stopLoad(){
+        isLoading = false;
+        reset();
+    }
+
+    protected boolean isLoading() {
         return isLoading;
     }
 
-    protected void setProgressColors(@ColorInt int... colors){
+    protected void setProgressColors(@ColorInt int... colors) {
         mProgress.setColorSchemeColors(colors);
     }
 

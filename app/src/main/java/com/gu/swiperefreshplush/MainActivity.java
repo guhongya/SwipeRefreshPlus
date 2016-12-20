@@ -1,9 +1,12 @@
 package com.gu.swiperefreshplush;
 
+import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.apkfuns.logutils.LogUtils;
@@ -16,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recycleContent;
     private SimpleRecycleAdapter recycleAdapter;
     private SwipeRefreshPlush swipeRefreshPlush;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         swipeRefreshPlush.setRefresh(false);
+                        LogUtils.d("heigth:"+recycleContent.getHeight()+"scrolly"+recycleContent.getScrollY());
                     }
                 },1000);
             }

@@ -61,10 +61,11 @@ public class RefreshViewController {
     private int mCircleDiameter;
     private SwipeRefreshPlush.OnScrollListener mListener;
 
-    final DisplayMetrics metrics ;
-    public RefreshViewController(Context context,View parent){
-        this.mContext=context;
-        this.parent=parent;
+    final DisplayMetrics metrics;
+
+    public RefreshViewController(Context context, View parent) {
+        this.mContext = context;
+        this.parent = parent;
         metrics = mContext.getResources().getDisplayMetrics();
         mDecelerateInterpolator = new DecelerateInterpolator(DECELERATE_INTERPOLATION_FACTOR);
         mCircleDiameter = (int) (CIRCLE_DIAMETER * metrics.density);
@@ -73,7 +74,9 @@ public class RefreshViewController {
         mTotalDragDistance = mSpinnerOffsetEnd;
 
     }
-    protected View create(){
+
+    //创建refresh view
+    protected View create() {
         mCircleView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
         mProgress = new ProgressDrawable(mContext, parent);
         mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
@@ -83,7 +86,8 @@ public class RefreshViewController {
         return mCircleView;
     }
 
-    protected void reset(){
+    //refresh 结束，资源清理
+    protected void reset() {
         mCircleView.clearAnimation();
         mProgress.stop();
         mCircleView.setVisibility(View.GONE);
@@ -100,24 +104,26 @@ public class RefreshViewController {
 
     /**
      * 设置progress colors
+     *
      * @param colors
      */
-    protected void setProgressColors(@ColorInt int... colors){
+    protected void setProgressColors(@ColorInt int... colors) {
         mProgress.setColorSchemeColors(colors);
     }
 
-    protected void startProgress(){
+    protected void startProgress() {
         mProgress.setAlpha(STARTING_PROGRESS_ALPHA);
     }
 
-    protected int getRefreshViewSize(){
-        return mCircleDiameter;
+    protected Size getRefreshViewSize() {
+        return new Size(mCircleDiameter,mCircleDiameter);
     }
 
-    protected boolean isRefresh(){
+    protected boolean isRefresh() {
         return isRefresh;
     }
 
+    //下拉时，refresh动画
     protected void showPullRefresh(float overscrollTop) {
         mProgress.showArrow(true);
         float originalDragPercent = overscrollTop / mTotalDragDistance;
@@ -165,6 +171,7 @@ public class RefreshViewController {
         mProgress.setProgressRotation(rotation);
         setTargetOffsetTopAndBottom(targetY - mCurrentTargetOffsetTop, true /* requires update */);
     }
+
     void setTargetOffsetTopAndBottom(int offset, boolean requiresUpdate) {
         mCircleView.bringToFront();
         ViewCompat.offsetTopAndBottom(mCircleView, offset);
@@ -174,10 +181,15 @@ public class RefreshViewController {
         }
     }
 
-    protected  int getmCurrentTargetOffsetTop(){
+    protected int getmCurrentTargetOffsetTop() {
         return mCurrentTargetOffsetTop;
     }
 
+    /**
+     * 根据用户下拉距离，判断是否应该刷新
+     *
+     * @param overscrollTop
+     */
     protected void finishPullRefresh(float overscrollTop) {
         if (overscrollTop > mTotalDragDistance) {
             setRefreshing(true, true /* notify */);
@@ -210,6 +222,7 @@ public class RefreshViewController {
             mProgress.showArrow(false);
         }
     }
+
     // refreshview下拉动画结束,开始刷新
     private Animation.AnimationListener mRefreshListener = new Animation.AnimationListener() {
         @Override
@@ -235,13 +248,15 @@ public class RefreshViewController {
             }
         }
     };
-    protected void setListener(SwipeRefreshPlush.OnScrollListener scrollListener){
-        this.mListener=scrollListener;
+
+    protected void setListener(SwipeRefreshPlush.OnScrollListener scrollListener) {
+        this.mListener = scrollListener;
     }
+
     protected void setRefreshing(boolean refreshing, final boolean notify) {
         if (isRefresh != refreshing) {
             //  mNotify = notify;
-           // ensureTarget();
+            // ensureTarget();
             isRefresh = refreshing;
             if (isRefresh) {
                 animateOffsetToCorrectPosition(mCurrentTargetOffsetTop, mRefreshListener);
@@ -250,6 +265,7 @@ public class RefreshViewController {
             }
         }
     }
+
     private boolean isAnimationRunning(Animation animation) {
         return animation != null && animation.hasStarted() && !animation.hasEnded();
     }
@@ -407,6 +423,7 @@ public class RefreshViewController {
             mProgress.setArrowScale(1 - interpolatedTime);
         }
     };
+
     /**
      * Pre API 11, alpha is used to make the progress circle appear instead of scale.
      */

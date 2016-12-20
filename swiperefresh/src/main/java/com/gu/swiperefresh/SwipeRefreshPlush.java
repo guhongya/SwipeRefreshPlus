@@ -12,6 +12,9 @@ import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -37,8 +40,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     private final NestedScrollingParentHelper nestedScrollingParentHelper;
     private int REFRESH_MODE = 1;
     private OnScrollListener mListener;
-    private View refreshView;
-    private View loadMoreView;
+    private View mRefreshView;
+    private View mLoadMoreView;
     private View mTarget;
 
     //上拉距离
@@ -50,7 +53,6 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     int circleViewIndex = -1;
     private final int[] mParentScrollConsumed = new int[2];
     private final int[] mParentOffsetInWindow = new int[2];
-
 
 
     private float mInitialMotionY;
@@ -66,7 +68,6 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     private static final float DRAG_RATE = .5f;
 
-    private boolean isLoad;
 
     private ScrollerCompat mScroller;
     private VelocityTracker mVelocityTracker;
@@ -76,31 +77,30 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     private int lastFlingY;
 
-    private RefreshViewController refreshController;
+    private RefreshViewController mRefreshController;
 
-   private LoadViewController loadViewController;
+    private LoadViewController mLoadViewController;
 
     private static final int ANIMATE_TO_TRIGGER_DURATION = 200;
 
     private final DecelerateInterpolator mDecelerateInterpolator;
 
     private static final float DECELERATE_INTERPOLATION_FACTOR = 2f;
+
+    private boolean isLoadAnimation;
+
     //loadmore动画结束，调用回调函数
     private Animation.AnimationListener mLoadMoreListener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
-
+            isLoadAnimation=true;
         }
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            if (isLoad) {
+                isLoadAnimation=false;
                 LogUtils.d("load begin");
-                loadViewController.showLoadAnimation();
-                if (mListener != null) {
-                    mListener.onLoadMore();
-                }
-            }
+                mLoadViewController.showLoadAnimation();
         }
 
         @Override
@@ -110,14 +110,15 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     };
 
     void reset() {
-       refreshController.reset();
+        mRefreshController.reset();
+        mLoadViewController.reset();
     }
 
     private void createProgressView() {
-       this.refreshView=refreshController.create();
-        this.loadMoreView=loadViewController.create();
-        addView(loadMoreView);
-        addView(refreshView);
+        this.mRefreshView = mRefreshController.create();
+        this.mLoadMoreView = mLoadViewController.create();
+        addView(mLoadMoreView);
+        addView(mRefreshView);
     }
 
     public SwipeRefreshPlush(Context context) {
@@ -126,8 +127,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     public SwipeRefreshPlush(Context context, AttributeSet attrs) {
         super(context, attrs);
-        loadViewController=new LoadViewController(context,this);
-        refreshController=new RefreshViewController(context,this);
+        mLoadViewController = new LoadViewController(context, this);
+        mRefreshController = new RefreshViewController(context, this);
         //   mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         final ViewConfiguration configuration = ViewConfiguration.get(getContext());
         mTouchSlop = configuration.getScaledTouchSlop();
@@ -146,8 +147,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         LogUtils.d("layout");
         final int width = getMeasuredWidth();
         final int height = getMeasuredHeight();
-        int loadViewWidth = loadMoreView.getMeasuredWidth();
-        int loadViewHeight = loadMoreView.getMeasuredHeight();
+        int loadViewWidth = mLoadMoreView.getMeasuredWidth();
+        int loadViewHeight = mLoadMoreView.getMeasuredHeight();
         if (getChildCount() == 0)
             return;
         if (mTarget == null)
@@ -160,13 +161,14 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         final int childTop = getPaddingTop();
         final int childBottom = getPaddingBottom();
         final int childWidth = width - childLeft - childRight;
-        final int childHeight = height - childTop - childBottom - loadViewController.getCurrentHeight();
+     //   final int childHeight=child.getMeasuredHeight();
+        final int childHeight = height - childTop - childBottom - mLoadViewController.getCurrentHeight();
         child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
-        int circleWidth = refreshView.getMeasuredWidth();
-        int circleHeight = refreshView.getMeasuredHeight();
-        refreshView.layout((width / 2 - circleWidth / 2), refreshController.getmCurrentTargetOffsetTop(),
-                (width / 2 + circleWidth / 2), refreshController.getmCurrentTargetOffsetTop() + circleHeight);
-        loadMoreView.layout(width / 2 - loadViewWidth / 2, height - childBottom, width / 2 + loadViewWidth / 2, height + loadViewHeight - childBottom);
+        int circleWidth = mRefreshView.getMeasuredWidth();
+        int circleHeight = mRefreshView.getMeasuredHeight();
+        mRefreshView.layout((width / 2 - circleWidth / 2), mRefreshController.getmCurrentTargetOffsetTop(),
+                (width / 2 + circleWidth / 2), mRefreshController.getmCurrentTargetOffsetTop() + circleHeight);
+        mLoadMoreView.layout(width / 2 - loadViewWidth / 2, height - childBottom, width / 2 + loadViewWidth / 2, height + loadViewHeight - childBottom);
 
         // mScroller.startScroll(0,height,0,loadViewHeight);
     }
@@ -174,20 +176,17 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     @Override
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
-            // int oldY = mHeaderController.getScroll();
-            int y = mScroller.getCurrY();
-            int dy=y-lastFlingY;
-            lastFlingY=y;
-            //dispatchNestedScroll(0,0,0,dy,new int[2]);
-            LogUtils.d("fling y" + y);
-            LogUtils.d("target height"+mTarget.getMeasuredHeight());
-           // scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
-//            if (oldY != y) {
-//                //moveBy(y - oldY);
-//            }
+            LogUtils.d(mScroller.isOverScrolled());
+            if(!canChildScrollDown()){
+                showLoadMoreView(mLoadMoreView.getHeight());
+                mScroller.abortAnimation();
+            }
             ViewCompat.postInvalidateOnAnimation(this);
         } else {
             //tryBounceBack();
+//            if(!canChildScrollDown()){
+//                showLoadMoreView(mLoadMoreView.getHeight());
+//            }
         }
     }
 
@@ -241,14 +240,14 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                 getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
                 MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
                 getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
-        refreshView.measure(MeasureSpec.makeMeasureSpec(refreshController.getRefreshViewSize(), MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(refreshController.getRefreshViewSize(), MeasureSpec.EXACTLY));
-        loadMoreView.measure(MeasureSpec.makeMeasureSpec(loadViewController.getLoadViewSize(), MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(loadViewController.getLoadViewSize(), MeasureSpec.EXACTLY));
+        mRefreshView.measure(MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getWidth(), MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getHeight(), MeasureSpec.EXACTLY));
+        mLoadMoreView.measure(MeasureSpec.makeMeasureSpec(mLoadViewController.getLoadViewSize().getWidth(), MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(mLoadViewController.getLoadViewSize().getHeight(), MeasureSpec.EXACTLY));
         circleViewIndex = -1;
         // Get the index of the circleview.
         for (int index = 0; index < getChildCount(); index++) {
-            if (getChildAt(index) == refreshView) {
+            if (getChildAt(index) == mRefreshView) {
                 circleViewIndex = index;
                 break;
             }
@@ -264,7 +263,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         }
 
         if (!isEnabled() || mReturningToStart || canChildScrollUp()
-                || refreshController.isRefresh() || mNestedScrollInProgress || isLoad) {
+                || mRefreshController.isRefresh() || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
             return false;
         }
@@ -293,7 +292,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                 if (mIsBeingDragged) {
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     if (overscrollTop > 0) {
-                        refreshController.showPullRefresh(overscrollTop);
+                        mRefreshController.showPullRefresh(overscrollTop);
                     } else {
                         mDownTotalUnconsumed += Math.abs(overscrollTop);
                         showLoadMoreView((int) Math.abs(overscrollTop));
@@ -312,7 +311,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                     final float y = event.getY(pointerIndex);
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     mIsBeingDragged = false;
-                    refreshController.finishPullRefresh(overscrollTop);
+                    mRefreshController.finishPullRefresh(overscrollTop);
                 }
                 mActivePointerId = INVALID_POINTER;
                 return false;
@@ -327,7 +326,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         if (yDiff > mTouchSlop && !mIsBeingDragged) {
             mInitialMotionY = mInitialDownY + mTouchSlop;
             mIsBeingDragged = true;
-            refreshController.startProgress();
+            mRefreshController.startProgress();
         }
     }
 
@@ -342,14 +341,14 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             mReturningToStart = false;
         }
         if (!isEnabled() || mReturningToStart || canChildScrollUp()
-                || refreshController.isRefresh() || mNestedScrollInProgress || isLoad) {
+                || mRefreshController.isRefresh() || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
             return false;
         }
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                refreshController.setTargetOffsetTopAndBottom(refreshController.getmCurrentTargetOffsetTop() - refreshView.getTop(), true);
+                mRefreshController.setTargetOffsetTopAndBottom(mRefreshController.getmCurrentTargetOffsetTop() - mRefreshView.getTop(), true);
                 mActivePointerId = ev.getPointerId(0);
                 mIsBeingDragged = false;
 
@@ -413,29 +412,34 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     }
 
     private boolean flingWithNestedDispatch(float velocityX, float velocityY) {
-        final boolean canFling = velocityY > mMinimumVelocity;
+        final boolean canFling = Math.abs(velocityY)> mMinimumVelocity;
         if (!dispatchNestedPreFling(velocityX, velocityY)) {
             dispatchNestedFling(velocityX, velocityY, canFling);
             if (canFling) {
-                fling(velocityY);
-                return true;
+                return fling(velocityY);
             }
         }
         return false;
-    }
+}
 
-    public void fling(float velocityY) {
+    public boolean fling(float velocityY) {
+        LogUtils.d("fling"+velocityY);
+        if(velocityY<=0){
+            if(mLoadViewController.getCurrentHeight()>0) {
+                hideLoadMoreView(mLoadViewController.getCurrentHeight());
+                LogUtils.d("stop load more");
+            }
+            mScroller.abortAnimation();
+            return false;
+        }
         //mPullState = STATE_FLING;
         mScroller.abortAnimation();
         mScroller.computeScrollOffset();
-
-        mScroller.fling(0, mScroller.getCurrY(), 0, (int) velocityY, 0, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
-
-//        mScroller.fling(0, mHeaderController.getScroll(), 0, velocityY, 0, 0,
-//                mHeaderController.getMinScroll(), mHeaderController.getMaxScroll(),
-//                0, 0);
-
+        if(canChildScrollUp()){
+            mScroller.fling(0, mScroller.getCurrY(), 0, (int) velocityY, 0, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
         ViewCompat.postInvalidateOnAnimation(this);
+        return false;
     }
 
     /***
@@ -497,7 +501,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
      */
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        return REFRESH_MODE != SwipeRefreshMode.MODE_NONE && !refreshController.isRefresh()
+        return REFRESH_MODE != SwipeRefreshMode.MODE_NONE && !mRefreshController.isRefresh()
                 && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
 
     }
@@ -518,7 +522,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         mNestedScrollInProgress = false;
         nestedScrollingParentHelper.onStopNestedScroll(target);
         if (mUpTotalUnconsumed > 0) {
-            refreshController.finishPullRefresh(mUpTotalUnconsumed);
+            mRefreshController.finishPullRefresh(mUpTotalUnconsumed);
             mUpTotalUnconsumed = 0;
         }
         if (mDownTotalUnconsumed > 0) {
@@ -532,12 +536,13 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow);
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
-        LogUtils.d("unconsumed" + dy);
+        if(mRefreshController.isRefresh())
+            return;
         if (dy < 0 && !canChildScrollUp()) {
             mUpTotalUnconsumed += Math.abs(dy);
             //moveSpinner(mUpTotalUnconsumed);
-            refreshController.showPullRefresh(mUpTotalUnconsumed);
-        } else if (dy > 0 && canChildScrollUp()) {
+            mRefreshController.showPullRefresh(mUpTotalUnconsumed);
+        } else if (dy > 0 && !canChildScrollDown()) {
             mDownTotalUnconsumed += dy;
             //// TODO: 2016/12/2 显示加载更多
             showLoadMoreView(dy);
@@ -563,8 +568,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                 consumed[1] = dy;
             }
             //   moveSpinner(mUpTotalUnconsumed);
-            refreshController.showPullRefresh(mUpTotalUnconsumed);
-        } else if (dy < 0 && mDownTotalUnconsumed > 0) {
+            mRefreshController.showPullRefresh(mUpTotalUnconsumed);
+        } else if (dy < 0 && mLoadViewController.getCurrentHeight()>0) {
             if (dy + mDownTotalUnconsumed < 0) {
                 consumed[1] = dy + (int) mDownTotalUnconsumed;
                 mDownTotalUnconsumed = 0;
@@ -574,12 +579,17 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             }
             hideLoadMoreView(Math.abs(dy));
         }
+        // Now let our nested parent consume the leftovers
+        final int[] parentConsumed = mParentScrollConsumed;
+        if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null)) {
+            consumed[0] += parentConsumed[0];
+            consumed[1] += parentConsumed[1];
+        }
     }
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        LogUtils.d("fling consumed" + consumed + velocityY);
-        if (!consumed && velocityY > 0) {
+        if (!consumed) {
             flingWithNestedDispatch(velocityX, velocityY);
             return true;
         }
@@ -589,8 +599,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
 //        LogUtils.d("onNestedPreFling");
-       // return dispatchNestedPreFling(velocityX, velocityY);
-           return flingWithNestedDispatch(velocityX,velocityY);
+        // return dispatchNestedPreFling(velocityX, velocityY);
+        return flingWithNestedDispatch(velocityX, velocityY);
 
     }
 
@@ -598,7 +608,10 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     public int getNestedScrollAxes() {
         return nestedScrollingParentHelper.getNestedScrollAxes();
     }
-    /********************parent end************************************/
+
+    /********************
+     * parent end
+     ************************************/
 
 
     //显示加载更多view
@@ -609,25 +622,26 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         if (listener != null) {
             mAnimationShowLoadMore.setAnimationListener(listener);
         }
-        loadMoreView.clearAnimation();
-        loadMoreView.startAnimation(mAnimationShowLoadMore);
+        mLoadMoreView.clearAnimation();
+        mLoadMoreView.startAnimation(mAnimationShowLoadMore);
     }
 
     //加载更多动画
     private final Animation mAnimationShowLoadMore = new Animation() {
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
-            int offset = (int) ((loadMoreView.getHeight() - loadViewController.getCurrentHeight()) * interpolatedTime);
-            loadViewController.move(offset);
-            // float offset=-loadMoreView.getMeasuredHeight()*interpolatedTime;
+            int offset = (int) ((mLoadMoreView.getHeight() - mLoadViewController.getCurrentHeight()) * interpolatedTime);
+            mLoadViewController.move(offset);
+            // float offset=-mLoadMoreView.getMeasuredHeight()*interpolatedTime;
             ViewCompat.offsetTopAndBottom(mTarget, -offset);
-            ViewCompat.offsetTopAndBottom(loadMoreView, -offset);
+            ViewCompat.offsetTopAndBottom(mLoadMoreView, -offset);
 //            mTarget.offsetTopAndBottom(-offset);
-//            loadMoreView.offsetTopAndBottom(-offset);
+//            mLoadMoreView.offsetTopAndBottom(-offset);
 
-           // mLoadProgress.setArrowScale(1 - interpolatedTime);
+            // mLoadProgress.setArrowScale(1 - interpolatedTime);
         }
     };
+
     /*******************************************************************/
     public boolean canChildScrollUp() {
         if (android.os.Build.VERSION.SDK_INT < 14) {
@@ -643,38 +657,83 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             return ViewCompat.canScrollVertically(mTarget, -1);
         }
     }
+    public boolean canChildScrollDown(){
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (mTarget instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) mTarget;
+                int count=absListView.getChildCount();
+                int position=absListView.getLastVisiblePosition();
+                return (count>position+1)||absListView.getChildAt(position).getBottom()<absListView.getPaddingBottom();
+//                return absListView.getChildCount() > 0
+//                        && (absListView.getLastVisiblePosition() ==absListView.getChildCount() || absListView.getChildAt(0)
+//                        .getTop() < absListView.getPaddingTop());
+            } else {
+                return ViewCompat.canScrollVertically(mTarget, 1);
+            }
+        } else {
+            return ViewCompat.canScrollVertically(mTarget,1);
+        }
+    }
+    public boolean hasScrollToBottom(){
+        if(mTarget instanceof AbsListView){
+            final AbsListView absListView=(AbsListView)mTarget;
+            return absListView.getChildCount()==absListView.getLastVisiblePosition()+1;
+        }else if(mTarget instanceof RecyclerView){
+            final RecyclerView recyclerView=(RecyclerView)mTarget;
+            RecyclerView.LayoutManager layoutManager=recyclerView.getLayoutManager();
+            if(layoutManager.getItemCount()==0)
+                return false;
+            if(layoutManager instanceof LinearLayoutManager){
+                LinearLayoutManager linearLayoutManager=(LinearLayoutManager)layoutManager;
+                return linearLayoutManager.getItemCount()==linearLayoutManager.findLastVisibleItemPosition()+1;
+            }else if(layoutManager instanceof StaggeredGridLayoutManager){
+                int count=layoutManager.getItemCount()-1;
+                StaggeredGridLayoutManager gridLayoutManager=(StaggeredGridLayoutManager)layoutManager;
+                int v[]=gridLayoutManager.findLastVisibleItemPositions(null);
+                for(int i:v){
+                    if(count==i)
+                        return true;
+                }
 
+            }
+        }
+        return false;
+    }
 
 
     private void showLoadMoreView(int height) {
-        LogUtils.i("height:" + height + "slop" + mTouchSlop);
-        if (!isLoad) {
-            isLoad = true;
-            if (loadMoreView.getVisibility() != VISIBLE)
-                loadMoreView.setVisibility(VISIBLE);
+        if (!isLoadAnimation&&mLoadViewController.getCurrentHeight()< mLoadMoreView.getHeight()) {
+            LogUtils.i("height:" + height);
+            if (mLoadMoreView.getVisibility() != VISIBLE)
+                mLoadMoreView.setVisibility(VISIBLE);
+            mLoadMoreView.clearAnimation();
             animateShowLoadMore(mLoadMoreListener);
         }
     }
 
 
-    private void hideLoadMoreView(int height) {
-        if (isLoad) {
-            loadMoreView.offsetTopAndBottom(height);
+    private synchronized void hideLoadMoreView(int height) {
+        if (mLoadViewController.isLoading()&&mLoadViewController.getCurrentHeight()!=0) {
+            int currentHeight= mLoadViewController.getCurrentHeight();
+            if(height>currentHeight){
+                height=currentHeight;
+            }
+            mLoadMoreView.offsetTopAndBottom(height);
             mTarget.offsetTopAndBottom(height);
-            loadViewController.move(-height);
+            mLoadViewController.move(-height);
         }
-        if (loadViewController.getCurrentHeight() <= 0) {
-            loadViewController.reset();
-            isLoad = false;
+        if (mLoadViewController.getCurrentHeight() <= 0) {
+            mLoadViewController.reset();
+            mLoadMoreView.setVisibility(GONE);
         }
     }
 
     public void setLoadMore(boolean show) {
         if (show) {
-            showLoadMoreView(loadMoreView.getMeasuredHeight());
+            showLoadMoreView(mLoadMoreView.getMeasuredHeight());
         } else {
             // hideLoadMoreView();
-            hideLoadMoreView(loadMoreView.getMeasuredHeight());
+            hideLoadMoreView(mLoadMoreView.getMeasuredHeight());
         }
     }
 
@@ -685,8 +744,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
      */
     public void setOnScrollListener(OnScrollListener onScrollListener) {
         this.mListener = onScrollListener;
-        loadViewController.setScrollListener(mListener);
-        refreshController.setListener(mListener);
+        mLoadViewController.setScrollListener(mListener);
+        mRefreshController.setListener(mListener);
     }
 
     /**
@@ -705,12 +764,12 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         this.REFRESH_MODE = mode;
     }
 
-    public void setRefreshView(View view) {
-        this.refreshView = view;
+    public void setmRefreshView(View view) {
+        this.mRefreshView = view;
     }
 
-    public void setLoadMoreView(View view) {
-        this.loadMoreView = view;
+    public void setmLoadMoreView(View view) {
+        this.mLoadMoreView = view;
     }
 
     public void setColorSchemeResources(@ColorRes int... colorResIds) {
@@ -724,15 +783,14 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     public void setColorSchemeColors(@ColorInt int... colors) {
         ensureTarget();
-        refreshController.setProgressColors(colors);
-        loadViewController.setProgressColors(colors);
+        mRefreshController.setProgressColors(colors);
+        mLoadViewController.setProgressColors(colors);
     }
 
     public void setRefresh(boolean refresh) {
         ensureTarget();
-        refreshController.setRefreshing(refresh, false);
+        mRefreshController.setRefreshing(refresh, false);
     }
-
 
 
     /*********************************************************************/
@@ -742,7 +800,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         if (mTarget == null) {
             for (int i = 0; i < getChildCount(); i++) {
                 View child = getChildAt(i);
-                if (!child.equals(refreshView) && !child.equals(loadMoreView)) {
+                if (!child.equals(mRefreshView) && !child.equals(mLoadMoreView)) {
                     mTarget = child;
                     break;
                 }
@@ -762,8 +820,6 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
         void onLoadMore();
     }
-
-
 
 
     private void onSecondaryPointerUp(MotionEvent ev) {
