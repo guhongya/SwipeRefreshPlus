@@ -50,7 +50,7 @@ public class DataPresenter implements DemoContact.Presenter {
     private List generatorData(){
         Long num=System.currentTimeMillis();
         List<Integer> resul=new ArrayList<>();
-        for(int i=0;i<10;i++){
+        for(int i=0;i<6;i++){
             mRandom.setSeed(num);
             num=mRandom.nextLong();
             resul.add(dataSource[Math.abs(num.intValue())%5]);
