@@ -1,9 +1,9 @@
-package com.gu.swiperefresh;
+package com.gu.swiperefresh.Utils;
+
 
 /**
  * Created by gu on 2016/12/20.
  */
-
 public class Size {
     private int width;
     private int height;

@@ -4,15 +4,12 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gu.swiperefreshplush.MainActivity">
+    tools:context="com.gu.swiperefreshplush.MainActivity"
+    android:orientation="vertical"
+    >
 
-   <com.gu.swiperefresh.SwipeRefreshPlush
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:id="@+id/swipe_refresh">
-    <android.support.v7.widget.RecyclerView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/content"></android.support.v7.widget.RecyclerView>
-       </com.gu.swiperefresh.SwipeRefreshPlush>
+        android:id="@+id/main_content"></FrameLayout>
 </RelativeLayout>

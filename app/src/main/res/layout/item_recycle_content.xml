@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:text="test"/>
-</LinearLayout>
+
+<android.support.v7.widget.CardView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    cardview:cardElevation="5dp"
+    cardview:cardCornerRadius="3dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginTop="5dp">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:id="@+id/item_content"
+        tools:src="@mipmap/pic1"/>
+</android.support.v7.widget.CardView>

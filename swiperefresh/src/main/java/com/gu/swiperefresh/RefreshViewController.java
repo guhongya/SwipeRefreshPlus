@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2013 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.gu.swiperefresh;
 
 import android.content.Context;
@@ -9,7 +24,8 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 
-import com.apkfuns.logutils.LogUtils;
+import com.gu.swiperefresh.Utils.Size;
+
 
 /**
  * Created by gu on 2016/12/19.
@@ -116,7 +132,7 @@ public class RefreshViewController {
     }
 
     protected Size getRefreshViewSize() {
-        return new Size(mCircleDiameter,mCircleDiameter);
+        return new Size(mCircleDiameter, mCircleDiameter);
     }
 
     protected boolean isRefresh() {
@@ -132,8 +148,7 @@ public class RefreshViewController {
         float adjustedPercent = (float) Math.max(dragPercent - .4, 0) * 5 / 3;
         float extraOS = Math.abs(overscrollTop) - mTotalDragDistance;
         float slingshotDist = mSpinnerOffsetEnd;
-        float tensionSlingshotPercent = Math.max(0, Math.min(extraOS, slingshotDist * 2)
-                / slingshotDist);
+        float tensionSlingshotPercent = Math.max(0, Math.min(extraOS, slingshotDist * 2) / slingshotDist);
         float tensionPercent = (float) ((tensionSlingshotPercent / 4) - Math.pow(
                 (tensionSlingshotPercent / 4), 2)) * 2f;
         float extraMove = (slingshotDist) * tensionPercent * 2;
@@ -173,7 +188,7 @@ public class RefreshViewController {
     }
 
     void setTargetOffsetTopAndBottom(int offset, boolean requiresUpdate) {
-        mCircleView.bringToFront();
+        // mCircleView.bringToFront();
         ViewCompat.offsetTopAndBottom(mCircleView, offset);
         mCurrentTargetOffsetTop = mCircleView.getTop();
         if (requiresUpdate && android.os.Build.VERSION.SDK_INT < 11) {

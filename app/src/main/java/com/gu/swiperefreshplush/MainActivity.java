@@ -1,11 +1,18 @@
 package com.gu.swiperefreshplush;
 
+import android.app.Fragment;
+import android.content.Intent;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
@@ -14,54 +21,44 @@ import com.gu.swiperefresh.SwipeRefreshPlush;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView recycleContent;
-    private SimpleRecycleAdapter recycleAdapter;
-    private SwipeRefreshPlush swipeRefreshPlush;
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recycleContent= (RecyclerView) findViewById(R.id.content);
-        swipeRefreshPlush= (SwipeRefreshPlush) findViewById(R.id.swipe_refresh);
-        iniView();
-    }
-    private void iniView(){
-        recycleContent.setLayoutManager(new LinearLayoutManager(this));
-
-        recycleAdapter=new SimpleRecycleAdapter();
-        recycleAdapter.setData(generatorData());
-        recycleContent.setAdapter(recycleAdapter);
-        swipeRefreshPlush.setColorSchemeResources(new int[]{R.color.colorPrimary});
-        swipeRefreshPlush.setOnScrollListener(new SwipeRefreshPlush.OnScrollListener() {
-            @Override
-            public void onRefresh() {
-                generatorData();
-                swipeRefreshPlush.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshPlush.setRefresh(false);
-                        LogUtils.d("heigth:"+recycleContent.getHeight()+"scrolly"+recycleContent.getScrollY());
-                    }
-                },1000);
-            }
-
-            @Override
-            public void onLoadMore() {
-                LogUtils.d("load more");
-            }
-        });
+        getFragmentManager().beginTransaction().add(R.id.main_content,new ReplaceFragment()).commit();
 
     }
-    private List generatorData(){
-        List<String> resul=new ArrayList<>();
-        for(int i=0;i<30;i++){
-            resul.add("ewetwes");
+   public void showList(View view){
+       if(getFragmentManager().getBackStackEntryCount()>0){
+           getFragmentManager().popBackStack();
+       }
+       ListFragment listFragment=new ListFragment();
+       new DataPresenter(listFragment);
+       showFragment(listFragment);
+   }
+    public void showRecycle(View view){
+       if(getFragmentManager().getBackStackEntryCount()>0){
+           getFragmentManager().popBackStack();
+       }
+        RecycleFragment fragment=new RecycleFragment();
+        showFragment(fragment);
+        new DataPresenter(fragment);
+    }
+    private void showFragment(Fragment fragment){
+        getFragmentManager().beginTransaction().replace(R.id.main_content,fragment).addToBackStack(fragment.getClass().toString()).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount()>0){
+            getFragmentManager().popBackStack();
+        }else {
+            super.onBackPressed();
         }
-        return resul;
     }
 }
