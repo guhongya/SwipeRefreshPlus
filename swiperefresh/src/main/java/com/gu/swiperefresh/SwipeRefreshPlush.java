@@ -24,7 +24,6 @@ import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
-import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.util.AttributeSet;
@@ -70,7 +69,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     private float mInitialMotionY;
     private float mInitialDownY;
-    private boolean mIsBeingDragged;
+    private boolean mIsBeingDragUp;
+    private boolean mIsBeingDragDowm;
     private int mActivePointerId = INVALID_POINTER;
 
     private int mTouchSlop;
@@ -314,7 +314,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         }
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                mIsBeingDragged = false;
+                mIsBeingDragUp = false;
+                mIsBeingDragDowm=false;
                 mActivePointerId = event.getPointerId(0);
                 pointerIndex = event.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
@@ -335,20 +336,23 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                 final float y = event.getY(pointerIndex);
                 startDragging(y);
 
-                if (mIsBeingDragged) {
+                if (mIsBeingDragUp) {
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     if (overscrollTop > 0) {
                         mRefreshController.showPullRefresh(overscrollTop);
                     }
+
+                }else if(mIsBeingDragDowm){
                     int dy=(int)(y-mLastY);
                     Log.i(TAG,"dy:"+dy);
-                    if(dy>=0){
-                        hideLoadMoreView(Math.abs(dy));
-                    }else {
-                        showLoadMoreView(dy);
+                    //消除抖动
+                        if (dy >= 0.5) {
+                            hideLoadMoreView(Math.abs(dy));
+                        } else if(dy<-0.5){
+                            showLoadMoreView(dy);
                     }
-                    mLastY=y;
                 }
+                mLastY=y;
                 break;
             }
             case MotionEvent.ACTION_UP: {
@@ -358,10 +362,10 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                     return false;
                 }
 
-                if (mIsBeingDragged) {
+                if (mIsBeingDragUp) {
                     final float y = event.getY(pointerIndex);
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
-                    mIsBeingDragged = false;
+                    mIsBeingDragUp = false;
                     if (overscrollTop > 0)
                         mRefreshController.finishPullRefresh(overscrollTop);
                 }
@@ -375,18 +379,18 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     private void startDragging(float y) {
         final float yDiff = y - mInitialDownY;
-        if (yDiff > mTouchSlop && !mIsBeingDragged) {
+        if (yDiff > mTouchSlop && !mIsBeingDragUp) {
             if (!canChildScrollUp() && canLoadMore()) {
                 mInitialMotionY = mInitialDownY + mTouchSlop;
-                mIsBeingDragged = true;
+                mIsBeingDragUp = true;
                 mRefreshController.startProgress();
             } else if (mLoadViewController.getCurrentHeight() > 0) {
                 hideLoadMoreView((int) yDiff);
             }
-        } else if (yDiff < -mTouchSlop && !mIsBeingDragged && !canChildScrollDown() && canLoadMore()) {
+        } else if (yDiff < -mTouchSlop && !mIsBeingDragDowm && !canChildScrollDown() && canLoadMore()) {
             Log.d(TAG, yDiff + ":" + mTouchSlop);
             mInitialMotionY = mInitialDownY - mTouchSlop;
-            mIsBeingDragged = true;
+            mIsBeingDragDowm = true;
         }
     }
 
@@ -409,7 +413,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             case MotionEvent.ACTION_DOWN:
                 mRefreshController.setTargetOffsetTopAndBottom(mRefreshController.getmCurrentTargetOffsetTop() - mRefreshView.getTop(), true);
                 mActivePointerId = ev.getPointerId(0);
-                mIsBeingDragged = false;
+                mIsBeingDragUp = false;
+                mIsBeingDragDowm=false;
 
                 pointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
@@ -448,12 +453,12 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                 releaseVelocityTracker();
                 break;
             case MotionEvent.ACTION_CANCEL:
-                mIsBeingDragged = false;
+                mIsBeingDragUp = false;
                 mActivePointerId = INVALID_POINTER;
                 break;
         }
 
-        return mIsBeingDragged;
+        return mIsBeingDragUp||mIsBeingDragDowm;
     }
 
     private void onSecondaryPointerUp(MotionEvent ev) {
@@ -725,10 +730,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                 final AbsListView absListView = (AbsListView) mTarget;
                 int count = absListView.getChildCount();
                 int position = absListView.getLastVisiblePosition();
-                return (count > position + 1) || absListView.getChildAt(position).getBottom() < absListView.getPaddingBottom();
-//                return absListView.getChildCount() > 0
-//                        && (absListView.getLastVisiblePosition() ==absListView.getChildCount() || absListView.getChildAt(0)
-//                        .getTop() < absListView.getPaddingTop());
+                return (count > position + 1) || absListView.getChildAt(position).getBottom() <=absListView.getPaddingBottom();
             } else {
                 return ViewCompat.canScrollVertically(mTarget, 1);
             }
