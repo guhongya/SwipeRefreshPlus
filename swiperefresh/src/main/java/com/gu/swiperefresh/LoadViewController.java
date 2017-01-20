@@ -120,12 +120,25 @@ public class LoadViewController {
     protected View getDefaultView(){
         return defaultView;
     }
-    protected void move(int distance) {
+
+    /**
+     * 实际移动距离
+     * @param distance
+     * @return
+     */
+    protected int move(int distance) {
         currentHeight+=distance;
-       if(currentHeight>mMaxHeigth)
-            currentHeight=mMaxHeigth;
-        else if(currentHeight<0)
-            currentHeight=0;
+       if(currentHeight>mMaxHeigth) {
+           int result=distance-(currentHeight-mMaxHeigth);
+           currentHeight = mMaxHeigth;
+           return result;
+       }
+        else if(currentHeight<0) {
+           int result=distance-currentHeight;
+           currentHeight = 0;
+           return result;
+       }
+        return distance;
     }
 
     protected int getMaxHeight(){

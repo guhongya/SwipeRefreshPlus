@@ -99,7 +99,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     private static final float DECELERATE_INTERPOLATION_FACTOR = 2f;
 
-    private boolean isLoadAnimation;
+    private volatile boolean isLoadAnimation;
 
     private View mNoMoreView = null;
     private boolean mShowNoMore = false;
@@ -641,7 +641,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                     consumed[1] = dy;
                 }
                 mRefreshController.showPullRefresh(mUpTotalUnconsumed);
-            } else if (dy < 0 && mLoadViewController.getCurrentHeight() > 0) {
+            } else if (dy < 0 && mLoadViewController.getCurrentHeight() > 0&&!isLoadAnimation) {
                 if (dy + mDownTotalUnconsumed < 0) {
                     consumed[1] = dy + (int) mDownTotalUnconsumed;
                     mDownTotalUnconsumed = 0;
@@ -703,8 +703,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
             int offset = (int) ((mLoadViewController.getMaxHeight() - mLoadViewController.getCurrentHeight()) * interpolatedTime);
-            mLoadViewController.move(offset);
-            scrollBy(0, offset);
+            scrollBy(0,  mLoadViewController.move(offset));
         }
     };
 
@@ -740,8 +739,9 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     }
 
 
-    private synchronized void showLoadMoreView(int height) {
+    private void showLoadMoreView(int height) {
         if (!isLoadAnimation) {
+            isLoadAnimation=true;
             if (mLoadMoreView.getVisibility() != VISIBLE)
                 mLoadMoreView.setVisibility(VISIBLE);
             mLoadMoreView.clearAnimation();
@@ -750,18 +750,18 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     }
 
 
-    private synchronized void hideLoadMoreView(int height) {
-        if (!isLoadAnimation&& mLoadViewController.getCurrentHeight() > 0) {
+    private void hideLoadMoreView(int height) {
+        if(isLoadAnimation)
+            return;
+        if (mLoadViewController.getCurrentHeight() > 0) {
             int currentHeight = mLoadViewController.getCurrentHeight();
             if (height > currentHeight) {
                 height = currentHeight;
             }
-            scrollBy(0, -height);
-            mLoadViewController.move(-height);
+            scrollBy(0,  mLoadViewController.move(-height));
         }
         if (mLoadViewController.getCurrentHeight() <= 0) {
             mLoadViewController.reset();
-            // mLoadMoreView.setVisibility(GONE);
         }
     }
 
