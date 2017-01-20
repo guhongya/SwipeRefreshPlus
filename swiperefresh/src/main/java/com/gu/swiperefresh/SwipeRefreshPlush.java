@@ -115,9 +115,9 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            isLoadAnimation = false;
             if (!mShowNoMore)
                 mLoadViewController.beginLoading();
+            isLoadAnimation = false;
         }
 
         @Override
@@ -615,7 +615,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             mUpTotalUnconsumed += Math.abs(dy);
             //moveSpinner(mUpTotalUnconsumed);
             mRefreshController.showPullRefresh(mUpTotalUnconsumed);
-        } else if (dy > 0 && !canChildScrollDown() && canLoadMore()) {
+        } else if (dy > 0 &&mLoadViewController.getCurrentHeight()==0&& !canChildScrollDown() && canLoadMore()) {
             mDownTotalUnconsumed += dy;
             showLoadMoreView(dy);
         }
@@ -641,7 +641,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                     consumed[1] = dy;
                 }
                 mRefreshController.showPullRefresh(mUpTotalUnconsumed);
-            } else if (dy < 0 && mLoadViewController.getCurrentHeight() > 0&&!isLoadAnimation) {
+            } else if (dy < -1 && mLoadViewController.getCurrentHeight() > 0&&!isLoadAnimation) {
                 if (dy + mDownTotalUnconsumed < 0) {
                     consumed[1] = dy + (int) mDownTotalUnconsumed;
                     mDownTotalUnconsumed = 0;
@@ -694,7 +694,6 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         if (listener != null) {
             mAnimationShowLoadMore.setAnimationListener(listener);
         }
-        mLoadMoreView.clearAnimation();
         mLoadMoreView.startAnimation(mAnimationShowLoadMore);
     }
 
@@ -740,7 +739,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
 
     private void showLoadMoreView(int height) {
-        if (!isLoadAnimation) {
+        if (!isLoadAnimation&&mLoadViewController.getCurrentHeight()<=0) {
             isLoadAnimation=true;
             if (mLoadMoreView.getVisibility() != VISIBLE)
                 mLoadMoreView.setVisibility(VISIBLE);
