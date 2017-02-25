@@ -766,6 +766,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
 
     /*********基本设置************/
+
     /**
      * @param onScrollListener
      */
@@ -839,6 +840,11 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         }
     }
 
+    /**
+     * 设置自定义loadmore view
+     * @param view
+     * @param layoutParams
+     */
     public void setLoadMoreView(View view, LayoutParams layoutParams) {
         detachViewFromParent(mLoadMoreView);
         this.mLoadMoreView = view;
@@ -846,12 +852,21 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         mLoadViewController.changeDefaultView(mLoadMoreView);
     }
 
+    /**
+     * 设置没有更多提示view
+     * @param view
+     * @param layoutParams
+     */
     public void setNoMoreView(View view, LayoutParams layoutParams) {
         mNoMoreView = view;
         mNoMoreView.setLayoutParams(layoutParams);
         // mLoadMoreView.setVisibility(GONE);
     }
 
+    /**
+     * 显示没有更多提示
+     * @param show true:滑动到底部时显示没有更多，false:滑动到底部时显示加载更多
+     */
     public void showNoMore(boolean show) {
         mShowNoMore = show;
         if (show && mNoMoreView != null) {
