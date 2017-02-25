@@ -380,7 +380,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     private void startDragging(float y) {
         final float yDiff = y - mInitialDownY;
         if (yDiff > mTouchSlop && !mIsBeingDragUp) {
-            if (!canChildScrollUp() && canLoadMore()) {
+            if (!canChildScrollUp()) {
                 mInitialMotionY = mInitialDownY + mTouchSlop;
                 mIsBeingDragUp = true;
                 mRefreshController.startProgress();
@@ -707,6 +707,10 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     };
 
     /*******************************************************************/
+    /**
+     * targrt view 是否能向上滑动
+     * @return
+     */
     public boolean canChildScrollUp() {
         if (android.os.Build.VERSION.SDK_INT < 14) {
             if (mTarget instanceof AbsListView) {
@@ -722,11 +726,16 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         }
     }
 
+    /**
+     * target view 是否能向下滑动
+     * @return
+     */
     public boolean canChildScrollDown() {
         if (android.os.Build.VERSION.SDK_INT < 14) {
             if (mTarget instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) mTarget;
                 int count = absListView.getChildCount();
+                //return absListView.canScrollList(-1);
                 int position = absListView.getLastVisiblePosition();
                 return (count > position + 1) || absListView.getChildAt(position).getBottom() <=absListView.getPaddingBottom();
             } else {
@@ -924,7 +933,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     }
 
     private boolean canLoadMore() {
-        if (REFRESH_MODE == SwipeRefreshMode.MODE_BOTH || REFRESH_MODE == SwipeRefreshMode.MODE_LOADMODE) {
+        if ((REFRESH_MODE == SwipeRefreshMode.MODE_BOTH || REFRESH_MODE == SwipeRefreshMode.MODE_LOADMODE)&&canChildScrollUp()) {
             return true;
         } else
             return false;
