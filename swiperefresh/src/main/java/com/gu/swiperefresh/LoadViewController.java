@@ -21,6 +21,9 @@ import android.support.annotation.ColorInt;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Transformation;
 
 import com.gu.swiperefresh.Utils.Size;
 
@@ -55,7 +58,7 @@ public class LoadViewController {
 
     private boolean isLoading;
 
-    private SwipeRefreshPlush.OnScrollListener mListener;
+    private SwipeRefreshPlush.OnRefreshListener mListener;
 
     private int mMargin =5;
     private int mMaxHeigth;
@@ -65,6 +68,16 @@ public class LoadViewController {
     private boolean isDefault=true;
 
     private View defaultView;
+
+    //动画是否在加载
+    private volatile boolean isLoadAnimation;
+    //是否显示没有更多view
+    private boolean mShowNoMore = false;
+
+
+    private static final int ANIMATE_TO_TRIGGER_DURATION = 200;
+    private static final float DECELERATE_INTERPOLATION_FACTOR = 2f;
+    private final DecelerateInterpolator mDecelerateInterpolator;
 
     public LoadViewController(Context context, View parent) {
         this.mContext = context;
@@ -77,6 +90,7 @@ public class LoadViewController {
         mMaxHeigth=mMargin*2+mCircleDiameter;
         mViewHeight=mCircleDiameter;
         mViewWidth=mCircleDiameter;
+        mDecelerateInterpolator = new DecelerateInterpolator(DECELERATE_INTERPOLATION_FACTOR);
         typedArray.recycle();
     }
 
@@ -97,8 +111,8 @@ public class LoadViewController {
         return mCircleImageView;
     }
 
-    protected void setScrollListener(SwipeRefreshPlush.OnScrollListener onScrollListener) {
-        this.mListener = onScrollListener;
+    protected void setScrollListener(SwipeRefreshPlush.OnRefreshListener onRefreshListener) {
+        this.mListener = onRefreshListener;
     }
 
     protected Size getLoadViewSize() {
@@ -123,22 +137,29 @@ public class LoadViewController {
 
     /**
      * 实际移动距离
-     * @param distance
+     * @param scrollDistance
      * @return
      */
-    protected int move(int distance) {
-        currentHeight+=distance;
+    protected int move(int scrollDistance) {
+        currentHeight+=scrollDistance;
        if(currentHeight>mMaxHeigth) {
-           int result=distance-(currentHeight-mMaxHeigth);
+           int result=scrollDistance-(currentHeight-mMaxHeigth);
            currentHeight = mMaxHeigth;
            return result;
        }
         else if(currentHeight<0) {
-           int result=distance-currentHeight;
+           int result=scrollDistance-currentHeight;
            currentHeight = 0;
            return result;
        }
-        return distance;
+        return scrollDistance;
+//        if(scrollDistance>mMaxHeigth){
+//            currentHeight=scrollDistance;
+//            return mMaxHeigth-currentHeight;
+//        }else{
+//            currentHeight+=scrollDistance;
+//            return scrollDistance;
+//        }
     }
 
     protected int getMaxHeight(){
@@ -152,7 +173,7 @@ public class LoadViewController {
         }
         if(!isLoading) {
             isLoading = true;
-            mListener.onLoadMore();
+            mListener.onPullUpToRefresh();
         }
     }
 
@@ -165,7 +186,13 @@ public class LoadViewController {
         isLoading = false;
         reset();
     }
-
+    protected void showLoadMore(){
+        if(isLoadAnimation)return;
+        animateShowLoadMore(mLoadMoreListener);
+    }
+    protected boolean canMove(){
+        return !isLoadAnimation;
+    }
     protected boolean isLoading() {
         return isLoading;
     }
@@ -174,4 +201,47 @@ public class LoadViewController {
         mProgress.setColorSchemeColors(colors);
     }
 
+    //loadmore动画结束，调用回调函数
+    private Animation.AnimationListener mLoadMoreListener = new Animation.AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) {
+            isLoadAnimation = true;
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            if (!mShowNoMore) beginLoading();
+            isLoadAnimation = false;
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    };
+
+
+    //显示加载更多view
+    private void animateShowLoadMore(Animation.AnimationListener listener) {
+        mAnimationShowLoadMore.reset();
+        mAnimationShowLoadMore.setDuration(ANIMATE_TO_TRIGGER_DURATION);
+        mAnimationShowLoadMore.setInterpolator(mDecelerateInterpolator);
+        if (listener != null) {
+            mAnimationShowLoadMore.setAnimationListener(listener);
+        }
+        parent.startAnimation(mAnimationShowLoadMore);
+    }
+
+    //加载更多动画
+    private final Animation mAnimationShowLoadMore = new Animation() {
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            int offset = (int) ((getMaxHeight() - getCurrentHeight()) * interpolatedTime);
+            parent.scrollBy(0,  move(offset));
+        }
+    };
+
+    protected void showNoMore(boolean show){
+        mShowNoMore=show;
+    }
 }

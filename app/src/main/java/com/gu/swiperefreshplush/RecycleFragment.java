@@ -1,8 +1,6 @@
 package com.gu.swiperefreshplush;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +11,6 @@ import android.view.ViewGroup;
 import com.apkfuns.logutils.LogUtils;
 import com.gu.swiperefresh.SwipeRefreshPlush;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,9 +41,9 @@ public class RecycleFragment extends Fragment implements DemoContact.View{
         recycleAdapter.setData(datas);
         recycleContent.setAdapter(recycleAdapter);
         swipeRefreshPlush.setRefreshColorResources(new int[]{R.color.colorPrimary});
-        swipeRefreshPlush.setOnScrollListener(new SwipeRefreshPlush.OnScrollListener() {
+        swipeRefreshPlush.setOnScrollListener(new SwipeRefreshPlush.OnRefreshListener() {
             @Override
-            public void onRefresh() {
+            public void onPullDownToRefresh() {
                 swipeRefreshPlush.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -58,7 +55,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View{
             }
 
             @Override
-            public void onLoadMore() {
+            public void onPullUpToRefresh() {
                 LogUtils.d("onloading");
                 count++;
                 if (count >= page) {

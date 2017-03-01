@@ -75,7 +75,7 @@ public class RefreshViewController {
     private Context mContext;
     private View parent;
     private int mCircleDiameter;
-    private SwipeRefreshPlush.OnScrollListener mListener;
+    private SwipeRefreshPlush.OnRefreshListener mListener;
 
     final DisplayMetrics metrics;
 
@@ -255,7 +255,7 @@ public class RefreshViewController {
                 mProgress.setAlpha(MAX_ALPHA);
                 mProgress.start();
                 if (mListener != null) {
-                    mListener.onRefresh();
+                    mListener.onPullDownToRefresh();
                 }
                 mCurrentTargetOffsetTop = mCircleView.getTop();
             } else {
@@ -264,7 +264,7 @@ public class RefreshViewController {
         }
     };
 
-    protected void setListener(SwipeRefreshPlush.OnScrollListener scrollListener) {
+    protected void setListener(SwipeRefreshPlush.OnRefreshListener scrollListener) {
         this.mListener = scrollListener;
     }
 

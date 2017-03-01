@@ -1,8 +1,6 @@
 package com.gu.swiperefreshplush;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,9 +69,9 @@ public class ListFragment extends Fragment implements DemoContact.View{
     }
     private void iniView(){
         mSwipeRefreshPlush.setRefreshColorResources(new int[]{R.color.colorPrimary});
-        mSwipeRefreshPlush.setOnScrollListener(new SwipeRefreshPlush.OnScrollListener() {
+        mSwipeRefreshPlush.setOnScrollListener(new SwipeRefreshPlush.OnRefreshListener() {
             @Override
-            public void onRefresh() {
+            public void onPullDownToRefresh() {
                 mSwipeRefreshPlush.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -85,7 +83,7 @@ public class ListFragment extends Fragment implements DemoContact.View{
             }
 
             @Override
-            public void onLoadMore() {
+            public void onPullUpToRefresh() {
                 count++;
                 if (count >= page) {
                     mSwipeRefreshPlush.showNoMore(true);
