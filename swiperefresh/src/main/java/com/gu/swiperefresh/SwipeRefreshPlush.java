@@ -40,13 +40,21 @@ import static android.support.v4.widget.ViewDragHelper.INVALID_POINTER;
 
 /**
  * Created by gu on 2016/11/13.
+ * 仿照 SwipeRefreshLayout 添加了滑动到底部时的事件回调
+ * 可添加的字子view 可以是 AbsListView 的子类，或者NestedScrollingChild的实现类
+ * 当添加了子view 没有实现 NestedScrollingChild 或者子view 是 AbsListView的子类并且sdk《21 时，不会响应子view requestDisallowInterceptTouchEvent 的请求
+ * 当targetview 内容不满一屏时，用户向上滑动屏幕 不会触发回调事件
  */
 
 public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParent,
         NestedScrollingChild {
+    private static final float DRAG_RATE = .5f;
     private final String TAG = "SwipeRefreshPlush";
     private final NestedScrollingChildHelper mNestedScrollingChildHelper;
     private final NestedScrollingParentHelper mNestedScrollingParentHelper;
+    private final int[] mParentScrollConsumed = new int[2];
+    private final int[] mParentOffsetInWindow = new int[2];
+    int circleViewIndex = -1;
     private int REFRESH_MODE = 1;
     private OnRefreshListener mListener;
     private View mRefreshView;
@@ -56,25 +64,16 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     private float mUpTotalUnconsumed;
     //下拉距离
     private float mDownTotalUnconsumed;
-
-    int circleViewIndex = -1;
-    private final int[] mParentScrollConsumed = new int[2];
-    private final int[] mParentOffsetInWindow = new int[2];
-
     private float mInitialMotionY;
     private float mInitialDownY;
     private boolean mIsBeingDragUp;
     private boolean mIsBeingDragDown;
     private int mActivePointerId = INVALID_POINTER;
-
     private int mTouchSlop;
     private boolean mNestedScrollInProgress;
     // Target is returning to its start offset because it was cancelled or a
     // refresh was triggered.
     private boolean mReturningToStart;
-
-    private static final float DRAG_RATE = .5f;
-
     private ScrollerCompat mScroller;
     private VelocityTracker mVelocityTracker;
     private int mMaximumVelocity;
@@ -83,31 +82,12 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
 
     private RefreshViewController mRefreshController;
-
     private LoadViewController mLoadViewController;
 
     private View mNoMoreView = null;
     //onInterceptTouchEvent或onTouch move时上一点
     private float mLastY;
 
-
-    void reset() {
-        mRefreshController.reset();
-        mLoadViewController.reset();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        reset();
-    }
-
-    private void createProgressView() {
-        this.mRefreshView = mRefreshController.create();
-        this.mLoadMoreView = mLoadViewController.create();
-        addView(mLoadMoreView, mLoadMoreView.getLayoutParams());
-        addView(mRefreshView);
-    }
 
     public SwipeRefreshPlush(Context context) {
         this(context, null);
@@ -127,6 +107,24 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         mScroller = ScrollerCompat.create(getContext());
         createProgressView();
         ViewCompat.setChildrenDrawingOrderEnabled(this, true);
+    }
+
+    void reset() {
+        mRefreshController.reset();
+        mLoadViewController.reset();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        reset();
+    }
+
+    private void createProgressView() {
+        this.mRefreshView = mRefreshController.create();
+        this.mLoadMoreView = mLoadViewController.create();
+        addView(mLoadMoreView, mLoadMoreView.getLayoutParams());
+        addView(mRefreshView);
     }
 
     @Override
@@ -178,13 +176,6 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         }
     }
 
-
-    private void obtainVelocityTracker(MotionEvent event) {
-        if (mVelocityTracker == null) {
-            mVelocityTracker = VelocityTracker.obtain();
-        }
-        mVelocityTracker.addMovement(event);
-    }
 
     private void initOrResetVelocityTracker() {
         if (mVelocityTracker == null) {
@@ -267,7 +258,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         final int action = MotionEventCompat.getActionMasked(event);
-        int pointerIndex = -1;
+        int pointerIndex ;
         if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
             mReturningToStart = false;
         }
@@ -309,6 +300,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
                 } else if (mIsBeingDragDown) {
                     int dy = (int) (y - mLastY);
+                    Log.i(TAG, "lasty:" + mLastY);
                     Log.i(TAG, "dy:" + dy);
                     //消除抖动
                     if (dy >= 0.5) {
@@ -333,11 +325,11 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                     mIsBeingDragUp = false;
                     if (overscrollTop > 0) mRefreshController.finishPullRefresh(overscrollTop);
                 }
-                if(mIsBeingDragDown){
+                if (mIsBeingDragDown) {
                     final float y = event.getY(pointerIndex);
                     final float overscrollBottom = (y - mInitialMotionY);
-                    mIsBeingDragDown=false;
-                    if(overscrollBottom<0) mLoadViewController.showLoadMore();
+                    mIsBeingDragDown = false;
+                    if (overscrollBottom < 0) mLoadViewController.showLoadMore();
                 }
                 mActivePointerId = INVALID_POINTER;
                 return false;
@@ -485,17 +477,17 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         return false;
     }
 
+    @Override
+    public boolean isNestedScrollingEnabled() {
+        return mNestedScrollingChildHelper.isNestedScrollingEnabled();
+    }
+
     /***
      * nestedScrollingChild
      **/
     @Override
     public void setNestedScrollingEnabled(boolean enabled) {
         mNestedScrollingChildHelper.setNestedScrollingEnabled(enabled);
-    }
-
-    @Override
-    public boolean isNestedScrollingEnabled() {
-        return mNestedScrollingChildHelper.isNestedScrollingEnabled();
     }
 
     @Override
@@ -532,10 +524,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
         return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
-    /********************child end*********************************************************/
 
-
-    /**********************parent begin***************************************************************/
     /**
      * @param child
      * @param target
@@ -659,7 +648,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     /**
      * targrt view 是否能向上滑动
      *
-     * @return
+     * @return target view 是否能向上滑动
      */
     public boolean canChildScrollUp() {
         if (android.os.Build.VERSION.SDK_INT < 14) {
@@ -720,10 +709,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         }
     }
 
-
-    /*********基本设置************/
-
     /**
+     * 设置滑动监听
      * @param onRefreshListener
      */
     public void setOnScrollListener(OnRefreshListener onRefreshListener) {
@@ -794,6 +781,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     /**
      * 设置自定义loadmore view
+     *
      * @param view
      * @param layoutParams
      */
@@ -806,6 +794,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     /**
      * 设置没有更多提示view
+     *
      * @param view
      * @param layoutParams
      */
@@ -817,6 +806,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     /**
      * 显示没有更多提示
+     *
      * @param show true:滑动到底部时显示没有更多，false:滑动到底部时显示加载更多
      */
     public void showNoMore(boolean show) {
@@ -842,7 +832,6 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    /*********************************************************************/
     private void ensureTarget() {
         // Don't bother getting the parent height if the parent hasn't been laid
         // out yet.
@@ -857,19 +846,6 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    public static interface SwipeRefreshMode {
-        int MODE_BOTH = 1;//刷新和下拉加载更多模式
-        int MODE_REFRESH_ONLY = 2;//刷新
-        int MODE_LOADMODE = 3;//加载更多
-        int MODE_NONE = 4;//即不能加载更多也不能下拉刷新
-    }
-
-    public interface OnRefreshListener {
-        void onPullDownToRefresh();
-
-        void onPullUpToRefresh();
-    }
-
     private boolean canRefresh() {
         if (REFRESH_MODE == SwipeRefreshMode.MODE_BOTH || REFRESH_MODE == SwipeRefreshMode.MODE_REFRESH_ONLY)
             return true;
@@ -882,5 +858,18 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             return true;
         } else
             return false;
+    }
+
+    public static interface SwipeRefreshMode {
+        int MODE_BOTH = 1;//刷新和下拉加载更多模式
+        int MODE_REFRESH_ONLY = 2;//刷新
+        int MODE_LOADMODE = 3;//加载更多
+        int MODE_NONE = 4;//即不能加载更多也不能下拉刷新
+    }
+
+    public interface OnRefreshListener {
+        void onPullDownToRefresh();
+
+        void onPullUpToRefresh();
     }
 }

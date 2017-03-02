@@ -29,55 +29,94 @@ import com.gu.swiperefresh.Utils.Size;
 
 /**
  * Created by gu on 2016/12/19.
+ * 下拉刷新控制类
+ * 下拉刷新 view 使用 google SwipeRefreshLayout 中的 ProgressDrawable
  */
 
 public class RefreshViewController {
+    //默认circleimage大小
+    static final int CIRCLE_DIAMETER = 40;
     // Default offset in dips from the top of the view to where the progress spinner should stop
     private static final int DEFAULT_CIRCLE_TARGET = 64;
-    private float mTotalDragDistance = -1;
-    int mSpinnerOffsetEnd;
-    private boolean isRefresh;
-
     // Max amount of circle that can be filled by progress during swipe gesture,
     // where 1.0 is a full circle
     private static final float MAX_PROGRESS_ANGLE = .8f;
     private static final int MAX_ALPHA = 255;
-    // Whether this item is scaled up rather than clipped
-    boolean mScale;
     private static final int STARTING_PROGRESS_ALPHA = (int) (.3f * MAX_ALPHA);
-
     private static final int ALPHA_ANIMATION_DURATION = 300;
-
     private static final int SCALE_DOWN_DURATION = 150;
-
-    protected int mFrom;
-
-    float mStartingScale;
-
     private static final float DECELERATE_INTERPOLATION_FACTOR = 2f;
-
-    private final DecelerateInterpolator mDecelerateInterpolator;
-
     private static final int ANIMATE_TO_START_DURATION = 200;
-
     private static final int ANIMATE_TO_TRIGGER_DURATION = 200;
-
-    private CircleImageView mCircleView;
-    //默认circleimage大小
-    static final int CIRCLE_DIAMETER = 40;
-
     // Default background for the progress spinner
     private static final int CIRCLE_BG_LIGHT = 0xFFFAFAFA;
-
-    ProgressDrawable mProgress;
-    int mCurrentTargetOffsetTop;
-    int mOriginalOffsetTop;
+    final DisplayMetrics metrics;
+    private final DecelerateInterpolator mDecelerateInterpolator;
+    private int mFrom;
+    private int mSpinnerOffsetEnd;
+    // Whether this item is scaled up rather than clipped
+    private boolean mScale;
+    private float mStartingScale;
+    private ProgressDrawable mProgress;
+    private int mCurrentTargetOffsetTop;
+    private int mOriginalOffsetTop;
+    private float mTotalDragDistance = -1;
+    private boolean isRefresh;
+    private CircleImageView mCircleView;
     private Context mContext;
     private View parent;
+    private final Animation mAnimateToStartPosition = new Animation() {
+        @Override
+        public void applyTransformation(float interpolatedTime, Transformation t) {
+            moveToStart(interpolatedTime);
+        }
+    };
+    private final Animation mAnimateToCorrectPosition = new Animation() {
+        @Override
+        public void applyTransformation(float interpolatedTime, Transformation t) {
+            int targetTop = 0;
+            int endTarget = 0;
+            endTarget = mSpinnerOffsetEnd;
+            targetTop = (mFrom + (int) ((endTarget - mFrom) * interpolatedTime));
+            int offset = targetTop - mCircleView.getTop();
+            setTargetOffsetTopAndBottom(offset, false /* requires update */);
+            mProgress.setArrowScale(1 - interpolatedTime);
+        }
+    };
     private int mCircleDiameter;
     private SwipeRefreshPlush.OnRefreshListener mListener;
+    // refreshview下拉动画结束,开始刷新
+    private Animation.AnimationListener mRefreshListener = new Animation.AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
 
-    final DisplayMetrics metrics;
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            if (isRefresh) {
+                // Make sure the progress view is fully visible
+                mProgress.setAlpha(MAX_ALPHA);
+                mProgress.start();
+                if (mListener != null) {
+                    mListener.onPullDownToRefresh();
+                }
+                mCurrentTargetOffsetTop = mCircleView.getTop();
+            } else {
+                reset();
+            }
+        }
+    };
+    /***************************
+     * 动画
+     ******************************************/
+    private Animation mScaleDownAnimation;
+    private Animation mAlphaStartAnimation;
+    private Animation mAlphaMaxAnimation;
+    private Animation mScaleDownToStartAnimation;
 
     public RefreshViewController(Context context, View parent) {
         this.mContext = context;
@@ -238,32 +277,6 @@ public class RefreshViewController {
         }
     }
 
-    // refreshview下拉动画结束,开始刷新
-    private Animation.AnimationListener mRefreshListener = new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
-        }
-
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            if (isRefresh) {
-                // Make sure the progress view is fully visible
-                mProgress.setAlpha(MAX_ALPHA);
-                mProgress.start();
-                if (mListener != null) {
-                    mListener.onPullDownToRefresh();
-                }
-                mCurrentTargetOffsetTop = mCircleView.getTop();
-            } else {
-                reset();
-            }
-        }
-    };
-
     protected void setListener(SwipeRefreshPlush.OnRefreshListener scrollListener) {
         this.mListener = scrollListener;
     }
@@ -284,19 +297,6 @@ public class RefreshViewController {
     private boolean isAnimationRunning(Animation animation) {
         return animation != null && animation.hasStarted() && !animation.hasEnded();
     }
-
-    /***************************
-     * 动画
-     ******************************************/
-    private Animation mScaleAnimation;
-
-    private Animation mScaleDownAnimation;
-
-    private Animation mAlphaStartAnimation;
-
-    private Animation mAlphaMaxAnimation;
-
-    private Animation mScaleDownToStartAnimation;
 
     /**
      * Pre API 11, this does an alpha animation.
@@ -370,13 +370,6 @@ public class RefreshViewController {
         }
     }
 
-    private final Animation mAnimateToStartPosition = new Animation() {
-        @Override
-        public void applyTransformation(float interpolatedTime, Transformation t) {
-            moveToStart(interpolatedTime);
-        }
-    };
-
     private void startScaleDownReturnToStartAnimation(int from,
                                                       Animation.AnimationListener listener) {
         mFrom = from;
@@ -425,19 +418,6 @@ public class RefreshViewController {
         mCircleView.clearAnimation();
         mCircleView.startAnimation(mAnimateToCorrectPosition);
     }
-
-    private final Animation mAnimateToCorrectPosition = new Animation() {
-        @Override
-        public void applyTransformation(float interpolatedTime, Transformation t) {
-            int targetTop = 0;
-            int endTarget = 0;
-            endTarget = mSpinnerOffsetEnd;
-            targetTop = (mFrom + (int) ((endTarget - mFrom) * interpolatedTime));
-            int offset = targetTop - mCircleView.getTop();
-            setTargetOffsetTopAndBottom(offset, false /* requires update */);
-            mProgress.setArrowScale(1 - interpolatedTime);
-        }
-    };
 
     /**
      * Pre API 11, alpha is used to make the progress circle appear instead of scale.

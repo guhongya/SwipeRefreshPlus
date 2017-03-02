@@ -29,178 +29,50 @@ import com.gu.swiperefresh.Utils.Size;
 
 /**
  * Created by Guhy on 2016/12/7.
+ *加载更多和没有更多时的view 控制类
+ * 加载更多提示 VIEW 使用SwipeRefreshLayout 中的ProgressDrawable 默认颜色为app的前景色
+ * 没有更多提示没有默认的view样式，需要使用者手动设置
  */
 
 public class LoadViewController {
-    private Context mContext;
-
-    private View parent;
-
-    private CircleImageView mCircleImageView;
-
-    private ProgressDrawable mProgress;
-
+    //默认circleimage大小
+    static final int CIRCLE_DIAMETER = 40;
     // Max amount of circle that can be filled by progress during swipe gesture,
     // where 1.0 is a full circle
     private static final float MAX_PROGRESS_ANGLE = .8f;
     private static final int MAX_ALPHA = 255;
-    //默认circleimage大小
-    static final int CIRCLE_DIAMETER = 40;
     // Default background for the progress spinner
     private static final int CIRCLE_BG_LIGHT = 0xFFFAFAFA;
+    private static final int ANIMATE_TO_TRIGGER_DURATION = 200;
+    private static final float DECELERATE_INTERPOLATION_FACTOR = 2f;
+    final DisplayMetrics metrics;
+    private final DecelerateInterpolator mDecelerateInterpolator;
+    private Context mContext;
+    private View parent;
+    private CircleImageView mCircleImageView;
+    private ProgressDrawable mProgress;
     private int mDefaultProgressColor;
     private int currentHeight;
-
     //loadview 大小
     private int mCircleDiameter;
-
-    final DisplayMetrics metrics;
-
     private boolean isLoading;
-
     private SwipeRefreshPlush.OnRefreshListener mListener;
-
-    private int mMargin =5;
+    private int mMargin = 5;
     private int mMaxHeigth;
-
-    private int mViewWidth,mViewHeight;
-
-    private boolean isDefault=true;
-
+    //加载更多动画
+    private final Animation mAnimationShowLoadMore = new Animation() {
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            int offset = (int) ((getMaxHeight() - getCurrentHeight()) * interpolatedTime);
+            parent.scrollBy(0, move(offset));
+        }
+    };
+    private boolean isDefault = true;
     private View defaultView;
-
     //动画是否在加载
     private volatile boolean isLoadAnimation;
     //是否显示没有更多view
     private boolean mShowNoMore = false;
-
-
-    private static final int ANIMATE_TO_TRIGGER_DURATION = 200;
-    private static final float DECELERATE_INTERPOLATION_FACTOR = 2f;
-    private final DecelerateInterpolator mDecelerateInterpolator;
-
-    public LoadViewController(Context context, View parent) {
-        this.mContext = context;
-        this.parent = parent;
-        TypedArray typedArray=context.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorAccent});
-        mDefaultProgressColor =typedArray.getColor(0,CIRCLE_BG_LIGHT);
-        metrics = mContext.getResources().getDisplayMetrics();
-        mCircleDiameter = (int) (CIRCLE_DIAMETER * metrics.density);
-        mMargin =(int)(mMargin *metrics.density);
-        mMaxHeigth=mMargin*2+mCircleDiameter;
-        mViewHeight=mCircleDiameter;
-        mViewWidth=mCircleDiameter;
-        mDecelerateInterpolator = new DecelerateInterpolator(DECELERATE_INTERPOLATION_FACTOR);
-        typedArray.recycle();
-    }
-
-    protected View create() {
-        mCircleImageView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
-       // mCircleImageView.set(mMargin,mMargin,mMargin,mMargin);
-        mProgress = new ProgressDrawable(mContext, parent);
-        mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
-        //  mLoadProgress.setAlpha(MAX_ALPHA);
-        mProgress.setRotation(MAX_PROGRESS_ANGLE);
-        mProgress.setColorSchemeColors(new int[]{mDefaultProgressColor});
-        mCircleImageView.setImageDrawable(mProgress);
-        //mCircleImageView.setVisibility(View.GONE);
-        ViewGroup.MarginLayoutParams marginLayoutParams= new ViewGroup.MarginLayoutParams(mCircleDiameter,mCircleDiameter);
-        marginLayoutParams.setMargins(0,mMargin,0,mMargin);
-        mCircleImageView.setLayoutParams(marginLayoutParams);
-        defaultView=mCircleImageView;
-        return mCircleImageView;
-    }
-
-    protected void setScrollListener(SwipeRefreshPlush.OnRefreshListener onRefreshListener) {
-        this.mListener = onRefreshListener;
-    }
-
-    protected Size getLoadViewSize() {
-        return new Size(mViewWidth,mViewHeight);
-    }
-
-    protected int getCurrentHeight() {
-        return currentHeight;
-    }
-   protected void clearState(){
-       mProgress.stop();
-       isLoading=false;
-   }
-
-    protected void changeDefaultView(View loadView){
-        this.defaultView=loadView;
-        this.isDefault=false;
-    }
-    protected View getDefaultView(){
-        return defaultView;
-    }
-
-    /**
-     * 实际移动距离
-     * @param scrollDistance
-     * @return
-     */
-    protected int move(int scrollDistance) {
-        currentHeight+=scrollDistance;
-       if(currentHeight>mMaxHeigth) {
-           int result=scrollDistance-(currentHeight-mMaxHeigth);
-           currentHeight = mMaxHeigth;
-           return result;
-       }
-        else if(currentHeight<0) {
-           int result=scrollDistance-currentHeight;
-           currentHeight = 0;
-           return result;
-       }
-        return scrollDistance;
-//        if(scrollDistance>mMaxHeigth){
-//            currentHeight=scrollDistance;
-//            return mMaxHeigth-currentHeight;
-//        }else{
-//            currentHeight+=scrollDistance;
-//            return scrollDistance;
-//        }
-    }
-
-    protected int getMaxHeight(){
-        return mMaxHeigth;
-    }
-
-    protected void beginLoading() {
-        if(isDefault) {
-            mProgress.setAlpha(MAX_ALPHA);
-            mProgress.start();
-        }
-        if(!isLoading) {
-            isLoading = true;
-            mListener.onPullUpToRefresh();
-        }
-    }
-
-    protected void reset() {
-        if(mProgress.isRunning())
-            mProgress.stop();
-        currentHeight = 0;
-    }
-    protected void stopLoad(){
-        isLoading = false;
-        reset();
-    }
-    protected void showLoadMore(){
-        if(isLoadAnimation)return;
-        animateShowLoadMore(mLoadMoreListener);
-    }
-    protected boolean canMove(){
-        return !isLoadAnimation;
-    }
-    protected boolean isLoading() {
-        return isLoading;
-    }
-
-    protected void setProgressColors(@ColorInt int... colors) {
-        mProgress.setColorSchemeColors(colors);
-    }
-
     //loadmore动画结束，调用回调函数
     private Animation.AnimationListener mLoadMoreListener = new Animation.AnimationListener() {
         @Override
@@ -220,6 +92,116 @@ public class LoadViewController {
         }
     };
 
+    public LoadViewController(Context context, View parent) {
+        this.mContext = context;
+        this.parent = parent;
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorAccent});
+        mDefaultProgressColor = typedArray.getColor(0, CIRCLE_BG_LIGHT);
+        metrics = mContext.getResources().getDisplayMetrics();
+        mCircleDiameter = (int) (CIRCLE_DIAMETER * metrics.density);
+        mMargin = (int) (mMargin * metrics.density);
+        mMaxHeigth = mMargin * 2 + mCircleDiameter;
+        mDecelerateInterpolator = new DecelerateInterpolator(DECELERATE_INTERPOLATION_FACTOR);
+        typedArray.recycle();
+    }
+
+    protected View create() {
+        mCircleImageView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
+        // mCircleImageView.set(mMargin,mMargin,mMargin,mMargin);
+        mProgress = new ProgressDrawable(mContext, parent);
+        mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
+        //  mLoadProgress.setAlpha(MAX_ALPHA);
+        mProgress.setRotation(MAX_PROGRESS_ANGLE);
+        mProgress.setColorSchemeColors(new int[]{mDefaultProgressColor});
+        mCircleImageView.setImageDrawable(mProgress);
+        //mCircleImageView.setVisibility(View.GONE);
+        ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(mCircleDiameter, mCircleDiameter);
+        marginLayoutParams.setMargins(0, mMargin, 0, mMargin);
+        mCircleImageView.setLayoutParams(marginLayoutParams);
+        defaultView = mCircleImageView;
+        return mCircleImageView;
+    }
+
+    protected void setScrollListener(SwipeRefreshPlush.OnRefreshListener onRefreshListener) {
+        this.mListener = onRefreshListener;
+    }
+
+    protected int getCurrentHeight() {
+        return currentHeight;
+    }
+
+    protected void clearState() {
+        mProgress.stop();
+        isLoading = false;
+    }
+
+    protected void changeDefaultView(View loadView) {
+        this.defaultView = loadView;
+        this.isDefault = false;
+    }
+
+    protected View getDefaultView() {
+        return defaultView;
+    }
+
+    /**
+     * 实际移动距离
+     *
+     * @param scrollDistance
+     * @return
+     */
+    protected int move(int scrollDistance) {
+        currentHeight += scrollDistance;
+        if (currentHeight > mMaxHeigth) {
+            int result = scrollDistance - (currentHeight - mMaxHeigth);
+            currentHeight = mMaxHeigth;
+            return result;
+        } else if (currentHeight < 0) {
+            int result = scrollDistance - currentHeight;
+            currentHeight = 0;
+            return result;
+        }
+        return scrollDistance;
+    }
+
+    protected int getMaxHeight() {
+        return mMaxHeigth;
+    }
+
+    protected void beginLoading() {
+        if (isDefault) {
+            mProgress.setAlpha(MAX_ALPHA);
+            mProgress.start();
+        }
+        if (!isLoading) {
+            isLoading = true;
+            mListener.onPullUpToRefresh();
+        }
+    }
+
+    protected void reset() {
+        if (mProgress.isRunning())
+            mProgress.stop();
+        currentHeight = 0;
+    }
+
+    protected void stopLoad() {
+        isLoading = false;
+        reset();
+    }
+
+    protected void showLoadMore() {
+        if (isLoadAnimation) return;
+        animateShowLoadMore(mLoadMoreListener);
+    }
+
+    protected boolean canMove() {
+        return !isLoadAnimation;
+    }
+
+    protected void setProgressColors(@ColorInt int... colors) {
+        mProgress.setColorSchemeColors(colors);
+    }
 
     //显示加载更多view
     private void animateShowLoadMore(Animation.AnimationListener listener) {
@@ -232,16 +214,7 @@ public class LoadViewController {
         parent.startAnimation(mAnimationShowLoadMore);
     }
 
-    //加载更多动画
-    private final Animation mAnimationShowLoadMore = new Animation() {
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            int offset = (int) ((getMaxHeight() - getCurrentHeight()) * interpolatedTime);
-            parent.scrollBy(0,  move(offset));
-        }
-    };
-
-    protected void showNoMore(boolean show){
-        mShowNoMore=show;
+    protected void showNoMore(boolean show) {
+        mShowNoMore = show;
     }
 }
