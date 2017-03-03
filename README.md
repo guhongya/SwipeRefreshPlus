@@ -28,12 +28,12 @@ gradle:
 
 	swipeRefreshPlush.setOnScrollListener(new SwipeRefreshPlush.OnScrollListener() {
             @Override
-            public void onRefresh() {
+            public void onPullDownToRefresh() {
                ......
             }
 
             @Override
-            public void onLoadMore() {
+            public void onPullUpToRefresh() {
                   ......
                }
         }); 	

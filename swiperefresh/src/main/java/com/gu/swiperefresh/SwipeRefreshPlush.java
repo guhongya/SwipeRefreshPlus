@@ -351,7 +351,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             }
         } else if (yDiff < -mTouchSlop && !mIsBeingDragDown && !canChildScrollDown() && canLoadMore()) {
             Log.d(TAG, yDiff + ":" + mTouchSlop);
-            mInitialMotionY = mInitialDownY - mTouchSlop;
+            mInitialMotionY = mInitialDownY +mTouchSlop;
+            mLastY=mInitialDownY;
             mIsBeingDragDown = true;
         }
     }
