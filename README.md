@@ -21,7 +21,7 @@ gradle:
       } 
 	}
 	dependencies {
-	        compile 'com.github.guhongya:SwipeRefreshPlush:1.0.1'
+	        compile 'com.github.guhongya:SwipeRefreshPlush:1.0.4'
 	}
   
 设置监听  
