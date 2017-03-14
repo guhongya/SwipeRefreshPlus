@@ -775,7 +775,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             showLoadMoreView(mLoadViewController.getMaxHeight());
         } else {
             // hideLoadMoreView();
-            hideLoadMoreView(mLoadViewController.getMaxHeight());
+            hideLoadMoreView(mLoadViewController.getCurrentHeight());
             mLoadViewController.stopLoad();
         }
     }

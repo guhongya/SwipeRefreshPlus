@@ -173,7 +173,7 @@ public class LoadViewController {
             mProgress.setAlpha(MAX_ALPHA);
             mProgress.start();
         }
-        if (!isLoading) {
+        if (!isLoading&&mListener!=null) {
             isLoading = true;
             mListener.onPullUpToRefresh();
         }
