@@ -1,7 +1,7 @@
-package com.gu.swiperefreshplush;
+package com.gu.swiperefreshplush.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.gu.swiperefresh.SwipeRefreshPlush;
+import com.gu.swiperefreshplush.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ListFragment extends Fragment implements DemoContact.View{
+public class ListFragment extends Fragment implements DemoContact.View {
     private ListView mListView;
     private SimpleAdapter mSimplaeAdaptr;
     private SwipeRefreshPlush mSwipeRefreshPlush;
@@ -47,6 +48,7 @@ public class ListFragment extends Fragment implements DemoContact.View{
         mAdapterDatas=new ArrayList<>();
         mSimplaeAdaptr=new SimpleAdapter(getActivity(),mAdapterDatas,R.layout.item_recycle_content,from,to);
         mListView.setAdapter(mSimplaeAdaptr);
+        new DataPresenter(this);
         iniView();
         return view;
     }

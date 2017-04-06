@@ -662,7 +662,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                 return ViewCompat.canScrollVertically(mTarget, -1) || mTarget.getScrollY() > 0;
             }
         } else {
-            return ViewCompat.canScrollVertically(mTarget, -1);
+            return mTarget.canScrollVertically(-1);
         }
     }
 
@@ -683,7 +683,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                 return ViewCompat.canScrollVertically(mTarget, 1);
             }
         } else {
-            return ViewCompat.canScrollVertically(mTarget, 1);
+            return mTarget.canScrollVertically(1);
         }
     }
 

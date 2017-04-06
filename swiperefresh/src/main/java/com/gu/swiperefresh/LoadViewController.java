@@ -25,11 +25,9 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 
-import com.gu.swiperefresh.Utils.Size;
-
 /**
  * Created by Guhy on 2016/12/7.
- *加载更多和没有更多时的view 控制类
+ * 加载更多和没有更多时的view 控制类
  * 加载更多提示 VIEW 使用SwipeRefreshLayout 中的ProgressDrawable 默认颜色为app的前景色
  * 没有更多提示没有默认的view样式，需要使用者手动设置
  */
@@ -48,23 +46,26 @@ public class LoadViewController {
     final DisplayMetrics metrics;
     private final DecelerateInterpolator mDecelerateInterpolator;
     private Context mContext;
-    private View parent;
+    private View mParent;
     private CircleImageView mCircleImageView;
     private ProgressDrawable mProgress;
     private int mDefaultProgressColor;
-    private int currentHeight;
+    private int mCurrentHeight;
+
+    private boolean isLoading;
     //loadview 大小
     private int mCircleDiameter;
-    private boolean isLoading;
-    private SwipeRefreshPlush.OnRefreshListener mListener;
     private int mMargin = 5;
     private int mMaxHeigth;
+
+    private SwipeRefreshPlush.OnRefreshListener mListener;
+
     //加载更多动画
     private final Animation mAnimationShowLoadMore = new Animation() {
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
             int offset = (int) ((getMaxHeight() - getCurrentHeight()) * interpolatedTime);
-            parent.scrollBy(0, move(offset));
+            mParent.scrollBy(0, move(offset));
         }
     };
     private boolean isDefault = true;
@@ -94,7 +95,7 @@ public class LoadViewController {
 
     public LoadViewController(Context context, View parent) {
         this.mContext = context;
-        this.parent = parent;
+        this.mParent = parent;
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorAccent});
         mDefaultProgressColor = typedArray.getColor(0, CIRCLE_BG_LIGHT);
         metrics = mContext.getResources().getDisplayMetrics();
@@ -107,14 +108,11 @@ public class LoadViewController {
 
     protected View create() {
         mCircleImageView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
-        // mCircleImageView.set(mMargin,mMargin,mMargin,mMargin);
-        mProgress = new ProgressDrawable(mContext, parent);
+        mProgress = new ProgressDrawable(mContext, mParent);
         mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
-        //  mLoadProgress.setAlpha(MAX_ALPHA);
         mProgress.setRotation(MAX_PROGRESS_ANGLE);
         mProgress.setColorSchemeColors(new int[]{mDefaultProgressColor});
         mCircleImageView.setImageDrawable(mProgress);
-        //mCircleImageView.setVisibility(View.GONE);
         ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(mCircleDiameter, mCircleDiameter);
         marginLayoutParams.setMargins(0, mMargin, 0, mMargin);
         mCircleImageView.setLayoutParams(marginLayoutParams);
@@ -127,7 +125,7 @@ public class LoadViewController {
     }
 
     protected int getCurrentHeight() {
-        return currentHeight;
+        return mCurrentHeight;
     }
 
     protected void clearState() {
@@ -151,14 +149,14 @@ public class LoadViewController {
      * @return
      */
     protected int move(int scrollDistance) {
-        currentHeight += scrollDistance;
-        if (currentHeight > mMaxHeigth) {
-            int result = scrollDistance - (currentHeight - mMaxHeigth);
-            currentHeight = mMaxHeigth;
+        mCurrentHeight += scrollDistance;
+        if (mCurrentHeight > mMaxHeigth) {
+            int result = scrollDistance - (mCurrentHeight - mMaxHeigth);
+            mCurrentHeight = mMaxHeigth;
             return result;
-        } else if (currentHeight < 0) {
-            int result = scrollDistance - currentHeight;
-            currentHeight = 0;
+        } else if (mCurrentHeight < 0) {
+            int result = scrollDistance - mCurrentHeight;
+            mCurrentHeight = 0;
             return result;
         }
         return scrollDistance;
@@ -173,7 +171,7 @@ public class LoadViewController {
             mProgress.setAlpha(MAX_ALPHA);
             mProgress.start();
         }
-        if (!isLoading&&mListener!=null) {
+        if (!isLoading && mListener != null) {
             isLoading = true;
             mListener.onPullUpToRefresh();
         }
@@ -182,7 +180,7 @@ public class LoadViewController {
     protected void reset() {
         if (mProgress.isRunning())
             mProgress.stop();
-        currentHeight = 0;
+        mCurrentHeight = 0;
     }
 
     protected void stopLoad() {
@@ -211,7 +209,7 @@ public class LoadViewController {
         if (listener != null) {
             mAnimationShowLoadMore.setAnimationListener(listener);
         }
-        parent.startAnimation(mAnimationShowLoadMore);
+        mParent.startAnimation(mAnimationShowLoadMore);
     }
 
     protected void showNoMore(boolean show) {

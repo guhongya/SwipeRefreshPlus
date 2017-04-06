@@ -64,7 +64,7 @@ public class RefreshViewController {
     private boolean isRefresh;
     private CircleImageView mCircleView;
     private Context mContext;
-    private View parent;
+    private View mParent;
     private final Animation mAnimateToStartPosition = new Animation() {
         @Override
         public void applyTransformation(float interpolatedTime, Transformation t) {
@@ -120,7 +120,7 @@ public class RefreshViewController {
 
     public RefreshViewController(Context context, View parent) {
         this.mContext = context;
-        this.parent = parent;
+        this.mParent = parent;
         metrics = mContext.getResources().getDisplayMetrics();
         mDecelerateInterpolator = new DecelerateInterpolator(DECELERATE_INTERPOLATION_FACTOR);
         mCircleDiameter = (int) (CIRCLE_DIAMETER * metrics.density);
@@ -133,7 +133,7 @@ public class RefreshViewController {
     //创建refresh view
     protected View create() {
         mCircleView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
-        mProgress = new ProgressDrawable(mContext, parent);
+        mProgress = new ProgressDrawable(mContext, mParent);
         mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
         mCircleView.setImageDrawable(mProgress);
         mCircleView.setVisibility(View.GONE);
@@ -231,7 +231,7 @@ public class RefreshViewController {
         ViewCompat.offsetTopAndBottom(mCircleView, offset);
         mCurrentTargetOffsetTop = mCircleView.getTop();
         if (requiresUpdate && android.os.Build.VERSION.SDK_INT < 11) {
-            parent.invalidate();
+            mParent.invalidate();
         }
     }
 

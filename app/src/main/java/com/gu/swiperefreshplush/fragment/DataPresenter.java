@@ -1,4 +1,6 @@
-package com.gu.swiperefreshplush;
+package com.gu.swiperefreshplush.fragment;
+
+import com.gu.swiperefreshplush.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +52,7 @@ public class DataPresenter implements DemoContact.Presenter {
     private List generatorData(){
         Long num=System.currentTimeMillis();
         List<Integer> resul=new ArrayList<>();
-        for(int i=0;i<4;i++){
+        for(int i=0;i<10;i++){
             mRandom.setSeed(num);
             num=mRandom.nextLong();
             resul.add(dataSource[Math.abs(num.intValue())%5]);

@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
+
 import java.util.List;
 
 /**
@@ -36,11 +38,19 @@ public class SimpleRecycleAdapter extends RecyclerView.Adapter<SimpleRecycleAdap
     }
     static class SimpleViewHolder  extends RecyclerView.ViewHolder{
         private ImageView mImageView;
+        private View rootView;
         public SimpleViewHolder(View itemView) {
             super(itemView);
+            this.rootView=itemView;
             mImageView= (ImageView) itemView.findViewById(R.id.item_content);
         }
         public void setData(int id){
+           // mImageView.setImageDrawable(drawable);
+            ViewGroup.LayoutParams lp = rootView.getLayoutParams();
+            if (lp instanceof FlexboxLayoutManager.LayoutParams) {
+                FlexboxLayoutManager.LayoutParams flexboxLp = (FlexboxLayoutManager.LayoutParams) lp;
+                flexboxLp.setFlexGrow(1.0f);
+            }
             mImageView.setImageResource(id);
         }
     }

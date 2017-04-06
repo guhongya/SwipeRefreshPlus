@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<item android:id="@+id/liner_layout"
+    android:title="线性布局"
+    app:showAsAction="never"></item>
+    <item android:title="网格布局"
+        app:showAsAction="never"
+        android:id="@+id/grid_layout"/>
+    <item android:title="瀑布流布局"
+        app:showAsAction="never"
+        android:id="@+id/staggered_grid_layout"/>
+    <item android:title="伸缩布局"
+        app:showAsAction="never"
+        android:id="@+id/flexbox_layout"/>
+</menu>

@@ -1,4 +1,4 @@
-package com.gu.swiperefreshplush;
+package com.gu.swiperefreshplush.fragment;
 
 import java.util.List;
 

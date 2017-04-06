@@ -31,6 +31,7 @@ dependencies {
     compile "com.android.support:support-v4:${rootProject.ext.supportLibraryVersion}"
     compile project(':swiperefresh')
     compile 'com.apkfuns.logutils:library:1.4.2'
-    compile 'com.android.support:support-v4:25.1.0'
+    compile 'com.google.android:flexbox:0.3.0-alpha3'
     testCompile 'junit:junit:4.12'
+    compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
 }
