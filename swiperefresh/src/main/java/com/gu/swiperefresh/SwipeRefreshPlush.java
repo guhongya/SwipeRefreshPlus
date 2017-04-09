@@ -81,8 +81,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     private int mMinimumVelocity;
 
 
-    private RefreshViewController mRefreshController;
-    private LoadViewController mLoadViewController;
+    private IRefreshViewController mRefreshController;
+    private ILoadViewController mLoadViewController;
 
     private View mNoMoreView = null;
     //onInterceptTouchEvent或onTouch move时上一点
@@ -714,10 +714,10 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
      * 设置滑动监听
      * @param onRefreshListener
      */
-    public void setOnScrollListener(OnRefreshListener onRefreshListener) {
+    public void setOnRefreshListener(OnRefreshListener onRefreshListener) {
         this.mListener = onRefreshListener;
-        mLoadViewController.setScrollListener(mListener);
-        mRefreshController.setListener(mListener);
+        mLoadViewController.setRefreshListener(mListener);
+        mRefreshController.setRefreshListener(mListener);
     }
 
     /**
@@ -776,22 +776,22 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         } else {
             // hideLoadMoreView();
             hideLoadMoreView(mLoadViewController.getCurrentHeight());
-            mLoadViewController.stopLoad();
+            mLoadViewController.reset();
         }
     }
 
-    /**
-     * 设置自定义loadmore view
-     *
-     * @param view
-     * @param layoutParams
-     */
-    public void setLoadMoreView(View view, LayoutParams layoutParams) {
-        detachViewFromParent(mLoadMoreView);
-        this.mLoadMoreView = view;
-        addView(mLoadMoreView, layoutParams);
-        mLoadViewController.changeDefaultView(mLoadMoreView);
-    }
+//    /**
+//     * 设置自定义loadmore view
+//     *
+//     * @param view
+//     * @param layoutParams
+//     */
+//    public void setLoadMoreView(View view, LayoutParams layoutParams) {
+//        detachViewFromParent(mLoadMoreView);
+//        this.mLoadMoreView = view;
+//        addView(mLoadMoreView, layoutParams);
+//        mLoadViewController.changeDefaultView(mLoadMoreView);
+//    }
 
     /**
      * 设置没有更多提示view
@@ -813,7 +813,6 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
     public void showNoMore(boolean show) {
         mLoadViewController.showNoMore(show);
         if (show && mNoMoreView != null) {
-            mLoadViewController.clearState();
             mLoadMoreView.clearAnimation();
             detachViewFromParent(mLoadMoreView);
             mLoadMoreView = mNoMoreView;

@@ -57,7 +57,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         recycleAdapter.setData(datas);
         recycleContent.setAdapter(recycleAdapter);
         swipeRefreshPlush.setRefreshColorResources(new int[]{R.color.colorPrimary});
-        swipeRefreshPlush.setOnScrollListener(new SwipeRefreshPlush.OnRefreshListener() {
+        swipeRefreshPlush.setOnRefreshListener(new SwipeRefreshPlush.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
                 swipeRefreshPlush.postDelayed(new Runnable() {

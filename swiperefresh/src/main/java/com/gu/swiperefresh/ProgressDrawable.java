@@ -48,6 +48,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Guhy on 2016/11/15.
+ * copy from android support library
  */
 public class ProgressDrawable extends Drawable{
     private static final Interpolator LINEAR_INTERPOLATOR = new LinearInterpolator();
@@ -451,93 +452,7 @@ public class ProgressDrawable extends Drawable{
         });
         mAnimation = animator;
     }
-//    private void setupAnimators() {
-//        final Ring ring = mRing;
-//        final Animation animation = new Animation() {
-//            @Override
-//            public void applyTransformation(float interpolatedTime, Transformation t) {
-//                if (mFinishing) {
-//                    applyFinishTranslation(interpolatedTime, ring);
-//                } else {
-//                    // The minProgressArc is calculated from 0 to create an
-//                    // angle that matches the stroke width.
-//                    final float minProgressArc = getMinProgressArc(ring);
-//                    final float startingEndTrim = ring.getStartingEndTrim();
-//                    final float startingTrim = ring.getStartingStartTrim();
-//                    final float startingRotation = ring.getStartingRotation();
-//
-//                    updateRingColor(interpolatedTime, ring);
-//
-//                    // Moving the start trim only occurs in the first 50% of a
-//                    // single ring animation
-//                    if (interpolatedTime <= START_TRIM_DURATION_OFFSET) {
-//                        // scale the interpolatedTime so that the full
-//                        // transformation from 0 - 1 takes place in the
-//                        // remaining time
-//                        final float scaledTime = (interpolatedTime)
-//                                / (1.0f - START_TRIM_DURATION_OFFSET);
-//                        final float startTrim = startingTrim
-//                                + ((MAX_PROGRESS_ARC - minProgressArc) * MATERIAL_INTERPOLATOR
-//                                .getInterpolation(scaledTime));
-//                        ring.setStartTrim(startTrim);
-//                    }
-//
-//                    // Moving the end trim starts after 50% of a single ring
-//                    // animation completes
-//                    if (interpolatedTime > END_TRIM_START_DELAY_OFFSET) {
-//                        // scale the interpolatedTime so that the full
-//                        // transformation from 0 - 1 takes place in the
-//                        // remaining time
-//                        final float minArc = MAX_PROGRESS_ARC - minProgressArc;
-//                        float scaledTime = (interpolatedTime - START_TRIM_DURATION_OFFSET)
-//                                / (1.0f - START_TRIM_DURATION_OFFSET);
-//                        final float endTrim = startingEndTrim
-//                                + (minArc * MATERIAL_INTERPOLATOR.getInterpolation(scaledTime));
-//                        ring.setEndTrim(endTrim);
-//                    }
-//
-//                    final float rotation = startingRotation + (0.25f * interpolatedTime);
-//                    ring.setRotation(rotation);
-//
-//                    float groupRotation = ((FULL_ROTATION / NUM_POINTS) * interpolatedTime)
-//                            + (FULL_ROTATION * (mRotationCount / NUM_POINTS));
-//                    setRotation(groupRotation);
-//                }
-//            }
-//        };
-//        animation.setRepeatCount(Animation.INFINITE);
-//        animation.setRepeatMode(Animation.RESTART);
-//        animation.setInterpolator(LINEAR_INTERPOLATOR);
-//        animation.setAnimationListener(new Animation.AnimationListener() {
-//
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                mRotationCount = 0;
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                // do nothing
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//                ring.storeOriginals();
-//                ring.goToNextColor();
-//                ring.setStartTrim(ring.getEndTrim());
-//                if (mFinishing) {
-//                    // finished closing the last ring from the swipe gesture; go
-//                    // into progress mode
-//                    mFinishing = false;
-//                    animation.setDuration(ANIMATION_DURATION);
-//                    ring.setShowArrow(false);
-//                } else {
-//                    mRotationCount = (mRotationCount + 1) % (NUM_POINTS);
-//                }
-//            }
-//        });
-//        mAnimation = animation;
-//    }
+
 
     private final Drawable.Callback mCallback = new Drawable.Callback() {
         @Override
