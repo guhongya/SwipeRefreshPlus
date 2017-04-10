@@ -17,6 +17,7 @@ package com.gu.swiperefresh;
 
 import android.content.Context;
 import android.support.annotation.ColorInt;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.view.ViewCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -235,7 +236,7 @@ public class RefreshViewController implements IRefreshViewController{
         }
     }
 
-    public int getmCurrentTargetOffsetTop() {
+    public int getCurrentTargetOffsetTop() {
         return mCurrentTargetOffsetTop;
     }
 
