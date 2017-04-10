@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -46,10 +47,14 @@ public class SimpleRecycleAdapter extends RecyclerView.Adapter<SimpleRecycleAdap
         }
         public void setData(int id){
            // mImageView.setImageDrawable(drawable);
-            ViewGroup.LayoutParams lp = rootView.getLayoutParams();
+            RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) rootView.getLayoutParams();
             if (lp instanceof FlexboxLayoutManager.LayoutParams) {
                 FlexboxLayoutManager.LayoutParams flexboxLp = (FlexboxLayoutManager.LayoutParams) lp;
+                flexboxLp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+                flexboxLp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
                 flexboxLp.setFlexGrow(1.0f);
+            }else{
+                lp.width=ViewGroup.LayoutParams.MATCH_PARENT;
             }
             mImageView.setImageResource(id);
         }

@@ -49,10 +49,10 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
     }
     private void iniView(){
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager();
-        layoutManager.setFlexDirection(FlexDirection.ROW);
-        layoutManager.setJustifyContent(JustifyContent.FLEX_END);
-        recycleContent.setLayoutManager(layoutManager);
-     //  recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        layoutManager.setFlexDirection(FlexDirection.ROW);
+//        layoutManager.setJustifyContent(JustifyContent.FLEX_END);
+//        recycleContent.setLayoutManager(layoutManager);
+        recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
         recycleAdapter=new SimpleRecycleAdapter();
         recycleAdapter.setData(datas);
         recycleContent.setAdapter(recycleAdapter);
@@ -122,10 +122,12 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                 recycleContent.setLayoutManager(new GridLayoutManager(getActivity(),2));
                 break;
             case R.id.flexbox_layout:
-//                FlexboxLayoutManager layoutManager = new FlexboxLayoutManager();
-//                layoutManager.setFlexDirection(FlexDirection.COLUMN);
-//                layoutManager.setJustifyContent(JustifyContent.FLEX_END);
-//                recycleContent.setLayoutManager(layoutManager);
+                FlexboxLayoutManager layoutManager = new FlexboxLayoutManager();
+                layoutManager.setFlexDirection(FlexDirection.ROW);
+                layoutManager.setJustifyContent(JustifyContent.FLEX_END);
+                recycleContent.setAdapter(null);
+                recycleContent.setLayoutManager(layoutManager);
+                recycleContent.setAdapter(recycleAdapter);
                 break;
             case R.id.staggered_grid_layout:
                 recycleContent.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
