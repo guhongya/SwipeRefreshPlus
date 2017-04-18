@@ -18,7 +18,6 @@ package com.gu.swiperefresh;
 import android.content.Context;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
-import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
@@ -157,7 +156,9 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
      */
     public void setRefreshColors(@ColorInt int... colors) {
         ensureTarget();
-        mRefreshController.setProgressColors(colors);
+        if(mRefreshController instanceof RefreshViewController){
+            ((RefreshViewController)mRefreshController).setProgressColors(colors);
+        }
     }
 
     /**
@@ -177,7 +178,9 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     public void setLoadMoreColors(@ColorInt int... colors) {
         ensureTarget();
-        mLoadViewController.setProgressColors(colors);
+        if(mLoadViewController instanceof LoadViewController) {
+            ((LoadViewController)mLoadViewController).setProgressColors(colors);
+        }
     }
 
     /**
@@ -300,7 +303,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         if (mScroller.computeScrollOffset()) {
             if (!canChildScrollDown() && canLoadMore()) {
                 //showLoadMoreView(mLoadMoreView.getHeight());
-                mLoadViewController.showLoadMore();
+                mLoadViewController.finishPullRefresh(mLoadViewController.getMaxHeight());
                 mScroller.abortAnimation();
             }
             ViewCompat.postInvalidateOnAnimation(this);
@@ -422,7 +425,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
                     final float y = event.getY(pointerIndex);
                     final float overscrollBottom = (y - mInitialMotionY);
                     mIsBeingDragDown = false;
-                    if (overscrollBottom < 0) mLoadViewController.showLoadMore();
+                    if (overscrollBottom < 0) mLoadViewController.finishPullRefresh(Math.abs(overscrollBottom));
                 }
                 mActivePointerId = INVALID_POINTER;
                 return false;
@@ -701,7 +704,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             mUpTotalUnconsumed = 0;
         }
         if (mDownTotalUnconsumed > 0) {
-            mLoadViewController.showLoadMore();
+            mLoadViewController.finishPullRefresh(mDownTotalUnconsumed);
             mDownTotalUnconsumed = 0;
         }
         stopNestedScroll();
@@ -835,7 +838,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             mLoadMoreView.setVisibility(VISIBLE);
         scrollBy(0, mLoadViewController.move(height));
         //  mLoadMoreView.clearAnimation();
-        //  mLoadViewController.showLoadMore();
+        //  mLoadViewController.finishPullRefresh();
     }
 
 

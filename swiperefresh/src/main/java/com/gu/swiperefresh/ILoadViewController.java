@@ -12,7 +12,7 @@ public interface ILoadViewController {
 
     View create();
 
-    void showLoadMore();
+    void finishPullRefresh(float totalDistance);
 
     int getMaxHeight();
 
@@ -21,8 +21,6 @@ public interface ILoadViewController {
     int move(int height);
 
     void setRefreshListener(SwipeRefreshPlush.OnRefreshListener mListener);
-
-    void setProgressColors(int[] colors);
 
     void showNoMore(boolean show);
 

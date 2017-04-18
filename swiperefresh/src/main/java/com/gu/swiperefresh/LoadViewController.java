@@ -174,14 +174,12 @@ public class LoadViewController implements ILoadViewController{
     }
 
     @Override
-    public void showLoadMore() {
+    public void finishPullRefresh(float totalDistance) {
         if (isLoadAnimation) return;
+        //beginLoading();
         animateShowLoadMore(mLoadMoreListener);
     }
 
-    protected boolean canMove() {
-        return !isLoadAnimation;
-    }
 
     public void setProgressColors(@ColorInt int... colors) {
         mProgress.setColorSchemeColors(colors);
