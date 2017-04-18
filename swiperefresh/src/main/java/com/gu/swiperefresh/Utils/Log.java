@@ -5,7 +5,7 @@ package com.gu.swiperefresh.Utils;
  */
 
 public class Log {
-    private static final boolean DEBUG=true;
+    private static final boolean DEBUG=false;
     public static void i(String tag,String info){
         if (DEBUG)
             android.util.Log.i(tag,info);

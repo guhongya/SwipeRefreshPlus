@@ -53,6 +53,7 @@ public class ListFragment extends Fragment implements DemoContact.View {
         return view;
     }
 
+
     @Override
     public void onDetach() {
         mSwipeRefreshPlush.setEnabled(false);
@@ -71,7 +72,7 @@ public class ListFragment extends Fragment implements DemoContact.View {
     }
     private void iniView(){
         mSwipeRefreshPlush.setRefreshColorResources(new int[]{R.color.colorPrimary});
-        mSwipeRefreshPlush.setOnScrollListener(new SwipeRefreshPlush.OnRefreshListener() {
+        mSwipeRefreshPlush.setOnRefreshListener(new SwipeRefreshPlush.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
                 mSwipeRefreshPlush.postDelayed(new Runnable() {

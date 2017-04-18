@@ -32,7 +32,7 @@ import android.view.animation.Transformation;
  * 没有更多提示没有默认的view样式，需要使用者手动设置
  */
 
-public class LoadViewController {
+public class LoadViewController implements ILoadViewController{
     //默认circleimage大小
     static final int CIRCLE_DIAMETER = 40;
     // Max amount of circle that can be filled by progress during swipe gesture,
@@ -68,8 +68,6 @@ public class LoadViewController {
             mParent.scrollBy(0, move(offset));
         }
     };
-    private boolean isDefault = true;
-    private View defaultView;
     //动画是否在加载
     private volatile boolean isLoadAnimation;
     //是否显示没有更多view
@@ -106,7 +104,8 @@ public class LoadViewController {
         typedArray.recycle();
     }
 
-    protected View create() {
+    @Override
+    public View create() {
         mCircleImageView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
         mProgress = new ProgressDrawable(mContext, mParent);
         mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
@@ -116,30 +115,21 @@ public class LoadViewController {
         ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(mCircleDiameter, mCircleDiameter);
         marginLayoutParams.setMargins(0, mMargin, 0, mMargin);
         mCircleImageView.setLayoutParams(marginLayoutParams);
-        defaultView = mCircleImageView;
         return mCircleImageView;
     }
-
-    protected void setScrollListener(SwipeRefreshPlush.OnRefreshListener onRefreshListener) {
+    @Override
+    public void setRefreshListener(SwipeRefreshPlush.OnRefreshListener onRefreshListener) {
         this.mListener = onRefreshListener;
     }
 
-    protected int getCurrentHeight() {
+    @Override
+    public int getCurrentHeight() {
         return mCurrentHeight;
     }
 
-    protected void clearState() {
-        mProgress.stop();
-        isLoading = false;
-    }
-
-    protected void changeDefaultView(View loadView) {
-        this.defaultView = loadView;
-        this.isDefault = false;
-    }
-
-    protected View getDefaultView() {
-        return defaultView;
+    @Override
+    public View getDefaultView() {
+        return mCircleImageView;
     }
 
     /**
@@ -148,7 +138,8 @@ public class LoadViewController {
      * @param scrollDistance
      * @return
      */
-    protected int move(int scrollDistance) {
+    @Override
+    public int move(int scrollDistance) {
         mCurrentHeight += scrollDistance;
         if (mCurrentHeight > mMaxHeigth) {
             int result = scrollDistance - (mCurrentHeight - mMaxHeigth);
@@ -162,42 +153,35 @@ public class LoadViewController {
         return scrollDistance;
     }
 
-    protected int getMaxHeight() {
+    public int getMaxHeight() {
         return mMaxHeigth;
     }
 
     protected void beginLoading() {
-        if (isDefault) {
-            mProgress.setAlpha(MAX_ALPHA);
-            mProgress.start();
-        }
+        mProgress.setAlpha(MAX_ALPHA);
+        mProgress.start();
         if (!isLoading && mListener != null) {
             isLoading = true;
             mListener.onPullUpToRefresh();
         }
     }
-
-    protected void reset() {
+    @Override
+    public void reset() {
+        isLoading = false;
         if (mProgress.isRunning())
             mProgress.stop();
         mCurrentHeight = 0;
     }
 
-    protected void stopLoad() {
-        isLoading = false;
-        reset();
-    }
-
-    protected void showLoadMore() {
+    @Override
+    public void finishPullRefresh(float totalDistance) {
         if (isLoadAnimation) return;
+        //beginLoading();
         animateShowLoadMore(mLoadMoreListener);
     }
 
-    protected boolean canMove() {
-        return !isLoadAnimation;
-    }
 
-    protected void setProgressColors(@ColorInt int... colors) {
+    public void setProgressColors(@ColorInt int... colors) {
         mProgress.setColorSchemeColors(colors);
     }
 
@@ -212,7 +196,10 @@ public class LoadViewController {
         mParent.startAnimation(mAnimationShowLoadMore);
     }
 
-    protected void showNoMore(boolean show) {
+    public void showNoMore(boolean show) {
         mShowNoMore = show;
+        isLoading = false;
+        if (mProgress.isRunning())
+            mProgress.stop();
     }
 }

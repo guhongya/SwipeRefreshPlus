@@ -17,6 +17,7 @@ package com.gu.swiperefresh;
 
 import android.content.Context;
 import android.support.annotation.ColorInt;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.view.ViewCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -33,7 +34,7 @@ import com.gu.swiperefresh.Utils.Size;
  * 下拉刷新 view 使用 google SwipeRefreshLayout 中的 ProgressDrawable
  */
 
-public class RefreshViewController {
+public class RefreshViewController implements IRefreshViewController{
     //默认circleimage大小
     static final int CIRCLE_DIAMETER = 40;
     // Default offset in dips from the top of the view to where the progress spinner should stop
@@ -131,7 +132,7 @@ public class RefreshViewController {
     }
 
     //创建refresh view
-    protected View create() {
+    public View create() {
         mCircleView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
         mProgress = new ProgressDrawable(mContext, mParent);
         mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
@@ -142,7 +143,7 @@ public class RefreshViewController {
     }
 
     //refresh 结束，资源清理
-    protected void reset() {
+    public void reset() {
         mCircleView.clearAnimation();
         mProgress.stop();
         mCircleView.setVisibility(View.GONE);
@@ -162,24 +163,24 @@ public class RefreshViewController {
      *
      * @param colors
      */
-    protected void setProgressColors(@ColorInt int... colors) {
+    public void setProgressColors(@ColorInt int... colors) {
         mProgress.setColorSchemeColors(colors);
     }
 
-    protected void startProgress() {
+    public void startProgress() {
         mProgress.setAlpha(STARTING_PROGRESS_ALPHA);
     }
 
-    protected Size getRefreshViewSize() {
+    public Size getRefreshViewSize() {
         return new Size(mCircleDiameter, mCircleDiameter);
     }
 
-    protected boolean isRefresh() {
+    public boolean isRefresh() {
         return isRefresh;
     }
 
     //下拉时，refresh动画
-    protected void showPullRefresh(float overscrollTop) {
+    public float showPullRefresh(float overscrollTop) {
         mProgress.showArrow(true);
         float originalDragPercent = overscrollTop / mTotalDragDistance;
 
@@ -224,9 +225,10 @@ public class RefreshViewController {
         float rotation = (-0.25f + .4f * adjustedPercent + tensionPercent * 2) * .5f;
         mProgress.setProgressRotation(rotation);
         setTargetOffsetTopAndBottom(targetY - mCurrentTargetOffsetTop, true /* requires update */);
+        return 0;
     }
 
-    void setTargetOffsetTopAndBottom(int offset, boolean requiresUpdate) {
+    public void setTargetOffsetTopAndBottom(int offset, boolean requiresUpdate) {
         // mCircleView.bringToFront();
         ViewCompat.offsetTopAndBottom(mCircleView, offset);
         mCurrentTargetOffsetTop = mCircleView.getTop();
@@ -235,7 +237,7 @@ public class RefreshViewController {
         }
     }
 
-    protected int getmCurrentTargetOffsetTop() {
+    public int getCurrentTargetOffsetTop() {
         return mCurrentTargetOffsetTop;
     }
 
@@ -244,7 +246,7 @@ public class RefreshViewController {
      *
      * @param overscrollTop
      */
-    protected void finishPullRefresh(float overscrollTop) {
+    public float finishPullRefresh(float overscrollTop) {
         if (overscrollTop > mTotalDragDistance) {
             setRefreshing(true, true /* notify */);
         } else {
@@ -275,13 +277,14 @@ public class RefreshViewController {
             animateOffsetToStartPosition(mCurrentTargetOffsetTop, listener);
             mProgress.showArrow(false);
         }
+        return 0;
     }
 
-    protected void setListener(SwipeRefreshPlush.OnRefreshListener scrollListener) {
+    public void setRefreshListener(SwipeRefreshPlush.OnRefreshListener scrollListener) {
         this.mListener = scrollListener;
     }
 
-    protected void setRefreshing(boolean refreshing, final boolean notify) {
+    public void setRefreshing(boolean refreshing, final boolean notify) {
         if (isRefresh != refreshing) {
             //  mNotify = notify;
             // ensureTarget();

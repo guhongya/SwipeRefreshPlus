@@ -1,6 +1,6 @@
 # SwipeRefreshPlush
 ******
-![效果演示](http://upload-images.jianshu.io/upload_images/1083672-600691b10500a63e.gif?imageMogr2/auto-orient/strip)
+![效果演示](http://wx4.sinaimg.cn/mw690/9430bbffly1fequpe4nyrg208w0dc1kx.gif)
 ##  简介
 与SwipeRereshLayout类似，不过添加了下拉加载更多的功能，下拉支持fling,不会有卡顿。
 
