@@ -20,6 +20,7 @@ import com.google.android.flexbox.JustifyContent;
 import com.gu.swiperefresh.SwipeRefreshPlush;
 import com.gu.swiperefreshplush.R;
 import com.gu.swiperefreshplush.SimpleRecycleAdapter;
+import com.gu.swiperefreshplush.extention.LoadMoreController;
 
 import java.util.List;
 
@@ -42,17 +43,18 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         View view=inflater.inflate(R.layout.fragment_recycle, container, false);
         recycleContent= (RecyclerView) view.findViewById(R.id.recycle_content);
         swipeRefreshPlush= (SwipeRefreshPlush) view.findViewById(R.id.swipe_refresh);
+        swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext()));
         new DataPresenter(this);
         setHasOptionsMenu(true);
         iniView();
         return view;
     }
     private void iniView(){
-        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager();
-        layoutManager.setFlexDirection(FlexDirection.ROW);
-        layoutManager.setJustifyContent(JustifyContent.FLEX_END);
-        recycleContent.setLayoutManager(layoutManager);
-     //  recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager();
+//        layoutManager.setFlexDirection(FlexDirection.ROW);
+//        layoutManager.setJustifyContent(JustifyContent.FLEX_END);
+//        recycleContent.setLayoutManager(layoutManager);
+       recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
         recycleAdapter=new SimpleRecycleAdapter();
         recycleAdapter.setData(datas);
         recycleContent.setAdapter(recycleAdapter);
