@@ -64,7 +64,7 @@ public class LoadViewController implements ILoadViewController{
     private final Animation mAnimationShowLoadMore = new Animation() {
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
-            int offset = (int) ((getMaxHeight() - getCurrentHeight()) * interpolatedTime);
+            int offset = (int) ((getDefaultHeight() - getCurrentHeight()) * interpolatedTime);
             mParent.scrollBy(0, move(offset));
         }
     };
@@ -152,8 +152,8 @@ public class LoadViewController implements ILoadViewController{
         }
         return scrollDistance;
     }
-
-    public int getMaxHeight() {
+    @Override
+    public int getDefaultHeight() {
         return mMaxHeigth;
     }
 
@@ -174,10 +174,11 @@ public class LoadViewController implements ILoadViewController{
     }
 
     @Override
-    public void finishPullRefresh(float totalDistance) {
-        if (isLoadAnimation) return;
+    public int finishPullRefresh(float totalDistance) {
+        if (isLoadAnimation) return 0;
         //beginLoading();
         animateShowLoadMore(mLoadMoreListener);
+        return 0;
     }
 
 

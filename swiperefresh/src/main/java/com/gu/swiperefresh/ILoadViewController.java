@@ -12,9 +12,9 @@ public interface ILoadViewController {
 
     View create();
 
-    void finishPullRefresh(float totalDistance);
+    int finishPullRefresh(float totalDistance);
 
-    int getMaxHeight();
+    int getDefaultHeight();
 
     int getCurrentHeight();
 
