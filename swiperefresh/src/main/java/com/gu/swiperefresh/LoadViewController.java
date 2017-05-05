@@ -95,7 +95,11 @@ public class LoadViewController implements ILoadViewController{
         this.mContext = context;
         this.mParent = parent;
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorAccent});
-        mDefaultProgressColor = typedArray.getColor(0, CIRCLE_BG_LIGHT);
+        try {
+            mDefaultProgressColor = typedArray.getColor(0, CIRCLE_BG_LIGHT);
+        }catch (Exception e){
+            mDefaultProgressColor=CIRCLE_BG_LIGHT;
+        }
         metrics = mContext.getResources().getDisplayMetrics();
         mCircleDiameter = (int) (CIRCLE_DIAMETER * metrics.density);
         mMargin = (int) (mMargin * metrics.density);
