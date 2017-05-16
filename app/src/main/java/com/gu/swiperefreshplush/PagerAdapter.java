@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.gu.swiperefreshplush.fragment.ListFragment;
+import com.gu.swiperefreshplush.fragment.NormalViewFragment;
 import com.gu.swiperefreshplush.fragment.RecycleFragment;
 
 /**
@@ -26,13 +27,17 @@ public class PagerAdapter extends FragmentPagerAdapter {
             case 1:
                 fragment=new ListFragment();
                 break;
+            case 2:
+                fragment=new NormalViewFragment();
+                break;
+
         }
         return fragment;
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -42,6 +47,8 @@ public class PagerAdapter extends FragmentPagerAdapter {
                 return "RecycleView";
             case 1:
                 return "ListView";
+            case 2:
+                return "NormalView";
         }
         return "";
     }

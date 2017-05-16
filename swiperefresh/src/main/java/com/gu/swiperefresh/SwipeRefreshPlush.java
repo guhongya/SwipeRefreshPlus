@@ -26,6 +26,7 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -190,7 +191,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
      */
     public void setRefresh(boolean refresh) {
         ensureTarget();
-        mRefreshController.setRefreshing(refresh, false);
+        mRefreshController.setRefreshing(refresh);
     }
 
     /**
@@ -444,7 +445,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
             mReturningToStart = false;
         }
-        if (!isEnabled() || (!canLoadMore() && !canRefresh()) || mReturningToStart || mRefreshController.isRefresh() || mNestedScrollInProgress) {
+        if (!isEnabled() || (!canLoadMore() && !canRefresh()) || mReturningToStart
+                || mRefreshController.isRefresh() || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
             return false;
         }

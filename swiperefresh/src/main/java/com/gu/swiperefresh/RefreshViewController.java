@@ -15,7 +15,9 @@
  */
 package com.gu.swiperefresh;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Animatable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.view.ViewCompat;
@@ -66,6 +68,8 @@ public class RefreshViewController implements IRefreshViewController{
     private CircleImageView mCircleView;
     private Context mContext;
     private View mParent;
+    //是否回调onPullDownToRefresh
+    private boolean mNotify;
     private final Animation mAnimateToStartPosition = new Animation() {
         @Override
         public void applyTransformation(float interpolatedTime, Transformation t) {
@@ -102,7 +106,7 @@ public class RefreshViewController implements IRefreshViewController{
                 // Make sure the progress view is fully visible
                 mProgress.setAlpha(MAX_ALPHA);
                 mProgress.start();
-                if (mListener != null) {
+                if (mNotify&&mListener != null) {
                     mListener.onPullDownToRefresh();
                 }
                 mCurrentTargetOffsetTop = mCircleView.getTop();
@@ -114,6 +118,7 @@ public class RefreshViewController implements IRefreshViewController{
     /***************************
      * 动画
      ******************************************/
+    private Animation mScaleAnimation;
     private Animation mScaleDownAnimation;
     private Animation mAlphaStartAnimation;
     private Animation mAlphaMaxAnimation;
@@ -283,10 +288,24 @@ public class RefreshViewController implements IRefreshViewController{
     public void setRefreshListener(SwipeRefreshPlush.OnRefreshListener scrollListener) {
         this.mListener = scrollListener;
     }
+    @Override
+    public void setRefreshing(boolean refreshing) {
+        if (refreshing && isRefresh!= refreshing) {
+            // scale and show
+            isRefresh= refreshing;
+            int endTarget = 0;
 
-    public void setRefreshing(boolean refreshing, final boolean notify) {
+            setTargetOffsetTopAndBottom(endTarget - mCurrentTargetOffsetTop,
+                    true /* requires update */);
+            mNotify = false;
+            startScaleUpAnimation(mRefreshListener);
+        } else {
+            setRefreshing(refreshing, false /* notify */);
+        }
+    }
+    private void setRefreshing(boolean refreshing, final boolean notify) {
         if (isRefresh != refreshing) {
-            //  mNotify = notify;
+            mNotify = notify;
             // ensureTarget();
             isRefresh = refreshing;
             if (isRefresh) {
@@ -408,6 +427,29 @@ public class RefreshViewController implements IRefreshViewController{
         mCircleView.setAnimationListener(listener);
         mCircleView.clearAnimation();
         mCircleView.startAnimation(mScaleDownAnimation);
+    }
+
+    @SuppressLint("NewApi")
+    private void startScaleUpAnimation(Animation.AnimationListener listener) {
+        mCircleView.setVisibility(View.VISIBLE);
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
+            // Pre API 11, alpha is used in place of scale up to show the
+            // progress circle appearing.
+            // Don't adjust the alpha during appearance otherwise.
+            mProgress.setAlpha(MAX_ALPHA);
+        }
+        mScaleAnimation = new Animation() {
+            @Override
+            public void applyTransformation(float interpolatedTime, Transformation t) {
+                setAnimationProgress(interpolatedTime);
+            }
+        };
+        mScaleAnimation.setDuration(SCALE_DOWN_DURATION);
+        if (listener != null) {
+            mCircleView.setAnimationListener(listener);
+        }
+        mCircleView.clearAnimation();
+        mCircleView.startAnimation(mScaleAnimation);
     }
 
     private void animateOffsetToCorrectPosition(int from, Animation.AnimationListener listener) {

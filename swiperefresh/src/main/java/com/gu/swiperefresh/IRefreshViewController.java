@@ -33,5 +33,5 @@ public interface IRefreshViewController {
 
     void setRefreshListener(SwipeRefreshPlush.OnRefreshListener mListener);
 
-    void setRefreshing(boolean refresh, boolean b);
+    void setRefreshing(boolean refresh);
 }
