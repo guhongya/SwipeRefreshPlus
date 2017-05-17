@@ -2,6 +2,7 @@ package com.gu.swiperefreshplush.extention;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -44,8 +45,7 @@ public class LoadMoreController implements ILoadViewController {
 
     @Override
     public View create() {
-        TextView view=new TextView(mContext);
-        view.setBackgroundResource(R.drawable.image_bottom9);
+        View view= LayoutInflater.from(mContext).inflate(R.layout.item_load_more,null);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,mDefaultHeight));
         mDefaultView=view;
         return view;
@@ -123,6 +123,7 @@ public class LoadMoreController implements ILoadViewController {
             mParent.scrollBy(0,mDefaultHeight);
         }else{
             mParent.scrollBy(0,-(int) mCurrentOffsetToTop);
+            reset();
         }
     }
 
