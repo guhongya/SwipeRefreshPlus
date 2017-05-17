@@ -122,17 +122,9 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     /**
      * 模式设置
-     * <p>
-     * public static interface SwipeRefreshMode{
-     * int MODE_BOTH=1;
-     * int MODE_REFRESH_ONLY=2;
-     * int MODE_LOADMODE=3;
-     * int MODE_NONE=4;
-     * }
-     *
      * @param mode 模式
      */
-    public void setScrollMode(int mode) {
+    public void setScrollMode(@SwipeRefreshMode int mode) {
         this.REFRESH_MODE = mode;
     }
 
@@ -899,12 +891,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             return false;
     }
 
-    public static interface SwipeRefreshMode {
-        int MODE_BOTH = 1;//刷新和下拉加载更多模式
-        int MODE_REFRESH_ONLY = 2;//刷新
-        int MODE_LOADMODE = 3;//加载更多
-        int MODE_NONE = 4;//即不能加载更多也不能下拉刷新
-    }
+
 
     public interface OnRefreshListener {
         void onPullDownToRefresh();
