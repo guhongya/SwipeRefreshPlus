@@ -68,6 +68,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                         presenter.refresh();
                         swipeRefreshPlush.setRefresh(false);
                         swipeRefreshPlush.showNoMore(false);
+                        LogUtils.d(swipeRefreshPlush.getLoadViewController().isLoading());
                     }
                 },1000);
             }

@@ -145,6 +145,11 @@ public class LoadViewController implements ILoadViewController {
         }
     }
 
+    @Override
+    public boolean isLoading() {
+        return isLoading;
+    }
+
     /**
      * 实际移动距离
      *

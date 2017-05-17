@@ -109,6 +109,7 @@ public class LoadMoreController implements ILoadViewController {
     @Override
     public void showNoMore(boolean show) {
         isNoMore=show;
+        isLoading=false;
     }
 
     @Override
@@ -118,13 +119,18 @@ public class LoadMoreController implements ILoadViewController {
 
     @Override
     public void setLoadMore(boolean loading) {
-        isLoading=loading;
         if (loading){
             mParent.scrollBy(0,mDefaultHeight);
         }else{
             mParent.scrollBy(0,-(int) mCurrentOffsetToTop);
             reset();
         }
+        isLoading=loading;
+    }
+
+    @Override
+    public boolean isLoading() {
+        return isLoading;
     }
 
 }
