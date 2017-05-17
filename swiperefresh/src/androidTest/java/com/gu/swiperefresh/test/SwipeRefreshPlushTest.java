@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Created by GUHY on 2017/4/10.
@@ -40,6 +41,7 @@ public class SwipeRefreshPlushTest {
     public void testNoData() throws Throwable {
         final Activity activity=mActivityRule.getActivity();
         final TestAdapter testAdapter=new TestAdapter();
+        SwipeRefreshPlush swipeRefreshPlush;
         mActivityRule.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -47,14 +49,41 @@ public class SwipeRefreshPlushTest {
                 RecyclerView recyclerView= (RecyclerView) activity.findViewById(R.id.recycle_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity));
                 recyclerView.setAdapter(testAdapter);
+                SwipeRefreshPlush swipeRefreshPlush= (SwipeRefreshPlush) activity.findViewById(R.id.swipe_refresh);
             }
         });
+        swipeRefreshPlush= (SwipeRefreshPlush) activity.findViewById(R.id.swipe_refresh);
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-        SwipeRefreshPlush swipeRefreshPlush= (SwipeRefreshPlush) activity.findViewById(R.id.swipe_refresh);
         swipe(GeneralLocation.TOP_CENTER,GeneralLocation.BOTTOM_CENTER);
         assertThat(swipeRefreshPlush.getRefreshController().getCurrentTargetOffsetTop(),is(not(0)));
         swipeRefreshPlush.setRefresh(false);
         assertThat(swipeRefreshPlush.getRefreshController().getCurrentTargetOffsetTop(),is(-TestUtil.dpToPixel(activity,40)));
+        swipe(GeneralLocation.BOTTOM_CENTER,GeneralLocation.TOP_CENTER);
+        assertThat(swipeRefreshPlush.getLoadViewController().getCurrentHeight(),is(0));
+    }
+
+    @Test
+    @FlakyTest
+    public void diffModeTest() throws Throwable {
+        final Activity activity=mActivityRule.getActivity();
+        final TestAdapter testAdapter=new TestAdapter();
+        SwipeRefreshPlush swipeRefreshPlush;
+        mActivityRule.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.setContentView(R.layout.activity_test);
+                RecyclerView recyclerView= (RecyclerView) activity.findViewById(R.id.recycle_view);
+                recyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                recyclerView.setAdapter(testAdapter);
+                SwipeRefreshPlush swipeRefreshPlush= (SwipeRefreshPlush) activity.findViewById(R.id.swipe_refresh);
+                swipeRefreshPlush.setScrollMode(SwipeRefreshMode.MODE_NONE);
+            }
+        });
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        swipeRefreshPlush= (SwipeRefreshPlush) activity.findViewById(R.id.swipe_refresh);
+        swipe(GeneralLocation.TOP_CENTER,GeneralLocation.BOTTOM_CENTER);
+        assertThat(swipeRefreshPlush.getRefreshController().isRefresh(),is(false));
+        swipe(GeneralLocation.BOTTOM_CENTER,GeneralLocation.TOP_CENTER);
         swipe(GeneralLocation.BOTTOM_CENTER,GeneralLocation.TOP_CENTER);
         assertThat(swipeRefreshPlush.getLoadViewController().getCurrentHeight(),is(0));
     }
