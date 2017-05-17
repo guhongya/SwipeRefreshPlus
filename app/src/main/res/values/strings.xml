@@ -3,5 +3,6 @@
     <string name="no_more_tips">没有更多了^-^</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">上拉加载更多会通过canScrollVertically(-1)判断view是否能滑动，因此普通
+        view只能下拉刷新，不能上拉加载更多</string>
 </resources>

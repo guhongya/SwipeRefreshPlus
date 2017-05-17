@@ -25,9 +25,12 @@ public class LoadMoreController implements ILoadViewController {
     private float mCurrentOffsetToTop;
     private SwipeRefreshPlush.OnRefreshListener mOnRefreshListener;
     private boolean isNoMore;
+    private boolean isLoading;
+    private View mParent;
 
-    public LoadMoreController(Context context){
+    public LoadMoreController(Context context,View parent){
         mContext=context;
+        this.mParent=parent;
         DisplayMetrics metrics=context.getResources().getDisplayMetrics();
         mMaxHeight=metrics.heightPixels;
         mDefaultHeight*=metrics.density;
@@ -51,7 +54,8 @@ public class LoadMoreController implements ILoadViewController {
     @Override
     public int finishPullRefresh(float totalDistance) {
         if(mCurrentOffsetToTop>mDefaultThreshold||(totalDistance+mCurrentOffsetToTop)>mDefaultThreshold){
-            if(!isNoMore) {
+            if(!isNoMore&&!isLoading) {
+                isLoading=true;
                 mOnRefreshListener.onPullUpToRefresh();
             }
             int dis= (int) (mDefaultHeight-mCurrentOffsetToTop);
@@ -111,4 +115,15 @@ public class LoadMoreController implements ILoadViewController {
     public View getDefaultView() {
         return mDefaultView;
     }
+
+    @Override
+    public void setLoadMore(boolean loading) {
+        isLoading=loading;
+        if (loading){
+            mParent.scrollBy(0,mDefaultHeight);
+        }else{
+            mParent.scrollBy(0,-(int) mCurrentOffsetToTop);
+        }
+    }
+
 }

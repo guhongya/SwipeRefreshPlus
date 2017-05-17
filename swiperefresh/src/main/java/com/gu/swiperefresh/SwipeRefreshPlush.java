@@ -26,6 +26,7 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -121,17 +122,9 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
 
     /**
      * 模式设置
-     * <p>
-     * public static interface SwipeRefreshMode{
-     * int MODE_BOTH=1;
-     * int MODE_REFRESH_ONLY=2;
-     * int MODE_LOADMODE=3;
-     * int MODE_NONE=4;
-     * }
-     *
      * @param mode 模式
      */
-    public void setScrollMode(int mode) {
+    public void setScrollMode(@SwipeRefreshMode int mode) {
         this.REFRESH_MODE = mode;
     }
 
@@ -190,7 +183,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
      */
     public void setRefresh(boolean refresh) {
         ensureTarget();
-        mRefreshController.setRefreshing(refresh, false);
+        mRefreshController.setRefreshing(refresh);
     }
 
     /**
@@ -199,13 +192,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
      * @param show
      */
     public void setLoadMore(boolean show) {
-        if (show) {
-            showLoadMoreView(mLoadViewController.getDefaultHeight());
-        } else {
-            // hideLoadMoreView();
-            hideLoadMoreView(mLoadViewController.getCurrentHeight());
-            mLoadViewController.reset();
-        }
+       mLoadViewController.setLoadMore(show);
     }
 
     /**
@@ -254,7 +241,11 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         addView(mLoadMoreView);
     }
 
-    public void setRefreshView(IRefreshViewController controller){
+    /**
+     * 还没有完成
+     * @param controller
+     */
+    void setRefreshViewController(IRefreshViewController controller){
         this.mRefreshController=controller;
         removeView(mRefreshView);
         mRefreshView=mRefreshController.create();
@@ -462,7 +453,8 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
         if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
             mReturningToStart = false;
         }
-        if (!isEnabled() || (!canLoadMore() && !canRefresh()) || mReturningToStart || mRefreshController.isRefresh() || mNestedScrollInProgress) {
+        if (!isEnabled() || (!canLoadMore() && !canRefresh()) || mReturningToStart
+                || mRefreshController.isRefresh() || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
             return false;
         }
@@ -900,12 +892,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             return false;
     }
 
-    public static interface SwipeRefreshMode {
-        int MODE_BOTH = 1;//刷新和下拉加载更多模式
-        int MODE_REFRESH_ONLY = 2;//刷新
-        int MODE_LOADMODE = 3;//加载更多
-        int MODE_NONE = 4;//即不能加载更多也不能下拉刷新
-    }
+
 
     public interface OnRefreshListener {
         void onPullDownToRefresh();

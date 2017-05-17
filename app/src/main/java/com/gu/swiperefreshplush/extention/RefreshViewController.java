@@ -62,7 +62,8 @@ public class RefreshViewController implements IRefreshViewController {
     }
 
     @Override
-    public void setRefreshing(boolean refresh, boolean b) {
+    public void setRefreshing(boolean refresh) {
 
     }
+
 }

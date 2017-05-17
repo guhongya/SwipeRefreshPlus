@@ -43,7 +43,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         View view=inflater.inflate(R.layout.fragment_recycle, container, false);
         recycleContent= (RecyclerView) view.findViewById(R.id.recycle_content);
         swipeRefreshPlush= (SwipeRefreshPlush) view.findViewById(R.id.swipe_refresh);
-        swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext()));
+        swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext(),swipeRefreshPlush));
         new DataPresenter(this);
         setHasOptionsMenu(true);
         iniView();
@@ -122,12 +122,6 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                 break;
             case R.id.grid_layout:
                 recycleContent.setLayoutManager(new GridLayoutManager(getActivity(),2));
-                break;
-            case R.id.flexbox_layout:
-//                FlexboxLayoutManager layoutManager = new FlexboxLayoutManager();
-//                layoutManager.setFlexDirection(FlexDirection.COLUMN);
-//                layoutManager.setJustifyContent(JustifyContent.FLEX_END);
-//                recycleContent.setLayoutManager(layoutManager);
                 break;
             case R.id.staggered_grid_layout:
                 recycleContent.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));

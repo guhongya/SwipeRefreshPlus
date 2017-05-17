@@ -25,4 +25,6 @@ public interface ILoadViewController {
     void showNoMore(boolean show);
 
     View getDefaultView();
+
+    void setLoadMore(boolean loading);
 }

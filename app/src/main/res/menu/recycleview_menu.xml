@@ -10,7 +10,4 @@
     <item android:title="瀑布流布局"
         app:showAsAction="never"
         android:id="@+id/staggered_grid_layout"/>
-    <item android:title="伸缩布局"
-        app:showAsAction="never"
-        android:id="@+id/flexbox_layout"/>
 </menu>

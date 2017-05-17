@@ -32,7 +32,7 @@ import android.view.animation.Transformation;
  * 没有更多提示没有默认的view样式，需要使用者手动设置
  */
 
-public class LoadViewController implements ILoadViewController{
+public class LoadViewController implements ILoadViewController {
     //默认circleimage大小
     static final int CIRCLE_DIAMETER = 40;
     // Max amount of circle that can be filled by progress during swipe gesture,
@@ -57,9 +57,6 @@ public class LoadViewController implements ILoadViewController{
     private int mCircleDiameter;
     private int mMargin = 5;
     private int mMaxHeigth;
-
-    private SwipeRefreshPlush.OnRefreshListener mListener;
-
     //加载更多动画
     private final Animation mAnimationShowLoadMore = new Animation() {
         @Override
@@ -68,6 +65,7 @@ public class LoadViewController implements ILoadViewController{
             mParent.scrollBy(0, move(offset));
         }
     };
+    private SwipeRefreshPlush.OnRefreshListener mListener;
     //动画是否在加载
     private volatile boolean isLoadAnimation;
     //是否显示没有更多view
@@ -95,7 +93,11 @@ public class LoadViewController implements ILoadViewController{
         this.mContext = context;
         this.mParent = parent;
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorAccent});
-        mDefaultProgressColor = typedArray.getColor(0, CIRCLE_BG_LIGHT);
+        try {
+            mDefaultProgressColor = typedArray.getColor(0, CIRCLE_BG_LIGHT);
+        } catch (Exception e) {
+            mDefaultProgressColor = CIRCLE_BG_LIGHT;
+        }
         metrics = mContext.getResources().getDisplayMetrics();
         mCircleDiameter = (int) (CIRCLE_DIAMETER * metrics.density);
         mMargin = (int) (mMargin * metrics.density);
@@ -117,6 +119,7 @@ public class LoadViewController implements ILoadViewController{
         mCircleImageView.setLayoutParams(marginLayoutParams);
         return mCircleImageView;
     }
+
     @Override
     public void setRefreshListener(SwipeRefreshPlush.OnRefreshListener onRefreshListener) {
         this.mListener = onRefreshListener;
@@ -130,6 +133,16 @@ public class LoadViewController implements ILoadViewController{
     @Override
     public View getDefaultView() {
         return mCircleImageView;
+    }
+
+    @Override
+    public void setLoadMore(boolean loading) {
+        isLoading=loading;
+        if (loading) {
+            animateShowLoadMore(mLoadMoreListener);
+        } else {
+            animateHideLoadMore(null);
+        }
     }
 
     /**
@@ -152,6 +165,7 @@ public class LoadViewController implements ILoadViewController{
         }
         return scrollDistance;
     }
+
     @Override
     public int getDefaultHeight() {
         return mMaxHeigth;
@@ -165,6 +179,7 @@ public class LoadViewController implements ILoadViewController{
             mListener.onPullUpToRefresh();
         }
     }
+
     @Override
     public void reset() {
         isLoading = false;
@@ -194,7 +209,14 @@ public class LoadViewController implements ILoadViewController{
         if (listener != null) {
             mAnimationShowLoadMore.setAnimationListener(listener);
         }
+        mParent.clearAnimation();
         mParent.startAnimation(mAnimationShowLoadMore);
+    }
+
+    private void animateHideLoadMore(Animation.AnimationListener listener) {
+        mParent.clearAnimation();
+        mParent.scrollBy(0, -getCurrentHeight());
+        reset();
     }
 
     public void showNoMore(boolean show) {
