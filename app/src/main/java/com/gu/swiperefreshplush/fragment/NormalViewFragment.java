@@ -27,7 +27,7 @@ public class NormalViewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_normal_view, container, false);
         mNormalRefresh= (SwipeRefreshPlush) view.findViewById(R.id.normal_view_refresh);
-        mNormalRefresh.setRefresh(true);
+        //mNormalRefresh.setRefresh(true);
         mNormalRefresh.setOnRefreshListener(new SwipeRefreshPlush.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
