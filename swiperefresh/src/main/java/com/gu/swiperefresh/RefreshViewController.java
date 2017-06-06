@@ -79,7 +79,7 @@ public class RefreshViewController implements IRefreshViewController {
         public void applyTransformation(float interpolatedTime, Transformation t) {
             int targetTop = 0;
             int endTarget = 0;
-            endTarget = mSpinnerOffsetEnd;
+            endTarget = mSpinnerOffsetEnd+mOriginalOffsetTop;
             targetTop = (mFrom + (int) ((endTarget - mFrom) * interpolatedTime));
             int offset = targetTop - mCircleView.getTop();
             setTargetOffsetTopAndBottom(offset, false /* requires update */);
