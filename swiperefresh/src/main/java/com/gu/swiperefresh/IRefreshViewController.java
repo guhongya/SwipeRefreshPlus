@@ -14,6 +14,9 @@ public interface IRefreshViewController {
 
     View create();
 
+    @ZIndex
+    int getZIndex();
+
     int getCurrentTargetOffsetTop();
 
     Size getRefreshViewSize();
@@ -21,8 +24,10 @@ public interface IRefreshViewController {
     boolean isRefresh();
 
     float showPullRefresh(float overscrollTop);
+
     /**
      * 根据下拉距离，判断是否应该刷新
+     *
      * @param overscrollTop 下拉总距离
      */
     float finishPullRefresh(float overscrollTop);
@@ -31,7 +36,9 @@ public interface IRefreshViewController {
 
     void setTargetOffsetTopAndBottom(int i, boolean b);
 
-    void setRefreshListener(SwipeRefreshPlush.OnRefreshListener mListener);
+    void setRefreshListener(SwipeRefreshPlus.OnRefreshListener mListener);
 
     void setRefreshing(boolean refresh);
+
+
 }

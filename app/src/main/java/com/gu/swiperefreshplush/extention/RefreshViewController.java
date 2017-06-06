@@ -3,8 +3,9 @@ package com.gu.swiperefreshplush.extention;
 import android.view.View;
 
 import com.gu.swiperefresh.IRefreshViewController;
-import com.gu.swiperefresh.SwipeRefreshPlush;
+import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefresh.Utils.Size;
+import com.gu.swiperefresh.ZIndex;
 
 /**
  * Created by GUHY on 2017/4/18.
@@ -19,6 +20,11 @@ public class RefreshViewController implements IRefreshViewController {
     @Override
     public View create() {
         return null;
+    }
+
+    @Override
+    public int getZIndex() {
+        return ZIndex.NORMAL;
     }
 
     @Override
@@ -57,7 +63,7 @@ public class RefreshViewController implements IRefreshViewController {
     }
 
     @Override
-    public void setRefreshListener(SwipeRefreshPlush.OnRefreshListener mListener) {
+    public void setRefreshListener(SwipeRefreshPlus.OnRefreshListener mListener) {
 
     }
 

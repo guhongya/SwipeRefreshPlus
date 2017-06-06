@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.gu.swiperefresh.SwipeRefreshPlush;
+import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplush.R;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class ListFragment extends Fragment implements DemoContact.View {
     private ListView mListView;
     private SimpleAdapter mSimplaeAdaptr;
-    private SwipeRefreshPlush mSwipeRefreshPlush;
+    private SwipeRefreshPlus mSwipeRefreshPlus;
     private List<Integer> datas;
     int count=0;
     int page=3;
@@ -44,7 +44,7 @@ public class ListFragment extends Fragment implements DemoContact.View {
         View view=inflater.inflate(R.layout.fragment_list, container, false);
        // View view=inflater.inflate(R.layout.fragment_list, container, false);
         mListView=(ListView) view.findViewById(R.id.list_content);
-        mSwipeRefreshPlush=(SwipeRefreshPlush) view.findViewById(R.id.list_swipe_refresh);
+        mSwipeRefreshPlus =(SwipeRefreshPlus) view.findViewById(R.id.list_swipe_refresh);
         mAdapterDatas=new ArrayList<>();
         mSimplaeAdaptr=new SimpleAdapter(getActivity(),mAdapterDatas,R.layout.item_recycle_content,from,to);
         mListView.setAdapter(mSimplaeAdaptr);
@@ -56,7 +56,7 @@ public class ListFragment extends Fragment implements DemoContact.View {
 
     @Override
     public void onDetach() {
-        mSwipeRefreshPlush.setEnabled(false);
+        mSwipeRefreshPlus.setEnabled(false);
         super.onDetach();
     }
 
@@ -71,16 +71,16 @@ public class ListFragment extends Fragment implements DemoContact.View {
         mSimplaeAdaptr.notifyDataSetChanged();
     }
     private void iniView(){
-        mSwipeRefreshPlush.setRefreshColorResources(new int[]{R.color.colorPrimary});
-        mSwipeRefreshPlush.setOnRefreshListener(new SwipeRefreshPlush.OnRefreshListener() {
+        mSwipeRefreshPlus.setRefreshColorResources(new int[]{R.color.colorPrimary});
+        mSwipeRefreshPlus.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
-                mSwipeRefreshPlush.postDelayed(new Runnable() {
+                mSwipeRefreshPlus.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         presenter.refresh();
-                        mSwipeRefreshPlush.setRefresh(false);
-                        mSwipeRefreshPlush.showNoMore(false);
+                        mSwipeRefreshPlus.setRefresh(false);
+                        mSwipeRefreshPlus.showNoMore(false);
                     }
                 },1000);
             }
@@ -89,14 +89,14 @@ public class ListFragment extends Fragment implements DemoContact.View {
             public void onPullUpToRefresh() {
                 count++;
                 if (count >= page) {
-                    mSwipeRefreshPlush.showNoMore(true);
+                    mSwipeRefreshPlus.showNoMore(true);
 
                 } else {
-                    mSwipeRefreshPlush.postDelayed(new Runnable() {
+                    mSwipeRefreshPlus.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             presenter.loadMore();
-                            mSwipeRefreshPlush.setLoadMore(false);
+                            mSwipeRefreshPlus.setLoadMore(false);
                         }
                     }, 1500);
                 }
@@ -106,7 +106,7 @@ public class ListFragment extends Fragment implements DemoContact.View {
         ViewGroup.LayoutParams layoutParams=new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         noMoreView.setPadding(10,10,10,10);
-        mSwipeRefreshPlush.setNoMoreView(noMoreView,layoutParams);
+        mSwipeRefreshPlus.setNoMoreView(noMoreView,layoutParams);
         presenter.refresh();
     }
     @Override

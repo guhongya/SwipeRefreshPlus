@@ -14,10 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.apkfuns.logutils.LogUtils;
-import com.google.android.flexbox.FlexDirection;
-import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.android.flexbox.JustifyContent;
-import com.gu.swiperefresh.SwipeRefreshPlush;
+import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplush.R;
 import com.gu.swiperefreshplush.SimpleRecycleAdapter;
 import com.gu.swiperefreshplush.extention.LoadMoreController;
@@ -30,7 +27,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
     private RecyclerView recycleContent;
 
     private SimpleRecycleAdapter recycleAdapter;
-    private SwipeRefreshPlush swipeRefreshPlush;
+    private SwipeRefreshPlus swipeRefreshPlus;
     private List<Integer> datas;
     int count=0;
     int page=2;
@@ -42,8 +39,8 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_recycle, container, false);
         recycleContent= (RecyclerView) view.findViewById(R.id.recycle_content);
-        swipeRefreshPlush= (SwipeRefreshPlush) view.findViewById(R.id.swipe_refresh);
-        swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext(),swipeRefreshPlush));
+        swipeRefreshPlus = (SwipeRefreshPlus) view.findViewById(R.id.swipe_refresh);
+        swipeRefreshPlus.setLoadViewController(new LoadMoreController(container.getContext(), swipeRefreshPlus));
         new DataPresenter(this);
         setHasOptionsMenu(true);
         iniView();
@@ -58,16 +55,16 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         recycleAdapter=new SimpleRecycleAdapter();
         recycleAdapter.setData(datas);
         recycleContent.setAdapter(recycleAdapter);
-        swipeRefreshPlush.setRefreshColorResources(new int[]{R.color.colorPrimary});
-        swipeRefreshPlush.setOnRefreshListener(new SwipeRefreshPlush.OnRefreshListener() {
+        swipeRefreshPlus.setRefreshColorResources(new int[]{R.color.colorPrimary});
+        swipeRefreshPlus.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
-                swipeRefreshPlush.postDelayed(new Runnable() {
+                swipeRefreshPlus.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         presenter.refresh();
-                        swipeRefreshPlush.setRefresh(false);
-                        swipeRefreshPlush.showNoMore(false);
+                        swipeRefreshPlus.setRefresh(false);
+                        swipeRefreshPlus.showNoMore(false);
                     }
                 },1000);
             }
@@ -77,14 +74,14 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                 LogUtils.d("onloading");
                 count++;
                 if (count >= page) {
-                    swipeRefreshPlush.showNoMore(true);
+                    swipeRefreshPlus.showNoMore(true);
 
                 } else {
-                    swipeRefreshPlush.postDelayed(new Runnable() {
+                    swipeRefreshPlus.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                            presenter.loadMore();
-                            swipeRefreshPlush.setLoadMore(false);
+                            swipeRefreshPlus.setLoadMore(false);
                         }
                     }, 1500);
                 }
@@ -94,7 +91,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         ViewGroup.LayoutParams layoutParams=new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         noMoreView.setPadding(10,10,10,10);
-        swipeRefreshPlush.setNoMoreView(noMoreView,layoutParams);
+        swipeRefreshPlus.setNoMoreView(noMoreView,layoutParams);
     }
 
     @Override

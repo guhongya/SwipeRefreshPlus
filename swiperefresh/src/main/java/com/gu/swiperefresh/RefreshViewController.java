@@ -17,9 +17,7 @@ package com.gu.swiperefresh;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Animatable;
 import android.support.annotation.ColorInt;
-import android.support.annotation.VisibleForTesting;
 import android.support.v4.view.ViewCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -36,7 +34,7 @@ import com.gu.swiperefresh.Utils.Size;
  * 下拉刷新 view 使用 google SwipeRefreshLayout 中的 ProgressDrawable
  */
 
-public class RefreshViewController implements IRefreshViewController{
+public class RefreshViewController implements IRefreshViewController {
     //默认circleimage大小
     static final int CIRCLE_DIAMETER = 40;
     // Default offset in dips from the top of the view to where the progress spinner should stop
@@ -89,7 +87,7 @@ public class RefreshViewController implements IRefreshViewController{
         }
     };
     private int mCircleDiameter;
-    private SwipeRefreshPlush.OnRefreshListener mListener;
+    private SwipeRefreshPlus.OnRefreshListener mListener;
     // refreshview下拉动画结束,开始刷新
     private Animation.AnimationListener mRefreshListener = new Animation.AnimationListener() {
         @Override
@@ -106,7 +104,7 @@ public class RefreshViewController implements IRefreshViewController{
                 // Make sure the progress view is fully visible
                 mProgress.setAlpha(MAX_ALPHA);
                 mProgress.start();
-                if (mNotify&&mListener != null) {
+                if (mNotify && mListener != null) {
                     mListener.onPullDownToRefresh();
                 }
                 mCurrentTargetOffsetTop = mCircleView.getTop();
@@ -285,14 +283,15 @@ public class RefreshViewController implements IRefreshViewController{
         return 0;
     }
 
-    public void setRefreshListener(SwipeRefreshPlush.OnRefreshListener scrollListener) {
+    public void setRefreshListener(SwipeRefreshPlus.OnRefreshListener scrollListener) {
         this.mListener = scrollListener;
     }
+
     @Override
     public void setRefreshing(boolean refreshing) {
-        if (refreshing && isRefresh!= refreshing) {
+        if (refreshing && isRefresh != refreshing) {
             // scale and show
-            isRefresh= refreshing;
+            isRefresh = refreshing;
             int endTarget = 0;
 
             setTargetOffsetTopAndBottom(endTarget - mCurrentTargetOffsetTop,
@@ -303,6 +302,12 @@ public class RefreshViewController implements IRefreshViewController{
             setRefreshing(refreshing, false /* notify */);
         }
     }
+
+    @Override
+    public int getZIndex() {
+        return ZIndex.TOP;
+    }
+
     private void setRefreshing(boolean refreshing, final boolean notify) {
         if (isRefresh != refreshing) {
             mNotify = notify;
