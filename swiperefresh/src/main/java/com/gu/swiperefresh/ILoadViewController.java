@@ -8,6 +8,7 @@ import android.view.View;
  */
 
 public interface ILoadViewController {
+
     void reset();
 
     View create();

@@ -246,7 +246,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
      *
      * @param controller
      */
-    void setRefreshViewController(IRefreshViewController controller) {
+   public void setRefreshViewController(IRefreshViewController controller) {
         this.mRefreshController = controller;
         removeView(mRefreshView);
         mRefreshView = mRefreshController.create();
@@ -319,19 +319,6 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
 
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {
-//        if (circleViewIndex < 0||mRefreshController.getZIndex()==ZIndex.NORMAL) {
-//            return i;
-//        } else if (i == childCount - 1) {
-//            // Draw the selected child last
-//            return circleViewIndex;
-//        } else if (i >= circleViewIndex) {
-//            // Move the children after the selected child earlier one
-//            return i + 1;
-//        } else {
-//            // Keep the children before the selected child the same
-//            return i;
-//        }
-
         if (circleViewIndex < 0||mRefreshController.getZIndex()==ZIndex.NORMAL) {
             return i;
         }else if(mRefreshController.getZIndex()==ZIndex.TOP){
@@ -418,7 +405,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
                 if (mIsBeingDragUp) {
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     if (overscrollTop > 0) {
-                        mRefreshController.showPullRefresh(overscrollTop);
+                      mRefreshController.showPullRefresh(overscrollTop);
                     }
 
                 } else if (mIsBeingDragDown) {

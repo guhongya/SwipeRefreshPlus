@@ -77,8 +77,7 @@ public class RefreshViewController implements IRefreshViewController {
     private final Animation mAnimateToCorrectPosition = new Animation() {
         @Override
         public void applyTransformation(float interpolatedTime, Transformation t) {
-            int targetTop = 0;
-            int endTarget = 0;
+            int targetTop ,endTarget ;
             endTarget = mSpinnerOffsetEnd+mOriginalOffsetTop;
             targetTop = (mFrom + (int) ((endTarget - mFrom) * interpolatedTime));
             int offset = targetTop - mCircleView.getTop();
@@ -183,7 +182,7 @@ public class RefreshViewController implements IRefreshViewController {
     }
 
     //下拉时，refresh动画
-    public float showPullRefresh(float overscrollTop) {
+    public int showPullRefresh(float overscrollTop) {
         mProgress.showArrow(true);
         float originalDragPercent = overscrollTop / mTotalDragDistance;
 

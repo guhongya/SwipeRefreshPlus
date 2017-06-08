@@ -23,7 +23,7 @@ public interface IRefreshViewController {
 
     boolean isRefresh();
 
-    float showPullRefresh(float overscrollTop);
+    int showPullRefresh(float overscrollTop);
 
     /**
      * 根据下拉距离，判断是否应该刷新

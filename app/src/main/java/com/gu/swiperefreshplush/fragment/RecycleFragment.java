@@ -21,6 +21,7 @@ import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplush.R;
 import com.gu.swiperefreshplush.SimpleRecycleAdapter;
 import com.gu.swiperefreshplush.extention.LoadMoreController;
+import com.gu.swiperefreshplush.extention.MRefreshViewController;
 
 import java.util.List;
 
@@ -44,16 +45,13 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         recycleContent= (RecyclerView) view.findViewById(R.id.recycle_content);
         swipeRefreshPlush= (SwipeRefreshPlus) view.findViewById(R.id.swipe_refresh);
         swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext(),swipeRefreshPlush));
+        swipeRefreshPlush.setRefreshViewController(new MRefreshViewController(container.getContext(),swipeRefreshPlush,recycleContent));
         new DataPresenter(this);
         setHasOptionsMenu(true);
         iniView();
         return view;
     }
     private void iniView(){
-//        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager();
-//        layoutManager.setFlexDirection(FlexDirection.ROW);
-//        layoutManager.setJustifyContent(JustifyContent.FLEX_END);
-//        recycleContent.setLayoutManager(layoutManager);
        recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
         recycleAdapter=new SimpleRecycleAdapter();
         recycleAdapter.setData(datas);
