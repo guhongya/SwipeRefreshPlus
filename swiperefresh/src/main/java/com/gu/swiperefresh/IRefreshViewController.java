@@ -19,7 +19,6 @@ public interface IRefreshViewController {
 
     int getCurrentTargetOffsetTop();
 
-    Size getRefreshViewSize();
 
     boolean isRefresh();
 

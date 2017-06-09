@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplush.R;
+import com.gu.swiperefreshplush.extention.MRefreshViewController;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +28,7 @@ public class NormalViewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_normal_view, container, false);
         mNormalRefresh= (SwipeRefreshPlus) view.findViewById(R.id.normal_view_refresh);
+        mNormalRefresh.setRefreshViewController(new MRefreshViewController(container.getContext(),mNormalRefresh,view));
         //mNormalRefresh.setRefresh(true);
         mNormalRefresh.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override

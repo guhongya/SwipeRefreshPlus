@@ -10,6 +10,7 @@ import android.widget.SimpleAdapter;
 
 import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplush.R;
+import com.gu.swiperefreshplush.extention.MRefreshViewController;
 
 import java.util.ArrayList;
 import java.util.HashMap;

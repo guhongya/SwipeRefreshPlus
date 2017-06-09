@@ -236,9 +236,12 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
 
     public void setLoadViewController(ILoadViewController controller) {
         this.mLoadViewController = controller;
-        removeView(mLoadMoreView);
+        detachViewFromParent(mLoadMoreView);
         mLoadMoreView = mLoadViewController.create();
+       // requestLayout();
+        measureChild(mLoadMoreView);
         addView(mLoadMoreView);
+        //forceLayout();
     }
 
     /**
@@ -250,7 +253,17 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         this.mRefreshController = controller;
         removeView(mRefreshView);
         mRefreshView = mRefreshController.create();
-        addView(mRefreshView);
+       switch (mRefreshController.getZIndex()){
+           case ZIndex.TOP:
+               addView(mRefreshView,0);
+               break;
+           case ZIndex.BOTTOM:
+               addView(mRefreshView,getChildCount());
+               break;
+           case ZIndex.NORMAL:
+               addView(mRefreshView);
+               break;
+       }
     }
 
     @Override
@@ -351,8 +364,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
                 getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
                 MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
                 getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
-        mRefreshView.measure(MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getWidth(), MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getHeight(), MeasureSpec.EXACTLY));
+        measureChild(mRefreshView);
+//        mRefreshView.measure(MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getWidth(), MeasureSpec.EXACTLY),
+//                MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getHeight(), MeasureSpec.EXACTLY));
         measureChild(mLoadMoreView);
         //measureChild(mNoMoreView);
         circleViewIndex = -1;
@@ -564,8 +578,8 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
             return;
         LayoutParams lp = view.getLayoutParams();
         int width, height;
-        width = getMeasureSpec(lp.width, getWidth());
-        height = getMeasureSpec(lp.height, mLoadViewController.getDefaultHeight());
+        width = getMeasureSpec(lp.width, getMeasuredWidth());
+        height = getMeasureSpec(lp.height, getMeasuredHeight());
         view.measure(width, height);
     }
 

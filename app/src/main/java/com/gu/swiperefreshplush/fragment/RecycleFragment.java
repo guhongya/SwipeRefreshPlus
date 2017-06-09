@@ -26,34 +26,35 @@ import com.gu.swiperefreshplush.extention.MRefreshViewController;
 import java.util.List;
 
 
-
 public class RecycleFragment extends Fragment implements DemoContact.View {
     private RecyclerView recycleContent;
 
     private SimpleRecycleAdapter recycleAdapter;
     private SwipeRefreshPlus swipeRefreshPlush;
     private List<Integer> datas;
-    int count=0;
-    int page=2;
+    int count = 0;
+    int page = 4;
     View noMoreView;
     DemoContact.Presenter presenter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        LogUtils.d("recycle created");
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_recycle, container, false);
-        recycleContent= (RecyclerView) view.findViewById(R.id.recycle_content);
-        swipeRefreshPlush= (SwipeRefreshPlus) view.findViewById(R.id.swipe_refresh);
-        swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext(),swipeRefreshPlush));
-        swipeRefreshPlush.setRefreshViewController(new MRefreshViewController(container.getContext(),swipeRefreshPlush,recycleContent));
+        View view = inflater.inflate(R.layout.fragment_recycle, container, false);
+        recycleContent = (RecyclerView) view.findViewById(R.id.recycle_content);
+        swipeRefreshPlush = (SwipeRefreshPlus) view.findViewById(R.id.swipe_refresh);
+        swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext(), swipeRefreshPlush));
         new DataPresenter(this);
         setHasOptionsMenu(true);
         iniView();
         return view;
     }
-    private void iniView(){
-       recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recycleAdapter=new SimpleRecycleAdapter();
+
+    private void iniView() {
+        recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recycleAdapter = new SimpleRecycleAdapter();
         recycleAdapter.setData(datas);
         recycleContent.setAdapter(recycleAdapter);
         swipeRefreshPlush.setRefreshColorResources(new int[]{R.color.colorPrimary});
@@ -68,7 +69,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                         swipeRefreshPlush.showNoMore(false);
                         LogUtils.d(swipeRefreshPlush.getLoadViewController().isLoading());
                     }
-                },1000);
+                }, 1000);
             }
 
             @Override
@@ -82,7 +83,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                     swipeRefreshPlush.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                           presenter.loadMore();
+                            presenter.loadMore();
                             swipeRefreshPlush.setLoadMore(false);
                         }
                     }, 1500);
@@ -90,10 +91,10 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
             }
         });
         noMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.item_no_more, null, false);
-        ViewGroup.LayoutParams layoutParams=new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        noMoreView.setPadding(10,10,10,10);
-        swipeRefreshPlush.setNoMoreView(noMoreView,layoutParams);
+        noMoreView.setPadding(10, 10, 10, 10);
+        swipeRefreshPlush.setNoMoreView(noMoreView, layoutParams);
     }
 
     @Override
@@ -103,27 +104,27 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
 
     @Override
     public void setPresenter(DemoContact.Presenter presenter) {
-        this.presenter=presenter;
+        this.presenter = presenter;
         presenter.bind();
-        datas=presenter.getData();
+        datas = presenter.getData();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.recycleview_menu,menu);
+        inflater.inflate(R.menu.recycleview_menu, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.liner_layout:
                 recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
                 break;
             case R.id.grid_layout:
-                recycleContent.setLayoutManager(new GridLayoutManager(getActivity(),2));
+                recycleContent.setLayoutManager(new GridLayoutManager(getActivity(), 2));
                 break;
             case R.id.staggered_grid_layout:
-                recycleContent.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
+                recycleContent.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
                 break;
         }
         return true;

@@ -20,8 +20,8 @@ import com.gu.swiperefreshplush.R;
 
 public class MRefreshViewController implements IRefreshViewController {
     private static final int DEFAULT_POSITION = 100;
-    private static final int DEFAULT_PULL_UP_DURATION = 200;
-    private static final int DEFAULT_PULL_DOWWN_DURATION = 300;
+    private static final int DEFAULT_PULL_UP_DURATION = 300;
+    private static final int DEFAULT_PULL_DOWWN_DURATION = 500;
     private int mOriginOffset;
     private int mTargetPosition;
     private int mCurrentOffsetTop;
@@ -106,7 +106,7 @@ public class MRefreshViewController implements IRefreshViewController {
     @Override
     public View create() {
         mRefreshView = new RefreshViewLayout(mContext);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mTargetPosition);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mRefreshView.setLayoutParams(params);
         mRefreshView.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary));
         mRefreshView.setDefaultThreshold(mTargetPosition);
@@ -123,10 +123,6 @@ public class MRefreshViewController implements IRefreshViewController {
         return mCurrentOffsetTop;
     }
 
-    @Override
-    public Size getRefreshViewSize() {
-        return new Size(mHeight, mWidth);
-    }
 
     @Override
     public boolean isRefresh() {
@@ -155,7 +151,7 @@ public class MRefreshViewController implements IRefreshViewController {
 
     @Override
     public void startProgress() {
-        setRefreshing(true,true);
+        //setRefreshing(true,true);
     }
 
     @Override

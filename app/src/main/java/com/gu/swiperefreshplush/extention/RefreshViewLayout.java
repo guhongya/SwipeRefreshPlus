@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.apkfuns.logutils.LogUtils;
@@ -38,19 +39,18 @@ public class RefreshViewLayout extends FrameLayout {
     public RefreshViewLayout(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setWillNotDraw(false);
+        mPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPath=new Path();
     }
 
     @Override
     public void setBackgroundColor(@ColorInt int color) {
         mBackgroundColor=color;
-        mPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPath=new Path();
         mPath.moveTo(0,mDefaultThreshold);
-        mPath.quadTo(300,1000,getWidth(),mDefaultThreshold);
+        mPath.quadTo(300,1000,800,mDefaultThreshold);
         mPath.setLastPoint(0,mDefaultThreshold);
-        mPaint.setColor(mBackgroundColor);
-        mPaint.setStyle(Paint.Style.FILL);
-        mPath=new Path();
+        mPaint.setColor(color);
     }
 
     public void setDefaultThreshold(int height){

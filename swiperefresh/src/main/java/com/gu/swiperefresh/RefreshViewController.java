@@ -21,6 +21,7 @@ import android.support.annotation.ColorInt;
 import android.support.v4.view.ViewCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
@@ -141,6 +142,7 @@ public class RefreshViewController implements IRefreshViewController {
         mCircleView.setImageDrawable(mProgress);
         mCircleView.setVisibility(View.GONE);
         moveToStart(1.0f);
+        mCircleView.setLayoutParams(new ViewGroup.LayoutParams(mCircleDiameter,mCircleDiameter));
         return mCircleView;
     }
 
@@ -173,9 +175,9 @@ public class RefreshViewController implements IRefreshViewController {
         mProgress.setAlpha(STARTING_PROGRESS_ALPHA);
     }
 
-    public Size getRefreshViewSize() {
-        return new Size(mCircleDiameter, mCircleDiameter);
-    }
+//    public Size getRefreshViewSize() {
+//        return new Size(mCircleDiameter, mCircleDiameter);
+//    }
 
     public boolean isRefresh() {
         return isRefresh;
