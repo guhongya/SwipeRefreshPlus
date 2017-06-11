@@ -9,6 +9,7 @@
 * 滑动到底部自动加载更多
 * 没有数据时，可显示自定义view
 * 支持AbsListView或NestChild的子类，如RecycleView,ListView  
+* 自持自定义加载更多view(可参考app中extention包中的LoadMoreController实现)
   
 ## 使用
 gradle:
@@ -20,7 +21,7 @@ gradle:
       } 
 	}
 	dependencies {
-	        compile 'com.github.guhongya:SwipeRefreshPlush:1.0.5'
+	        compile 'com.github.guhongya:SwipeRefreshPlush:1.0.5-a'
 	}
   
 设置监听  
@@ -49,6 +50,11 @@ swipeRefreshPlush.setNoMoreView(noMoreView,layoutParams);
 	swipeRefreshPlush.showNoMore(false);//设置是否显示nomoreView,设置为true是拖动到底部将不再显示加载更多
 	swipeRefreshPlush.setLoadMore(false);//设置是否显示加载更多
 	swipeRefreshPlush.setScrollMode(@SwipeRefreshMode int mode)//设置模式
+	swipeRefreshPlush.setLoadViewController(new LoadMoreController())//设置自定义loadMoreController
+
+## todo
+* 自定义RefreshViewController
+
 ## Licence
 	    
 	Licensed under the Apache License, Version 2.0 (the "License");

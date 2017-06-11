@@ -46,6 +46,7 @@ class CircleImageView extends ImageView {
 
     private Animation.AnimationListener mListener;
     int mShadowRadius;
+
     CircleImageView(Context context, int color) {
         super(context);
         final float density = getContext().getResources().getDisplayMetrics().density;
@@ -120,7 +121,8 @@ class CircleImageView extends ImageView {
             ((ShapeDrawable) getBackground()).getPaint().setColor(color);
         }
     }
-//    @Override
+
+    //    @Override
 //    public void setPadding(int left,int top,int right,int bottom){
 //        super.setPadding(left+mShadowRadius,top+mShadowRadius,right+mShadowRadius,bottom+mShadowRadius);
 //    }
@@ -146,12 +148,12 @@ class CircleImageView extends ImageView {
             final int viewWidth = CircleImageView.this.getWidth();
             final int viewHeight = CircleImageView.this.getHeight();
             canvas.drawCircle(viewWidth / 2, viewHeight / 2, viewWidth / 2, mShadowPaint);
-            canvas.drawCircle(viewWidth / 2, viewHeight / 2, viewWidth / 2 -mShadowRadius, paint);
+            canvas.drawCircle(viewWidth / 2, viewHeight / 2, viewWidth / 2 - mShadowRadius, paint);
         }
 
         private void updateRadialGradient(int diameter) {
             mRadialGradient = new RadialGradient(diameter / 2, diameter / 2,
-                    mShadowRadius, new int[] { FILL_SHADOW_COLOR, Color.TRANSPARENT },
+                    mShadowRadius, new int[]{FILL_SHADOW_COLOR, Color.TRANSPARENT},
                     null, Shader.TileMode.CLAMP);
             mShadowPaint.setShader(mRadialGradient);
         }

@@ -4,7 +4,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolVersion
     defaultConfig {
-        applicationId "com.gu.swiperefreshplush"
+        applicationId "com.gu.swiperefreshplus"
         minSdkVersion 11
         targetSdkVersion 24
         versionCode 1

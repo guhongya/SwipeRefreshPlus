@@ -1,4 +1,4 @@
-<com.gu.swiperefresh.SwipeRefreshPlush android:layout_width="match_parent"
+<com.gu.swiperefresh.SwipeRefreshPlus android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_swipe_refresh"
@@ -8,6 +8,6 @@
     android:layout_height="match_parent"
     android:id="@+id/list_content"
     android:divider="@null"></ListView>
-    </com.gu.swiperefresh.SwipeRefreshPlush>
+    </com.gu.swiperefresh.SwipeRefreshPlus>
 
 

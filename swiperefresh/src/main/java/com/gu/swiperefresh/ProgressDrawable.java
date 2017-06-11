@@ -50,7 +50,7 @@ import java.util.ArrayList;
  * Created by Guhy on 2016/11/15.
  * copy from android support library
  */
-public class ProgressDrawable extends Drawable{
+public class ProgressDrawable extends Drawable {
     private static final Interpolator LINEAR_INTERPOLATOR = new LinearInterpolator();
     static final Interpolator MATERIAL_INTERPOLATOR = new FastOutSlowInInterpolator();
 
@@ -58,7 +58,8 @@ public class ProgressDrawable extends Drawable{
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({LARGE, DEFAULT})
-    public @interface ProgressDrawableSize {}
+    public @interface ProgressDrawableSize {
+    }
 
     // Maps to ProgressBar.Large style
     static final int LARGE = 0;
@@ -75,7 +76,7 @@ public class ProgressDrawable extends Drawable{
     private static final float CENTER_RADIUS_LARGE = 12.5f;
     private static final float STROKE_WIDTH_LARGE = 3f;
 
-    private static final int[] COLORS = new int[] {
+    private static final int[] COLORS = new int[]{
             Color.BLACK
     };
 
@@ -87,26 +88,38 @@ public class ProgressDrawable extends Drawable{
     private static final float END_TRIM_START_DELAY_OFFSET = 0.5f;
     private static final float START_TRIM_DURATION_OFFSET = 0.5f;
 
-    /** The duration of a single progress spin in milliseconds. */
+    /**
+     * The duration of a single progress spin in milliseconds.
+     */
     private static final int ANIMATION_DURATION = 1332;
 
-    /** The number of points in the progress "star". */
+    /**
+     * The number of points in the progress "star".
+     */
     private static final float NUM_POINTS = 5f;
     /** The list of animators operating on this drawable. */
-  //  private final ArrayList<Animation> mAnimators = new ArrayList<Animation>();
+    //  private final ArrayList<Animation> mAnimators = new ArrayList<Animation>();
 
-    /** The indicator ring, used to manage animation state. */
+    /**
+     * The indicator ring, used to manage animation state.
+     */
     private final Ring mRing;
 
-    /** Canvas rotation in degrees. */
+    /**
+     * Canvas rotation in degrees.
+     */
     private float mRotation;
 
-    /** Layout info for the arrowhead in dp */
+    /**
+     * Layout info for the arrowhead in dp
+     */
     private static final int ARROW_WIDTH = 10;
     private static final int ARROW_HEIGHT = 5;
     private static final float ARROW_OFFSET_ANGLE = 5;
 
-    /** Layout info for the arrowhead for the large spinner in dp */
+    /**
+     * Layout info for the arrowhead for the large spinner in dp
+     */
     private static final int ARROW_WIDTH_LARGE = 12;
     private static final int ARROW_HEIGHT_LARGE = 6;
     private static final float MAX_PROGRESS_ARC = .8f;
@@ -148,7 +161,6 @@ public class ProgressDrawable extends Drawable{
     /**
      * Set the overall size for the progress spinner. This updates the radius
      * and stroke width of the ring.
-     *
      */
     public void updateSizes(@ProgressDrawableSize int size) {
         if (size == LARGE) {
@@ -178,7 +190,7 @@ public class ProgressDrawable extends Drawable{
      * Set the start and end trim for the progress spinner arc.
      *
      * @param startAngle start angle
-     * @param endAngle end angle
+     * @param endAngle   end angle
      */
     public void setStartEndTrim(float startAngle, float endAngle) {
         mRing.setStartTrim(startAngle);
@@ -275,27 +287,29 @@ public class ProgressDrawable extends Drawable{
 //        return false;
 //    }
 
-   // @Override
+    // @Override
     public void start() {
-       // mAnimation.resume();
+        // mAnimation.resume();
         mRing.storeOriginals();
         // Already showing some part of the ring
         if (mRing.getEndTrim() != mRing.getStartTrim()) {
             mFinishing = true;
             mAnimation.setDuration(ANIMATION_DURATION / 2);
             mAnimation.start();
-           // mParent.st(mAnimation);
+            // mParent.st(mAnimation);
         } else {
             mRing.setColorIndex(0);
             mRing.resetOriginals();
             mAnimation.setDuration(ANIMATION_DURATION);
             mAnimation.start();
-           // mParent.startAnimation(mAnimation);
+            // mParent.startAnimation(mAnimation);
         }
     }
-    public boolean isRunning(){
+
+    public boolean isRunning() {
         return mAnimation.isRunning();
     }
+
     //@Override
     public void stop() {
         //mParent.clearAnimation();
@@ -364,13 +378,14 @@ public class ProgressDrawable extends Drawable{
                 + ((targetRotation - ring.getStartingRotation()) * interpolatedTime);
         ring.setRotation(rotation);
     }
-    private void setupAnimators(){
+
+    private void setupAnimators() {
         final Ring ring = mRing;
-        final ValueAnimator animator =ObjectAnimator.ofFloat(0f,1f);
+        final ValueAnimator animator = ObjectAnimator.ofFloat(0f, 1f);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                float interpolatedTime=Float.valueOf(animation.getAnimatedValue().toString());
+                float interpolatedTime = Float.valueOf(animation.getAnimatedValue().toString());
                 if (mFinishing) {
                     applyFinishTranslation(interpolatedTime, ring);
                 } else {
@@ -521,7 +536,7 @@ public class ProgressDrawable extends Drawable{
         /**
          * Set the dimensions of the arrowhead.
          *
-         * @param width Width of the hypotenuse of the arrow head
+         * @param width  Width of the hypotenuse of the arrow head
          * @param height Height of the arrow point
          */
         public void setArrowDimensions(float width, float height) {
@@ -611,7 +626,7 @@ public class ProgressDrawable extends Drawable{
 
         /**
          * @param index Index into the color array of the color to display in
-         *            the progress spinner.
+         *              the progress spinner.
          */
         public void setColorIndex(int index) {
             mColorIndex = index;
@@ -733,7 +748,7 @@ public class ProgressDrawable extends Drawable{
 
         /**
          * @param centerRadius Inner radius in px of the circle the progress
-         *            spinner arc traces.
+         *                     spinner arc traces.
          */
         public void setCenterRadius(double centerRadius) {
             mRingCenterRadius = centerRadius;
