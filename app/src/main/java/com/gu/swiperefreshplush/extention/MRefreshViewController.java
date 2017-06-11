@@ -41,44 +41,51 @@ public class MRefreshViewController implements IRefreshViewController {
     private RefreshViewLayout mRefreshView;
     private SwipeRefreshPlus.OnRefreshListener mOnRefreshListener;
 
-    private Animation mPullDownAnimation = new Animation() {
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-
-
-        }
-    };
+    private ValueAnimator mPullDownAnimation ;
     private ValueAnimator mPullUpAnimation;
 
-    private Animation.AnimationListener mPullDownListener = new Animation.AnimationListener() {
+
+    private Animator.AnimatorListener mPullUpListener = new  Animator.AnimatorListener(){
+
         @Override
-        public void onAnimationStart(Animation animation) {
+        public void onAnimationStart(Animator animation) {
+            mRefreshView.reset();
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
 
         }
 
         @Override
-        public void onAnimationEnd(Animation animation) {
+        public void onAnimationCancel(Animator animation) {
 
         }
 
         @Override
-        public void onAnimationRepeat(Animation animation) {
+        public void onAnimationRepeat(Animator animation) {
 
         }
     };
-    private Animation.AnimationListener mPullUpListener = new Animation.AnimationListener() {
+    private Animator.AnimatorListener mPullDownListener=new Animator.AnimatorListener() {
+
         @Override
-        public void onAnimationStart(Animation animation) {
+        public void onAnimationStart(Animator animation) {
 
         }
 
         @Override
-        public void onAnimationEnd(Animation animation) {
+        public void onAnimationEnd(Animator animation) {
 
         }
 
         @Override
-        public void onAnimationRepeat(Animation animation) {
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
 
         }
     };
@@ -131,7 +138,7 @@ public class MRefreshViewController implements IRefreshViewController {
             mParent.scrollTo(0, (int) -overscrollTop);
             mCurrentOffsetTop = (int) (mOriginOffset+overscrollTop);
         } else {
-            mRefreshView.pullDown((int) overscrollTop);
+            mRefreshView.pullDown((int) overscrollTop-mTargetPosition);
         }
         return 0;
     }
@@ -182,11 +189,21 @@ public class MRefreshViewController implements IRefreshViewController {
     }
 
     private void pullDownAnimation() {
-        mPullDownAnimation.reset();
-        mPullDownAnimation.setDuration(DEFAULT_PULL_DOWWN_DURATION);
-        mPullDownAnimation.setAnimationListener(mPullDownListener);
-        mRefreshView.clearAnimation();
-        mRefreshView.startAnimation(mPullDownAnimation);
+        if(mPullDownAnimation!=null){
+            mPullDownAnimation.cancel();
+        }
+        mPullDownAnimation=ValueAnimator.ofInt(mParent.getTop(),mTargetPosition);
+        mPullDownAnimation
+                .setDuration(DEFAULT_PULL_DOWWN_DURATION)
+                .addListener(mPullDownListener);
+        mPullDownAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mParent.scrollTo(0, (int) animation.getAnimatedValue());
+                mCurrentOffsetTop=mRefreshView.getTop();
+            }
+        });
+        mPullDownAnimation.start();
     }
 
     private void pullUpAnimation() {
@@ -203,50 +220,8 @@ public class MRefreshViewController implements IRefreshViewController {
                 mCurrentOffsetTop=mRefreshView.getTop();
             }
         });
-        mPullUpAnimation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                mRefreshView.reset();
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        if(mTotalDiatance>mTargetPosition){
-            AnimatorSet animatorSet=new AnimatorSet();
-            ValueAnimator dampAnimator=ValueAnimator.ofFloat(0,10);
-            dampAnimator.setDuration(500);
-            dampAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-            dampAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-
-                    float value= (float) animation.getAnimatedValue();
-                    LogUtils.d(value);
-                    double damp=(Math.cos(value)+0.8)/Math.pow(1.2,value);
-                    double target=mTargetPosition+(mTotalDiatance-mTargetPosition)*damp;
-                    LogUtils.d(target);
-                    mRefreshView.pullDown((int) target);
-                }
-            });
-            animatorSet.play(dampAnimator).before(mPullUpAnimation);
-            animatorSet.start();
-
-        }else {
-            mPullUpAnimation.start();
-        }
+        mPullUpAnimation.addListener(mPullUpListener);
+        mPullUpAnimation.start();
 
     }
 
