@@ -623,7 +623,7 @@ public class SwipeRefreshPlush extends ViewGroup implements NestedScrollingParen
             mScroller.abortAnimation();
             return false;
         }
-        //mPullState = STATE_FLING;
+
         mScroller.abortAnimation();
         mScroller.computeScrollOffset();
         if (canChildScrollUp() && canLoadMore()) {
