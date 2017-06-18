@@ -22,16 +22,16 @@ public interface IRefreshViewController {
 
     boolean isRefresh();
 
-    int showPullRefresh(float overscrollTop);
+    void showPullRefresh(float overscrollTop);
 
     /**
      * 根据下拉距离，判断是否应该刷新
      *
      * @param overscrollTop 下拉总距离
      */
-    float finishPullRefresh(float overscrollTop);
+    void finishPullRefresh(float overscrollTop);
 
-    void startProgress();
+    void startPulling();
 
     void setTargetOffsetTopAndBottom(int i, boolean b);
 

@@ -171,7 +171,7 @@ public class RefreshViewController implements IRefreshViewController {
         mProgress.setColorSchemeColors(colors);
     }
 
-    public void startProgress() {
+    public void startPulling() {
         mProgress.setAlpha(STARTING_PROGRESS_ALPHA);
     }
 
@@ -184,7 +184,7 @@ public class RefreshViewController implements IRefreshViewController {
     }
 
     //下拉时，refresh动画
-    public int showPullRefresh(float overscrollTop) {
+    public void showPullRefresh(float overscrollTop) {
         mProgress.showArrow(true);
         float originalDragPercent = overscrollTop / mTotalDragDistance;
 
@@ -229,7 +229,6 @@ public class RefreshViewController implements IRefreshViewController {
         float rotation = (-0.25f + .4f * adjustedPercent + tensionPercent * 2) * .5f;
         mProgress.setProgressRotation(rotation);
         setTargetOffsetTopAndBottom(targetY - mCurrentTargetOffsetTop, true /* requires update */);
-        return 0;
     }
 
     public void setTargetOffsetTopAndBottom(int offset, boolean requiresUpdate) {
@@ -250,7 +249,7 @@ public class RefreshViewController implements IRefreshViewController {
      *
      * @param overscrollTop
      */
-    public float finishPullRefresh(float overscrollTop) {
+    public void finishPullRefresh(float overscrollTop) {
         if (overscrollTop > mTotalDragDistance) {
             setRefreshing(true, true /* notify */);
         } else {
@@ -281,7 +280,6 @@ public class RefreshViewController implements IRefreshViewController {
             animateOffsetToStartPosition(mCurrentTargetOffsetTop, listener);
             mProgress.showArrow(false);
         }
-        return 0;
     }
 
     public void setRefreshListener(SwipeRefreshPlus.OnRefreshListener scrollListener) {

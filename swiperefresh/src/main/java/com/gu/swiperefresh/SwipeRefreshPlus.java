@@ -237,6 +237,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         // requestLayout();
         measureChild(mLoadMoreView);
         addView(mLoadMoreView);
+        if (mListener!=null){
+            mLoadViewController.setRefreshListener(mListener);
+        }
         //forceLayout();
     }
 
@@ -245,7 +248,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     }
 
     /**
-     * 还没有完成
+     * todo
      *
      * @param controller
      */
@@ -264,6 +267,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
             case ZIndex.NORMAL:
                 addView(mRefreshView);
                 break;
+        }
+        if(mListener!=null){
+            mRefreshController.setRefreshListener(mListener);
         }
     }
 
@@ -612,7 +618,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
             if (!canChildScrollUp()) {
                 mInitialMotionY = mInitialDownY + mTouchSlop;
                 mIsBeingDragUp = true;
-                mRefreshController.startProgress();
+                mRefreshController.startPulling();
             } else if (mLoadViewController.getCurrentHeight() > 0) {
                 hideLoadMoreView((int) yDiff);
             }
