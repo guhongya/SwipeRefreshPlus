@@ -1,22 +1,16 @@
 package com.gu.swiperefreshplush.extention;
 
 import android.animation.Animator;
-import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Transformation;
 
 import com.apkfuns.logutils.LogUtils;
 import com.gu.swiperefresh.IRefreshViewController;
 import com.gu.swiperefresh.SwipeRefreshPlus;
-import com.gu.swiperefresh.Utils.Size;
 import com.gu.swiperefresh.ZIndex;
 import com.gu.swiperefreshplush.R;
 
@@ -36,7 +30,7 @@ public class MRefreshViewController implements IRefreshViewController {
     private View mTarget;
     private boolean refreshing;
     private boolean mNotify;
-    private float mTotalDiatance;
+    private float mTotalDragDiatance;
 
     private RefreshViewLayout mRefreshView;
     private SwipeRefreshPlus.OnRefreshListener mOnRefreshListener;
@@ -49,12 +43,12 @@ public class MRefreshViewController implements IRefreshViewController {
 
         @Override
         public void onAnimationStart(Animator animation) {
-            mRefreshView.reset();
+
         }
 
         @Override
         public void onAnimationEnd(Animator animation) {
-
+            reset();
         }
 
         @Override
@@ -90,6 +84,7 @@ public class MRefreshViewController implements IRefreshViewController {
         }
     };
 
+
     public MRefreshViewController(Context context, View parent, View target) {
         mContext = context;
         mParent = parent;
@@ -98,6 +93,7 @@ public class MRefreshViewController implements IRefreshViewController {
         mTargetPosition = (int) (DEFAULT_POSITION * metrics.density);
         mCurrentOffsetTop = -mTargetPosition;
         mOriginOffset = mCurrentOffsetTop;
+        innitAnimation();
 
     }
 
@@ -133,30 +129,28 @@ public class MRefreshViewController implements IRefreshViewController {
     }
 
     @Override
-    public int showPullRefresh(float overscrollTop) {
+    public void showPullRefresh(float overscrollTop) {
+        mTotalDragDiatance =overscrollTop;
         if (overscrollTop <= mTargetPosition) {
             mParent.scrollTo(0, (int) -overscrollTop);
             mCurrentOffsetTop = (int) (mOriginOffset+overscrollTop);
         } else {
             mRefreshView.pullDown((int) overscrollTop-mTargetPosition);
         }
-        return 0;
     }
 
     @Override
-    public float finishPullRefresh(float overscrollTop) {
-
-        mTotalDiatance=overscrollTop;
+    public void finishPullRefresh(float overscrollTop) {
+        mTotalDragDiatance =overscrollTop;
         if (overscrollTop > mTargetPosition) {
-            pullUpAnimation();
+            setRefreshing(true,true);
         } else {
             pullUpAnimation();
         }
-        return 0;
     }
 
     @Override
-    public void startProgress() {
+    public void startPulling() {
         //setRefreshing(true,true);
     }
 
@@ -184,15 +178,11 @@ public class MRefreshViewController implements IRefreshViewController {
             mNotify = false;
             pullDownAnimation();
         } else {
-            setRefreshing(refreshing, false /* notify */);
+            setRefreshing(refresh, false /* notify */);
         }
     }
-
-    private void pullDownAnimation() {
-        if(mPullDownAnimation!=null){
-            mPullDownAnimation.cancel();
-        }
-        mPullDownAnimation=ValueAnimator.ofInt(mParent.getTop(),mTargetPosition);
+    private void innitAnimation(){
+        mPullDownAnimation=new ValueAnimator();
         mPullDownAnimation
                 .setDuration(DEFAULT_PULL_DOWWN_DURATION)
                 .addListener(mPullDownListener);
@@ -203,14 +193,8 @@ public class MRefreshViewController implements IRefreshViewController {
                 mCurrentOffsetTop=mRefreshView.getTop();
             }
         });
-        mPullDownAnimation.start();
-    }
 
-    private void pullUpAnimation() {
-        if(mPullUpAnimation!=null){
-            mPullUpAnimation.cancel();
-        }
-        mPullUpAnimation = ValueAnimator.ofInt(-mParent.getTop(), 0);
+        mPullUpAnimation = new ValueAnimator();
         mPullUpAnimation.setDuration(DEFAULT_PULL_UP_DURATION);
         mPullUpAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -221,21 +205,87 @@ public class MRefreshViewController implements IRefreshViewController {
             }
         });
         mPullUpAnimation.addListener(mPullUpListener);
+    }
+    private void pullDownAnimation() {
+        if(mPullDownAnimation.isRunning()){
+            mPullDownAnimation.end();
+        }
+        mPullDownAnimation.setIntValues(mParent.getTop(),mTargetPosition);
+        mPullDownAnimation.start();
+    }
+
+    private void pullUpAnimation() {
+        LogUtils.d("pull up");
+       if(mPullUpAnimation.isRunning()){
+           mPullUpAnimation.end();
+       }
+       mPullUpAnimation.setIntValues(-mParent.getTop(),0);
         mPullUpAnimation.start();
 
     }
 
     private void setRefreshing(boolean refresh, final boolean notify) {
+        LogUtils.d(refresh);
         if (refreshing != refresh) {
             mNotify = notify;
-            // ensureTarget();
             refreshing = refresh;
             if (refreshing) {
-                // animateOffsetToCorrectPosition(mCurrentTargetOffsetTop, mRefreshListener);
+                 animateOffsetToCorrectPosition();
             } else {
-                mRefreshView.reset();
-                pullUpAnimation();
+                mRefreshView.reset(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        pullUpAnimation();
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
             }
+        }
+    }
+
+    private void animateOffsetToCorrectPosition() {
+        LogUtils.d("animateOffsetToCorrectPosition");
+        if(mTotalDragDiatance>=mTargetPosition) {
+            mRefreshView.reset(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if(mNotify&&mOnRefreshListener!=null){
+                        mOnRefreshListener.onPullDownToRefresh();
+                    }
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }else{
+            pullDownAnimation();
         }
     }
 

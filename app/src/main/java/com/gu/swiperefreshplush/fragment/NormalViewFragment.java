@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.apkfuns.logutils.LogUtils;
 import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplush.R;
 import com.gu.swiperefreshplush.extention.MRefreshViewController;
@@ -36,6 +37,7 @@ public class NormalViewFragment extends Fragment {
                 mNormalRefresh.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        LogUtils.d("refresh");
                        mNormalRefresh.setRefresh(false);
                     }
                 },5000);

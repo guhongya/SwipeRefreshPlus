@@ -1,5 +1,6 @@
 package com.gu.swiperefreshplush.extention;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
@@ -40,6 +41,30 @@ public class RefreshViewLayout extends FrameLayout {
     private Paint mPaint;
     private Path mPath;
     private Paint mBkgPaint;
+    private ValueAnimator dampAnimator;
+    private int mTotalOffset;
+    private Animator.AnimatorListener mDampListener=new Animator.AnimatorListener() {
+        @Override
+        public void onAnimationStart(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            reset();
+            mTotalOffset=0;
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
+    };
 
     public RefreshViewLayout(@NonNull Context context) {
         this(context, null);
@@ -56,6 +81,7 @@ public class RefreshViewLayout extends FrameLayout {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
         mPath = new Path();
+        initAnimation();
     }
 
     @Override
@@ -71,25 +97,41 @@ public class RefreshViewLayout extends FrameLayout {
     }
 
     public void pullDown(int offset) {
+        mTotalOffset=offset;
         mPath.reset();
         mPath.moveTo(0, 0);
         mPath.lineTo(0,mDefaultThreshold);
-        mPath.quadTo(getWidth() / 2, (mDefaultThreshold+offset) * 1.4f, getWidth(), mDefaultThreshold);
+        mPath.quadTo(getWidth() / 2, mDefaultThreshold+offset * 1.6f, getWidth(), mDefaultThreshold);
         mPath.lineTo(getWidth(),0);
         postInvalidate();
-        //mPath.setLastPoint(0,mDefaultThreshold);
-        //postInvalidate(0, mDefaultThreshold, getWidth(), getHeight());
     }
 
-    public void reset() {
+    public void reset(Animator.AnimatorListener listener) {
+        if(mTotalOffset>0){
+            if(dampAnimator.isRunning()){
+                dampAnimator.cancel();
+            }
+            dampAnimator.addListener(listener);
+            dampAnimator.start();
+        }else{
+            reset();
+            listener.onAnimationEnd(dampAnimator);
+        }
+       // mPath.reset();
+       // postInvalidate(0, mDefaultThreshold, getWidth(), getHeight());
+    }
+    private void reset(){
         mPath.reset();
-        //postInvalidate();
-        postInvalidate(0, mDefaultThreshold, getWidth(), getHeight());
-    }
+        mPath.moveTo(0,0);
+        mPath.lineTo(0,mDefaultThreshold);
+        mPath.lineTo(getWidth(),mDefaultThreshold);
+        mPath.lineTo(getWidth(),0);
+        postInvalidate();
+       // postInvalidate(0, mDefaultThreshold, getWidth(), getHeight());
 
-    public void startProgress(final float totalDistance){
-        AnimatorSet animatorSet=new AnimatorSet();
-        ValueAnimator dampAnimator=ValueAnimator.ofFloat(0,10);
+    }
+    private void initAnimation(){
+        dampAnimator=ValueAnimator.ofFloat(0,10);
         dampAnimator.setDuration(1000);
         dampAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         dampAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -97,24 +139,27 @@ public class RefreshViewLayout extends FrameLayout {
             public void onAnimationUpdate(ValueAnimator animation) {
 
                 float value= (float) animation.getAnimatedValue();
-                LogUtils.d(value);
-                double damp=(Math.cos(value))/Math.pow(1.2,value);
-                double offset=(totalDistance-mDefaultThreshold)*damp;
-                LogUtils.d(offset);
+                double damp=(Math.cos(value))/(Math.pow(1.2,value)+1);
+                double offset=(mTotalOffset-mDefaultThreshold)*damp;
                 pullDown((int) offset);
             }
         });
-        animatorSet.play(dampAnimator);
-        animatorSet.start();
+        dampAnimator.addListener(mDampListener);
     }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        mPath.moveTo(0,0);
+        mPath.lineTo(0,mDefaultThreshold);
+        mPath.lineTo(right,mDefaultThreshold);
+        mPath.lineTo(right,0);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //canvas.drawRect(0, 0, getWidth(), mDefaultThreshold, mBkgPaint);
-
         canvas.drawPath(mPath, mPaint);
-        //mPaint.setColorFilter(new PorterDuffColorFilter(mBackgroundColor, PorterDuff.Mode.XOR));
-        //canvas.drawPath(mPath,mPaint);
     }
 
 }
