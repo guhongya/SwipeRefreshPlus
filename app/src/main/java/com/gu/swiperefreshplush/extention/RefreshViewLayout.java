@@ -1,30 +1,16 @@
 package com.gu.swiperefreshplush.extention;
 
 import android.animation.Animator;
-import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.Xfermode;
-import android.os.Build;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 
@@ -43,28 +29,7 @@ public class RefreshViewLayout extends FrameLayout {
     private Paint mBkgPaint;
     private ValueAnimator dampAnimator;
     private int mTotalOffset;
-    private Animator.AnimatorListener mDampListener=new Animator.AnimatorListener() {
-        @Override
-        public void onAnimationStart(Animator animation) {
-
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            reset();
-            mTotalOffset=0;
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-
-        }
-    };
+    private int mResertFrom;
 
     public RefreshViewLayout(@NonNull Context context) {
         this(context, null);
@@ -106,7 +71,9 @@ public class RefreshViewLayout extends FrameLayout {
         postInvalidate();
     }
 
-    public void reset(Animator.AnimatorListener listener) {
+    public void animatorToCurrentPosition(Animator.AnimatorListener listener) {
+        dampAnimator.removeAllListeners();
+        mResertFrom=mTotalOffset;
         if(mTotalOffset>0){
             if(dampAnimator.isRunning()){
                 dampAnimator.cancel();
@@ -117,10 +84,10 @@ public class RefreshViewLayout extends FrameLayout {
             reset();
             listener.onAnimationEnd(dampAnimator);
         }
-       // mPath.reset();
+       // mPath.animatorToCurrentPosition();
        // postInvalidate(0, mDefaultThreshold, getWidth(), getHeight());
     }
-    private void reset(){
+    public void reset(){
         mPath.reset();
         mPath.moveTo(0,0);
         mPath.lineTo(0,mDefaultThreshold);
@@ -131,20 +98,21 @@ public class RefreshViewLayout extends FrameLayout {
 
     }
     private void initAnimation(){
-        dampAnimator=ValueAnimator.ofFloat(0,10);
-        dampAnimator.setDuration(1000);
+        dampAnimator=ValueAnimator.ofFloat(0,11);
+        dampAnimator.setDuration(500);
         dampAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         dampAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
 
                 float value= (float) animation.getAnimatedValue();
-                double damp=(Math.cos(value))/(Math.pow(1.2,value)+1);
-                double offset=(mTotalOffset-mDefaultThreshold)*damp;
+                double damp=(Math.cos(value))/Math.pow(1.2,value);
+                LogUtils.d(damp);
+                double offset=mResertFrom*damp;
                 pullDown((int) offset);
             }
         });
-        dampAnimator.addListener(mDampListener);
+       // dampAnimator.addListener(mDampListener);
     }
 
     @Override

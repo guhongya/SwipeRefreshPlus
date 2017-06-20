@@ -35,11 +35,11 @@ public class MRefreshViewController implements IRefreshViewController {
     private RefreshViewLayout mRefreshView;
     private SwipeRefreshPlus.OnRefreshListener mOnRefreshListener;
 
-    private ValueAnimator mPullDownAnimation ;
+    private ValueAnimator mPullDownAnimation;
     private ValueAnimator mPullUpAnimation;
 
 
-    private Animator.AnimatorListener mPullUpListener = new  Animator.AnimatorListener(){
+    private Animator.AnimatorListener mPullUpListener = new Animator.AnimatorListener() {
 
         @Override
         public void onAnimationStart(Animator animation) {
@@ -61,7 +61,7 @@ public class MRefreshViewController implements IRefreshViewController {
 
         }
     };
-    private Animator.AnimatorListener mPullDownListener=new Animator.AnimatorListener() {
+    private Animator.AnimatorListener mPullDownListener = new Animator.AnimatorListener() {
 
         @Override
         public void onAnimationStart(Animator animation) {
@@ -70,7 +70,7 @@ public class MRefreshViewController implements IRefreshViewController {
 
         @Override
         public void onAnimationEnd(Animator animation) {
-
+            mRefreshView.reset();
         }
 
         @Override
@@ -99,6 +99,7 @@ public class MRefreshViewController implements IRefreshViewController {
 
     @Override
     public void reset() {
+        mRefreshView.reset();
         mCurrentOffsetTop = -mTargetPosition;
     }
 
@@ -130,20 +131,20 @@ public class MRefreshViewController implements IRefreshViewController {
 
     @Override
     public void showPullRefresh(float overscrollTop) {
-        mTotalDragDiatance =overscrollTop;
+        mTotalDragDiatance = overscrollTop;
         if (overscrollTop <= mTargetPosition) {
             mParent.scrollTo(0, (int) -overscrollTop);
-            mCurrentOffsetTop = (int) (mOriginOffset+overscrollTop);
+            mCurrentOffsetTop = (int) (mOriginOffset + overscrollTop);
         } else {
-            mRefreshView.pullDown((int) overscrollTop-mTargetPosition);
+            mRefreshView.pullDown((int) overscrollTop - mTargetPosition);
         }
     }
 
     @Override
     public void finishPullRefresh(float overscrollTop) {
-        mTotalDragDiatance =overscrollTop;
+        mTotalDragDiatance = overscrollTop;
         if (overscrollTop > mTargetPosition) {
-            setRefreshing(true,true);
+            setRefreshing(true, true);
         } else {
             pullUpAnimation();
         }
@@ -181,8 +182,9 @@ public class MRefreshViewController implements IRefreshViewController {
             setRefreshing(refresh, false /* notify */);
         }
     }
-    private void innitAnimation(){
-        mPullDownAnimation=new ValueAnimator();
+
+    private void innitAnimation() {
+        mPullDownAnimation = new ValueAnimator();
         mPullDownAnimation
                 .setDuration(DEFAULT_PULL_DOWWN_DURATION)
                 .addListener(mPullDownListener);
@@ -190,7 +192,7 @@ public class MRefreshViewController implements IRefreshViewController {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mParent.scrollTo(0, (int) animation.getAnimatedValue());
-                mCurrentOffsetTop=mRefreshView.getTop();
+                mCurrentOffsetTop = mRefreshView.getTop();
             }
         });
 
@@ -199,27 +201,27 @@ public class MRefreshViewController implements IRefreshViewController {
         mPullUpAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                LogUtils.d(animation.getAnimatedValue());
                 mParent.scrollTo(0, (int) animation.getAnimatedValue());
-                mCurrentOffsetTop=mRefreshView.getTop();
+                mCurrentOffsetTop = mRefreshView.getTop();
             }
         });
         mPullUpAnimation.addListener(mPullUpListener);
     }
+
     private void pullDownAnimation() {
-        if(mPullDownAnimation.isRunning()){
+        if (mPullDownAnimation.isRunning()) {
             mPullDownAnimation.end();
         }
-        mPullDownAnimation.setIntValues(mParent.getTop(),mTargetPosition);
+        mPullDownAnimation.setIntValues(mParent.getTop(), mTargetPosition);
         mPullDownAnimation.start();
     }
 
     private void pullUpAnimation() {
         LogUtils.d("pull up");
-       if(mPullUpAnimation.isRunning()){
-           mPullUpAnimation.end();
-       }
-       mPullUpAnimation.setIntValues(-mParent.getTop(),0);
+        if (mPullUpAnimation.isRunning()) {
+            mPullUpAnimation.end();
+        }
+        mPullUpAnimation.setIntValues(-mParent.getTop(), 0);
         mPullUpAnimation.start();
 
     }
@@ -227,12 +229,12 @@ public class MRefreshViewController implements IRefreshViewController {
     private void setRefreshing(boolean refresh, final boolean notify) {
         LogUtils.d(refresh);
         if (refreshing != refresh) {
-            mNotify = notify;
             refreshing = refresh;
+            mNotify = notify;
             if (refreshing) {
-                 animateOffsetToCorrectPosition();
+                animateOffsetToCorrectPosition();
             } else {
-                mRefreshView.reset(new Animator.AnimatorListener() {
+                mRefreshView.animatorToCurrentPosition(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
 
@@ -260,8 +262,8 @@ public class MRefreshViewController implements IRefreshViewController {
 
     private void animateOffsetToCorrectPosition() {
         LogUtils.d("animateOffsetToCorrectPosition");
-        if(mTotalDragDiatance>=mTargetPosition) {
-            mRefreshView.reset(new Animator.AnimatorListener() {
+        if (mTotalDragDiatance >= mTargetPosition) {
+            mRefreshView.animatorToCurrentPosition(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
 
@@ -269,7 +271,7 @@ public class MRefreshViewController implements IRefreshViewController {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if(mNotify&&mOnRefreshListener!=null){
+                    if (mNotify && mOnRefreshListener != null) {
                         mOnRefreshListener.onPullDownToRefresh();
                     }
                 }
@@ -284,7 +286,7 @@ public class MRefreshViewController implements IRefreshViewController {
 
                 }
             });
-        }else{
+        } else {
             pullDownAnimation();
         }
     }

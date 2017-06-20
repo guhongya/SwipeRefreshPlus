@@ -34,10 +34,10 @@ public class NormalViewFragment extends Fragment {
         mNormalRefresh.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
+                LogUtils.d("refresh");
                 mNormalRefresh.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        LogUtils.d("refresh");
                        mNormalRefresh.setRefresh(false);
                     }
                 },5000);
