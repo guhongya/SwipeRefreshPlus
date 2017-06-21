@@ -175,9 +175,6 @@ public class RefreshViewController implements IRefreshViewController {
         mProgress.setAlpha(STARTING_PROGRESS_ALPHA);
     }
 
-//    public Size getRefreshViewSize() {
-//        return new Size(mCircleDiameter, mCircleDiameter);
-//    }
 
     public boolean isRefresh() {
         return isRefresh;

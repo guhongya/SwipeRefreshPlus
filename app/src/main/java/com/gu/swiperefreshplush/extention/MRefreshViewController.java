@@ -27,7 +27,6 @@ public class MRefreshViewController implements IRefreshViewController {
     private int mCurrentOffsetTop;
     private Context mContext;
     private View mParent;
-    private View mTarget;
     private boolean refreshing;
     private boolean mNotify;
     private float mTotalDragDiatance;
@@ -85,10 +84,9 @@ public class MRefreshViewController implements IRefreshViewController {
     };
 
 
-    public MRefreshViewController(Context context, View parent, View target) {
+    public MRefreshViewController(Context context, View parent) {
         mContext = context;
         mParent = parent;
-        mTarget = target;
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         mTargetPosition = (int) (DEFAULT_POSITION * metrics.density);
         mCurrentOffsetTop = -mTargetPosition;
@@ -261,7 +259,7 @@ public class MRefreshViewController implements IRefreshViewController {
     }
 
     private void animateOffsetToCorrectPosition() {
-        LogUtils.d("animateOffsetToCorrectPosition");
+        LogUtils.d("animate");
         if (mTotalDragDiatance >= mTargetPosition) {
             mRefreshView.animatorToCurrentPosition(new Animator.AnimatorListener() {
                 @Override
@@ -273,7 +271,9 @@ public class MRefreshViewController implements IRefreshViewController {
                 public void onAnimationEnd(Animator animation) {
                     if (mNotify && mOnRefreshListener != null) {
                         mOnRefreshListener.onPullDownToRefresh();
+                        mRefreshView.start();
                     }
+
                 }
 
                 @Override

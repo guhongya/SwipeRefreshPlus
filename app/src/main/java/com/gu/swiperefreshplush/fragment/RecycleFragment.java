@@ -2,9 +2,11 @@ package com.gu.swiperefreshplush.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -57,6 +59,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         recycleAdapter = new SimpleRecycleAdapter();
         recycleAdapter.setData(datas);
         recycleContent.setAdapter(recycleAdapter);
+        recycleContent.setItemAnimator(new DefaultItemAnimator());
         swipeRefreshPlush.setRefreshColorResources(new int[]{R.color.colorPrimary});
         swipeRefreshPlush.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override
@@ -66,7 +69,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                     public void run() {
                         presenter.refresh();
                         swipeRefreshPlush.setRefresh(false);
-                        swipeRefreshPlush.showNoMore(false);
+                        //swipeRefreshPlush.showNoMore(false);
                         LogUtils.d(swipeRefreshPlush.getLoadViewController().isLoading());
                     }
                 }, 1000);
@@ -100,6 +103,14 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
     @Override
     public void onDataChange() {
         recycleAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDataAdded(int from, int to) {
+        recycleAdapter.notifyItemRangeInserted(from,to-from);
+        if(from==0){
+            recycleContent.scrollToPosition(0);
+        }
     }
 
     @Override

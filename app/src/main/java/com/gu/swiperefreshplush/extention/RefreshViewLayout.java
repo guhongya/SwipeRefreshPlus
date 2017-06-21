@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.AttrRes;
@@ -11,10 +12,12 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.apkfuns.logutils.LogUtils;
+import com.gu.swiperefreshplush.R;
 
 
 /**
@@ -24,12 +27,16 @@ import com.apkfuns.logutils.LogUtils;
 public class RefreshViewLayout extends FrameLayout {
     private int mBackgroundColor = 0xff0000;
     private int mDefaultThreshold = 150;
+    private static final int progressViewDiment=40;
     private Paint mPaint;
     private Path mPath;
     private Paint mBkgPaint;
     private ValueAnimator dampAnimator;
     private int mTotalOffset;
     private int mResertFrom;
+
+    private ProgressView mProgressView;
+
 
     public RefreshViewLayout(@NonNull Context context) {
         this(context, null);
@@ -47,6 +54,13 @@ public class RefreshViewLayout extends FrameLayout {
         mPaint.setStyle(Paint.Style.FILL);
         mPath = new Path();
         initAnimation();
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        int dimnet= (int) (metrics.density*progressViewDiment);
+        mProgressView=new ProgressView(context);
+        mProgressView.setColor(context.getResources().getColor(R.color.white));
+        mProgressView.setGap(2*metrics.density);
+        mProgressView.setLayoutParams(new LayoutParams(dimnet,dimnet));
+        addView(mProgressView);
     }
 
     @Override
@@ -70,7 +84,9 @@ public class RefreshViewLayout extends FrameLayout {
         mPath.lineTo(getWidth(),0);
         postInvalidate();
     }
-
+    public void start(){
+        mProgressView.start();
+    }
     public void animatorToCurrentPosition(Animator.AnimatorListener listener) {
         dampAnimator.removeAllListeners();
         mResertFrom=mTotalOffset;
@@ -94,6 +110,7 @@ public class RefreshViewLayout extends FrameLayout {
         mPath.lineTo(getWidth(),mDefaultThreshold);
         mPath.lineTo(getWidth(),0);
         postInvalidate();
+        mProgressView.stop();
        // postInvalidate(0, mDefaultThreshold, getWidth(), getHeight());
 
     }
@@ -107,17 +124,18 @@ public class RefreshViewLayout extends FrameLayout {
 
                 float value= (float) animation.getAnimatedValue();
                 double damp=(Math.cos(value))/Math.pow(1.2,value);
-                LogUtils.d(damp);
                 double offset=mResertFrom*damp;
                 pullDown((int) offset);
             }
         });
-       // dampAnimator.addListener(mDampListener);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
+       super.onLayout(changed, left, top, right, bottom);
+        int childLeft=(right-left-mProgressView.getMeasuredWidth())/2;
+        int childTop=(mDefaultThreshold-mProgressView.getMeasuredHeight())/2;
+        mProgressView.layout(childLeft,childTop,childLeft+mProgressView.getMeasuredWidth(),childTop+mProgressView.getMeasuredHeight());
         mPath.moveTo(0,0);
         mPath.lineTo(0,mDefaultThreshold);
         mPath.lineTo(right,mDefaultThreshold);

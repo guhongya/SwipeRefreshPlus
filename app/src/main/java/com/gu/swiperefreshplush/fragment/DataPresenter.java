@@ -23,15 +23,18 @@ public class DataPresenter implements DemoContact.Presenter {
     }
     @Override
     public void refresh() {
-        datas.clear();
-        datas.addAll(generatorData());
-        view.onDataChange();
+        //datas.clear();
+        List<Integer> tem=generatorData(1);
+        datas.addAll(0,tem);
+       view.onDataAdded(0,tem.size());
     }
 
     @Override
     public void loadMore() {
-        datas.addAll(generatorData());
-        view.onDataChange();
+        List<Integer> tem=generatorData(5);
+        datas.addAll(tem);
+       // view.onDataChange();
+        view.onDataAdded(datas.size()-tem.size(),datas.size());
     }
 
     @Override
@@ -41,7 +44,7 @@ public class DataPresenter implements DemoContact.Presenter {
 
     @Override
     public void bind() {
-        datas.addAll(generatorData());
+        datas.addAll(generatorData(10));
     }
 
     @Override
@@ -49,10 +52,10 @@ public class DataPresenter implements DemoContact.Presenter {
         view=null;
     }
 
-    private List generatorData(){
+    private List generatorData(int n){
         Long num=System.currentTimeMillis();
         List<Integer> resul=new ArrayList<>();
-        for(int i=0;i<10;i++){
+        for(int i=0;i<n;i++){
             mRandom.setSeed(num);
             num=mRandom.nextLong();
             resul.add(dataSource[Math.abs(num.intValue())%5]);

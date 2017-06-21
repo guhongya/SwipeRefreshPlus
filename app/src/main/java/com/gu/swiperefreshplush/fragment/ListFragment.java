@@ -71,6 +71,12 @@ public class ListFragment extends Fragment implements DemoContact.View {
         }
         mSimplaeAdaptr.notifyDataSetChanged();
     }
+
+    @Override
+    public void onDataAdded(int from, int to) {
+        onDataChange();
+    }
+
     private void iniView(){
         mSwipeRefreshPlus.setRefreshColorResources(new int[]{R.color.colorPrimary});
         mSwipeRefreshPlus.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
