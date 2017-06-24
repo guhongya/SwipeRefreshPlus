@@ -3,6 +3,8 @@ package com.gu.swiperefreshplush.extention;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Color;
+import android.support.annotation.ColorInt;
 import android.support.v4.view.ViewCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -12,7 +14,6 @@ import com.apkfuns.logutils.LogUtils;
 import com.gu.swiperefresh.IRefreshViewController;
 import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefresh.ZIndex;
-import com.gu.swiperefreshplush.R;
 
 /**
  * Created by GUHY on 2017/4/18.
@@ -31,12 +32,12 @@ public class MRefreshViewController implements IRefreshViewController {
     private boolean mNotify;
     private float mTotalDragDiatance;
 
-    private RefreshViewLayout mRefreshView;
+    private RefreshViewLayout mRefreshViewLayout;
     private SwipeRefreshPlus.OnRefreshListener mOnRefreshListener;
 
     private ValueAnimator mPullDownAnimation;
     private ValueAnimator mPullUpAnimation;
-
+    private int mBackgroundColor= Color.WHITE;
 
     private Animator.AnimatorListener mPullUpListener = new Animator.AnimatorListener() {
 
@@ -69,7 +70,7 @@ public class MRefreshViewController implements IRefreshViewController {
 
         @Override
         public void onAnimationEnd(Animator animation) {
-            mRefreshView.reset();
+            mRefreshViewLayout.reset();
         }
 
         @Override
@@ -97,18 +98,18 @@ public class MRefreshViewController implements IRefreshViewController {
 
     @Override
     public void reset() {
-        mRefreshView.reset();
+        mRefreshViewLayout.reset();
         mCurrentOffsetTop = -mTargetPosition;
     }
 
     @Override
     public View create() {
-        mRefreshView = new RefreshViewLayout(mContext);
+        mRefreshViewLayout = new RefreshViewLayout(mContext);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mRefreshView.setLayoutParams(params);
-        mRefreshView.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary));
-        mRefreshView.setDefaultThreshold(mTargetPosition);
-        return mRefreshView;
+        mRefreshViewLayout.setLayoutParams(params);
+        mRefreshViewLayout.setBackgroundColor(mBackgroundColor);
+        mRefreshViewLayout.setDefaultThreshold(mTargetPosition);
+        return mRefreshViewLayout;
     }
 
     @Override
@@ -134,7 +135,7 @@ public class MRefreshViewController implements IRefreshViewController {
             mParent.scrollTo(0, (int) -overscrollTop);
             mCurrentOffsetTop = (int) (mOriginOffset + overscrollTop);
         } else {
-            mRefreshView.pullDown((int) overscrollTop - mTargetPosition);
+            mRefreshViewLayout.pullDown((int) overscrollTop - mTargetPosition);
         }
     }
 
@@ -159,7 +160,7 @@ public class MRefreshViewController implements IRefreshViewController {
         //if(mPullDownAnimation.isRunning())mPullDownAnimation.cancel();
         if(mPullUpAnimation.isRunning())mPullUpAnimation.cancel();
         ViewCompat.offsetTopAndBottom(mParent, i);
-        mCurrentOffsetTop = mRefreshView.getTop();
+        mCurrentOffsetTop = mRefreshViewLayout.getTop();
     }
 
     @Override
@@ -183,6 +184,11 @@ public class MRefreshViewController implements IRefreshViewController {
         }
     }
 
+    public void setBackgroundColor(@ColorInt int color){
+        mBackgroundColor=color;
+        if(mRefreshViewLayout !=null) mRefreshViewLayout.setBackgroundColor(color);
+    }
+
     private void innitAnimation() {
         mPullDownAnimation = new ValueAnimator();
         mPullDownAnimation
@@ -192,7 +198,7 @@ public class MRefreshViewController implements IRefreshViewController {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mParent.scrollTo(0, (int) animation.getAnimatedValue());
-                mCurrentOffsetTop = mRefreshView.getTop();
+                mCurrentOffsetTop = mRefreshViewLayout.getTop();
             }
         });
 
@@ -202,7 +208,7 @@ public class MRefreshViewController implements IRefreshViewController {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mParent.scrollTo(0, (int) animation.getAnimatedValue());
-                mCurrentOffsetTop = mRefreshView.getTop();
+                mCurrentOffsetTop = mRefreshViewLayout.getTop();
             }
         });
         mPullUpAnimation.addListener(mPullUpListener);
@@ -236,7 +242,7 @@ public class MRefreshViewController implements IRefreshViewController {
             if (refreshing) {
                 animateOffsetToCorrectPosition();
             } else {
-                mRefreshView.animatorToCurrentPosition(new Animator.AnimatorListener() {
+                mRefreshViewLayout.animatorToCurrentPosition(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
 
@@ -265,7 +271,7 @@ public class MRefreshViewController implements IRefreshViewController {
     private void animateOffsetToCorrectPosition() {
         LogUtils.d("animate");
         if (mTotalDragDiatance >= mTargetPosition) {
-            mRefreshView.animatorToCurrentPosition(new Animator.AnimatorListener() {
+            mRefreshViewLayout.animatorToCurrentPosition(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
 
@@ -275,7 +281,7 @@ public class MRefreshViewController implements IRefreshViewController {
                 public void onAnimationEnd(Animator animation) {
                     if (mNotify && mOnRefreshListener != null) {
                         mOnRefreshListener.onPullDownToRefresh();
-                        mRefreshView.start();
+                        mRefreshViewLayout.start();
                     }
 
                 }

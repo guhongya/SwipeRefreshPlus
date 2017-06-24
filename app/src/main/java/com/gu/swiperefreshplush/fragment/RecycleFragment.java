@@ -1,14 +1,15 @@
 package com.gu.swiperefreshplush.fragment;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,9 +24,6 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.flexbox.FlexDirection;
-import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.android.flexbox.JustifyContent;
 import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplush.R;
 import com.gu.swiperefreshplush.SimpleRecycleAdapter;
@@ -45,6 +43,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
     int page = 4;
     View noMoreView;
     DemoContact.Presenter presenter;
+    private MRefreshViewController mRefreshViewController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +54,9 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         recycleContent = (RecyclerView) view.findViewById(R.id.recycle_content);
         swipeRefreshPlush = (SwipeRefreshPlus) view.findViewById(R.id.swipe_refresh);
         swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext(), swipeRefreshPlush));
-        swipeRefreshPlush.setRefreshViewController(new MRefreshViewController(container.getContext(),swipeRefreshPlush));
+        mRefreshViewController=new MRefreshViewController(container.getContext(),swipeRefreshPlush);
+        mRefreshViewController.setBackgroundColor(getActivity().getResources().getColor(R.color.colorAccent));
+        swipeRefreshPlush.setRefreshViewController(mRefreshViewController);
         new DataPresenter(this);
         setHasOptionsMenu(true);
         iniView();
@@ -130,6 +131,13 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
             @Override
             public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
                 LogUtils.d("ok");
+                Palette palette=Palette.from(resource).generate();
+                int color= palette.getVibrantColor(Color.WHITE);
+                if(color==Color.WHITE) {
+                    color = palette.getMutedColor(Color.WHITE);
+                    if(color==Color.WHITE)color=palette.getDominantColor(Color.WHITE);
+                }
+                if(color!=Color.WHITE) mRefreshViewController.setBackgroundColor(color);
                 return false;
             }
         }).submit();

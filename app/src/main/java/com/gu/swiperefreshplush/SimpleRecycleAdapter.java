@@ -57,10 +57,7 @@ public class SimpleRecycleAdapter extends RecyclerView.Adapter<SimpleRecycleAdap
             }else{
                 lp.width=ViewGroup.LayoutParams.MATCH_PARENT;
             }
-            Glide.with(mImageView)
-                    .asDrawable()
-                    .load(id)
-                    .into(mImageView);
+            mImageView.setImageResource(id);
         }
     }
 }

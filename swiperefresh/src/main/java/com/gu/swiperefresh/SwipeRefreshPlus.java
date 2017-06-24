@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-
 import com.gu.swiperefresh.Utils.Log;
 
 import static android.support.v4.widget.ViewDragHelper.INVALID_POINTER;
@@ -375,7 +374,6 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
 //        mRefreshView.measure(MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getWidth(), MeasureSpec.EXACTLY),
 //                MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getHeight(), MeasureSpec.EXACTLY));
         measureChild(mLoadMoreView);
-        //measureChild(mNoMoreView);
         circleViewIndex = -1;
         // Get the index of the circleview.
         for (int index = 0; index < getChildCount(); index++) {
