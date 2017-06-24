@@ -156,6 +156,8 @@ public class MRefreshViewController implements IRefreshViewController {
     @Override
     public void setTargetOffsetTopAndBottom(int i, boolean b) {
         LogUtils.d(i);
+        //if(mPullDownAnimation.isRunning())mPullDownAnimation.cancel();
+        if(mPullUpAnimation.isRunning())mPullUpAnimation.cancel();
         ViewCompat.offsetTopAndBottom(mParent, i);
         mCurrentOffsetTop = mRefreshView.getTop();
     }
@@ -208,7 +210,8 @@ public class MRefreshViewController implements IRefreshViewController {
 
     private void pullDownAnimation() {
         if (mPullDownAnimation.isRunning()) {
-            mPullDownAnimation.end();
+           // mPullDownAnimation.cancel();
+            return;
         }
         mPullDownAnimation.setIntValues(mParent.getTop(), mTargetPosition);
         mPullDownAnimation.start();
@@ -217,7 +220,8 @@ public class MRefreshViewController implements IRefreshViewController {
     private void pullUpAnimation() {
         LogUtils.d("pull up");
         if (mPullUpAnimation.isRunning()) {
-            mPullUpAnimation.end();
+            //mPullUpAnimation.cancel();
+            return;
         }
         mPullUpAnimation.setIntValues(-mParent.getTop(), 0);
         mPullUpAnimation.start();

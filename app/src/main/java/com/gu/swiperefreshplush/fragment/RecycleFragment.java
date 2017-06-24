@@ -1,6 +1,8 @@
 package com.gu.swiperefreshplush.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.apkfuns.logutils.LogUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
@@ -48,6 +55,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         recycleContent = (RecyclerView) view.findViewById(R.id.recycle_content);
         swipeRefreshPlush = (SwipeRefreshPlus) view.findViewById(R.id.swipe_refresh);
         swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext(), swipeRefreshPlush));
+        swipeRefreshPlush.setRefreshViewController(new MRefreshViewController(container.getContext(),swipeRefreshPlush));
         new DataPresenter(this);
         setHasOptionsMenu(true);
         iniView();
@@ -68,7 +76,6 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                     @Override
                     public void run() {
                         presenter.refresh();
-                        swipeRefreshPlush.setRefresh(false);
                         //swipeRefreshPlush.showNoMore(false);
                         LogUtils.d(swipeRefreshPlush.getLoadViewController().isLoading());
                     }
@@ -103,6 +110,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
     @Override
     public void onDataChange() {
         recycleAdapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -111,6 +119,20 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         if(from==0){
             recycleContent.scrollToPosition(0);
         }
+        swipeRefreshPlush.setRefresh(false);
+        int id=datas.get(0);
+        Glide.with(this).asBitmap().load(id).listener(new RequestListener<Bitmap>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                LogUtils.d("ok");
+                return false;
+            }
+        }).submit();
     }
 
     @Override

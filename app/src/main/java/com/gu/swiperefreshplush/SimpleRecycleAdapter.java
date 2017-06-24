@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.flexbox.FlexboxLayoutManager;
 
 import java.util.List;
@@ -56,7 +57,10 @@ public class SimpleRecycleAdapter extends RecyclerView.Adapter<SimpleRecycleAdap
             }else{
                 lp.width=ViewGroup.LayoutParams.MATCH_PARENT;
             }
-            mImageView.setImageResource(id);
+            Glide.with(mImageView)
+                    .asDrawable()
+                    .load(id)
+                    .into(mImageView);
         }
     }
 }
