@@ -259,10 +259,10 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         measureChild(mRefreshView);
         switch (mRefreshController.getZIndex()) {
             case ZIndex.TOP:
-                addView(mRefreshView, 0);
+                addView(mRefreshView, getChildCount());
                 break;
             case ZIndex.BOTTOM:
-                addView(mRefreshView, getChildCount());
+                addView(mRefreshView, 0);
                 break;
             case ZIndex.NORMAL:
                 addView(mRefreshView);
