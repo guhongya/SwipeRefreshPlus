@@ -1,15 +1,16 @@
 # SwipeRefreshPlush
 ******
-![效果演示](http://wx4.sinaimg.cn/mw690/9430bbffly1fequpe4nyrg208w0dc1kx.gif)
+![自定义refreshview效果](https://github.com/guhongya/SwipeRefreshPlush/blob/master/app/demo_capture.gif)
+![默认效果演示](https://github.com/guhongya/SwipeRefreshPlush/blob/master/app/screenshot.gif)
 ##  简介
 与SwipeRereshLayout类似，不过添加了下拉加载更多的功能，下拉支持fling,不会有卡顿。
 
 ## 基本特性
-* 下拉刷新
+* 下拉刷新，上拉刷新
 * 滑动到底部自动加载更多
-* 没有数据时，可显示自定义view
+* 上拉刷新没有数据时，可显示自定义view
 * 支持AbsListView或NestChild的子类，如RecycleView,ListView  
-* 自持自定义加载更多view(可参考app中extention包中的LoadMoreController实现)
+* 自持自定义上拉刷新(可参考app中extention包中的LoadMoreController实现)和下拉刷新时的view显示和动画控制。
   
 ## 使用
 gradle:
@@ -52,8 +53,6 @@ swipeRefreshPlush.setNoMoreView(noMoreView,layoutParams);
 	swipeRefreshPlush.setScrollMode(@SwipeRefreshMode int mode)//设置模式
 	swipeRefreshPlush.setLoadViewController(new LoadMoreController())//设置自定义loadMoreController
 
-## todo
-* 自定义RefreshViewController
 
 ## Licence
 	    
