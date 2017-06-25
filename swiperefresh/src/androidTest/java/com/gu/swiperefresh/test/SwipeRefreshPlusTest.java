@@ -31,7 +31,7 @@ import static org.junit.Assert.fail;
  * Created by GUHY on 2017/4/10.
  */
 @RunWith(AndroidJUnit4.class)
-public class SwipeRefreshPlushTest {
+public class SwipeRefreshPlusTest {
     @Rule
     public ActivityTestRule<SwipeRefreshTestActivity> mActivityRule =
             new ActivityTestRule<>(SwipeRefreshTestActivity.class);
@@ -41,7 +41,7 @@ public class SwipeRefreshPlushTest {
     public void testNoData() throws Throwable {
         final Activity activity=mActivityRule.getActivity();
         final TestAdapter testAdapter=new TestAdapter();
-        SwipeRefreshPlush swipeRefreshPlush;
+        SwipeRefreshPlus swipeRefreshPlus;
         mActivityRule.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -49,17 +49,17 @@ public class SwipeRefreshPlushTest {
                 RecyclerView recyclerView= (RecyclerView) activity.findViewById(R.id.recycle_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity));
                 recyclerView.setAdapter(testAdapter);
-                SwipeRefreshPlush swipeRefreshPlush= (SwipeRefreshPlush) activity.findViewById(R.id.swipe_refresh);
+                SwipeRefreshPlus swipeRefreshPlus = (SwipeRefreshPlus) activity.findViewById(R.id.swipe_refresh);
             }
         });
-        swipeRefreshPlush= (SwipeRefreshPlush) activity.findViewById(R.id.swipe_refresh);
+        swipeRefreshPlus = (SwipeRefreshPlus) activity.findViewById(R.id.swipe_refresh);
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         swipe(GeneralLocation.TOP_CENTER,GeneralLocation.BOTTOM_CENTER);
-        assertThat(swipeRefreshPlush.getRefreshController().getCurrentTargetOffsetTop(),is(not(0)));
-        swipeRefreshPlush.setRefresh(false);
-        assertThat(swipeRefreshPlush.getRefreshController().getCurrentTargetOffsetTop(),is(-TestUtil.dpToPixel(activity,40)));
+        assertThat(swipeRefreshPlus.getRefreshController().getCurrentTargetOffsetTop(),is(not(0)));
+        swipeRefreshPlus.setRefresh(false);
+        assertThat(swipeRefreshPlus.getRefreshController().getCurrentTargetOffsetTop(),is(-TestUtil.dpToPixel(activity,40)));
         swipe(GeneralLocation.BOTTOM_CENTER,GeneralLocation.TOP_CENTER);
-        assertThat(swipeRefreshPlush.getLoadViewController().getCurrentHeight(),is(0));
+        assertThat(swipeRefreshPlus.getLoadViewController().getCurrentHeight(),is(0));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class SwipeRefreshPlushTest {
     public void diffModeTest() throws Throwable {
         final Activity activity=mActivityRule.getActivity();
         final TestAdapter testAdapter=new TestAdapter();
-        SwipeRefreshPlush swipeRefreshPlush;
+        SwipeRefreshPlus swipeRefreshPlus;
         mActivityRule.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -75,17 +75,17 @@ public class SwipeRefreshPlushTest {
                 RecyclerView recyclerView= (RecyclerView) activity.findViewById(R.id.recycle_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(activity));
                 recyclerView.setAdapter(testAdapter);
-                SwipeRefreshPlush swipeRefreshPlush= (SwipeRefreshPlush) activity.findViewById(R.id.swipe_refresh);
-                swipeRefreshPlush.setScrollMode(SwipeRefreshMode.MODE_NONE);
+                SwipeRefreshPlus swipeRefreshPlus = (SwipeRefreshPlus) activity.findViewById(R.id.swipe_refresh);
+                swipeRefreshPlus.setScrollMode(SwipeRefreshMode.MODE_NONE);
             }
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-        swipeRefreshPlush= (SwipeRefreshPlush) activity.findViewById(R.id.swipe_refresh);
+        swipeRefreshPlus = (SwipeRefreshPlus) activity.findViewById(R.id.swipe_refresh);
         swipe(GeneralLocation.TOP_CENTER,GeneralLocation.BOTTOM_CENTER);
-        assertThat(swipeRefreshPlush.getRefreshController().isRefresh(),is(false));
+        assertThat(swipeRefreshPlus.getRefreshController().isRefresh(),is(false));
         swipe(GeneralLocation.BOTTOM_CENTER,GeneralLocation.TOP_CENTER);
         swipe(GeneralLocation.BOTTOM_CENTER,GeneralLocation.TOP_CENTER);
-        assertThat(swipeRefreshPlush.getLoadViewController().getCurrentHeight(),is(0));
+        assertThat(swipeRefreshPlus.getLoadViewController().getCurrentHeight(),is(0));
     }
 
     /**

@@ -8,6 +8,7 @@ import android.view.View;
  */
 
 public interface ILoadViewController {
+
     void reset();
 
     View create();
@@ -20,7 +21,7 @@ public interface ILoadViewController {
 
     int move(int height);
 
-    void setRefreshListener(SwipeRefreshPlush.OnRefreshListener mListener);
+    void setRefreshListener(SwipeRefreshPlus.OnRefreshListener mListener);
 
     void showNoMore(boolean show);
 

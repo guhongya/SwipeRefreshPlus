@@ -9,6 +9,7 @@ import java.util.List;
 public class DemoContact {
     interface View{
         void onDataChange();
+        void onDataAdded(int from,int to);
         void setPresenter(Presenter presenter);
     }
     interface Presenter{

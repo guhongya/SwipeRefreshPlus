@@ -5,10 +5,9 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.gu.swiperefresh.ILoadViewController;
-import com.gu.swiperefresh.SwipeRefreshPlush;
+import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplush.R;
 
 /**
@@ -24,7 +23,7 @@ public class LoadMoreController implements ILoadViewController {
     private Context mContext;
 
     private float mCurrentOffsetToTop;
-    private SwipeRefreshPlush.OnRefreshListener mOnRefreshListener;
+    private SwipeRefreshPlus.OnRefreshListener mOnRefreshListener;
     private boolean isNoMore;
     private boolean isLoading;
     private View mParent;
@@ -102,7 +101,7 @@ public class LoadMoreController implements ILoadViewController {
     }
 
     @Override
-    public void setRefreshListener(SwipeRefreshPlush.OnRefreshListener mListener) {
+    public void setRefreshListener(SwipeRefreshPlus.OnRefreshListener mListener) {
         mOnRefreshListener=mListener;
     }
 

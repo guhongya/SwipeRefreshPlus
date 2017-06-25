@@ -65,7 +65,7 @@ public class LoadViewController implements ILoadViewController {
             mParent.scrollBy(0, move(offset));
         }
     };
-    private SwipeRefreshPlush.OnRefreshListener mListener;
+    private SwipeRefreshPlus.OnRefreshListener mListener;
     //动画是否在加载
     private volatile boolean isLoadAnimation;
     //是否显示没有更多view
@@ -121,7 +121,7 @@ public class LoadViewController implements ILoadViewController {
     }
 
     @Override
-    public void setRefreshListener(SwipeRefreshPlush.OnRefreshListener onRefreshListener) {
+    public void setRefreshListener(SwipeRefreshPlus.OnRefreshListener onRefreshListener) {
         this.mListener = onRefreshListener;
     }
 
@@ -137,7 +137,7 @@ public class LoadViewController implements ILoadViewController {
 
     @Override
     public void setLoadMore(boolean loading) {
-        isLoading=loading;
+        isLoading = loading;
         if (loading) {
             animateShowLoadMore(mLoadMoreListener);
         } else {

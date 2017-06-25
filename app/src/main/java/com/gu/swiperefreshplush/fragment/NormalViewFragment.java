@@ -7,14 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.gu.swiperefresh.SwipeRefreshPlush;
+import com.apkfuns.logutils.LogUtils;
+import com.gu.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplush.R;
+import com.gu.swiperefreshplush.extention.MRefreshViewController;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class NormalViewFragment extends Fragment {
-    private SwipeRefreshPlush mNormalRefresh;
+    private SwipeRefreshPlus mNormalRefresh;
 
     public NormalViewFragment() {
         // Required empty public constructor
@@ -26,11 +28,13 @@ public class NormalViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_normal_view, container, false);
-        mNormalRefresh= (SwipeRefreshPlush) view.findViewById(R.id.normal_view_refresh);
+        mNormalRefresh= (SwipeRefreshPlus) view.findViewById(R.id.normal_view_refresh);
+        mNormalRefresh.setRefreshViewController(new MRefreshViewController(container.getContext(),mNormalRefresh));
         //mNormalRefresh.setRefresh(true);
-        mNormalRefresh.setOnRefreshListener(new SwipeRefreshPlush.OnRefreshListener() {
+        mNormalRefresh.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
+                LogUtils.d("refresh");
                 mNormalRefresh.postDelayed(new Runnable() {
                     @Override
                     public void run() {
