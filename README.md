@@ -1,5 +1,6 @@
 # SwipeRefreshPlush
-##效果
+## 效果
+
 ![自定义refreshview效果](https://github.com/guhongya/SwipeRefreshPlush/blob/master/app/demo_capture.gif)
 ![默认效果演示](https://github.com/guhongya/SwipeRefreshPlush/blob/master/app/screenshot.gif)
 ##  简介
@@ -23,7 +24,7 @@ gradle:
       } 
 	}
 	dependencies {
-	        compile 'com.github.guhongya:SwipeRefreshPlush:1.0.5-a'
+	        compile 'com.github.guhongya:SwipeRefreshPlus:1.0.6'
 	}
   
 设置监听  
@@ -50,9 +51,9 @@ swipeRefreshPlush.setNoMoreView(noMoreView,layoutParams);
 
 #### 自定义下拉刷新	
  新建类并实现 IRefreshViewController 接口（可参考app extension包中 MRefreshViewController 类）	
- ````
+````
 swipeRefreshPlush.setRefreshViewController(mRefreshViewController);//设置自定义RefreshViewController
-	````
+````
 	
 #### 自定义上拉加载更多 
 新建类并实现 ILoadViewController 接口（可参考app extension 包中 LoadMoreController 类）
