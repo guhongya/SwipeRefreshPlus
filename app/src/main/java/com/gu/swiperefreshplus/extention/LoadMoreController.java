@@ -1,4 +1,4 @@
-package com.gu.swiperefreshplush.extention;
+package com.gu.swiperefreshplus.extention;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.gu.swiperefresh.ILoadViewController;
 import com.gu.swiperefresh.SwipeRefreshPlus;
-import com.gu.swiperefreshplush.R;
+import com.gu.swiperefreshplus.R;
 
 /**
  * Created by GUHY on 2017/4/18.

@@ -1,4 +1,4 @@
-package com.gu.swiperefreshplush.extention;
+package com.gu.swiperefreshplus.extention;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -16,7 +16,7 @@ import android.util.DisplayMetrics;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 
-import com.gu.swiperefreshplush.R;
+import com.gu.swiperefreshplus.R;
 
 
 /**

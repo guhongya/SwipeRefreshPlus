@@ -1,4 +1,4 @@
-package com.gu.swiperefreshplush.fragment;
+package com.gu.swiperefreshplus.fragment;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -25,10 +25,10 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.gu.swiperefresh.SwipeRefreshPlus;
-import com.gu.swiperefreshplush.R;
-import com.gu.swiperefreshplush.SimpleRecycleAdapter;
-import com.gu.swiperefreshplush.extention.LoadMoreController;
-import com.gu.swiperefreshplush.extention.MRefreshViewController;
+import com.gu.swiperefreshplus.SimpleRecycleAdapter;
+import com.gu.swiperefreshplus.extention.LoadMoreController;
+import com.gu.swiperefreshplus.extention.MRefreshViewController;
+import com.gu.swiperefreshplus.R;
 
 import java.util.List;
 

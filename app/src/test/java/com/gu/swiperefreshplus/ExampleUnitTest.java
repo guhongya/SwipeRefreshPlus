@@ -1,4 +1,4 @@
-package com.gu.swiperefreshplush;
+package com.gu.swiperefreshplus;
 
 import org.junit.Test;
 

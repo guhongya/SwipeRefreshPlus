@@ -1,13 +1,11 @@
-package com.gu.swiperefreshplush.extention;
+package com.gu.swiperefreshplus.extention;
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.support.annotation.ColorInt;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**

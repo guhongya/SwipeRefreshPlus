@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.gu.swiperefreshplush">
+    package="com.gu.swiperefreshplus">
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -8,7 +8,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:resizeableActivity="true">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.gu.swiperefreshplus.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

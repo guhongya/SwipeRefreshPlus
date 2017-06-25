@@ -1,6 +1,6 @@
-package com.gu.swiperefreshplush.fragment;
+package com.gu.swiperefreshplus.fragment;
 
-import com.gu.swiperefreshplush.R;
+import com.gu.swiperefreshplus.R;
 
 import java.util.ArrayList;
 import java.util.List;

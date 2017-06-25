@@ -1,4 +1,4 @@
-package com.gu.swiperefreshplush.extention;
+package com.gu.swiperefreshplus.extention;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;

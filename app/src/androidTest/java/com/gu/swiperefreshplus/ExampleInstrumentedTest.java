@@ -1,4 +1,4 @@
-package com.gu.swiperefreshplush;
+package com.gu.swiperefreshplus;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,12 +1,12 @@
-package com.gu.swiperefreshplush;
+package com.gu.swiperefreshplus;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.gu.swiperefreshplush.fragment.ListFragment;
-import com.gu.swiperefreshplush.fragment.NormalViewFragment;
-import com.gu.swiperefreshplush.fragment.RecycleFragment;
+import com.gu.swiperefreshplus.fragment.ListFragment;
+import com.gu.swiperefreshplus.fragment.NormalViewFragment;
+import com.gu.swiperefreshplus.fragment.RecycleFragment;
 
 /**
  * Created by GUHY on 2017/4/5.

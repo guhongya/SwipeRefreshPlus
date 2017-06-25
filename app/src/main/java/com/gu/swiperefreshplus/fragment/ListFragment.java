@@ -1,4 +1,4 @@
-package com.gu.swiperefreshplush.fragment;
+package com.gu.swiperefreshplus.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,8 +9,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.gu.swiperefresh.SwipeRefreshPlus;
-import com.gu.swiperefreshplush.R;
-import com.gu.swiperefreshplush.extention.MRefreshViewController;
+import com.gu.swiperefreshplus.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

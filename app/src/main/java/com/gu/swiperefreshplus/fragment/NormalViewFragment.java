@@ -1,4 +1,4 @@
-package com.gu.swiperefreshplush.fragment;
+package com.gu.swiperefreshplus.fragment;
 
 
 import android.os.Bundle;
@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 
 import com.apkfuns.logutils.LogUtils;
 import com.gu.swiperefresh.SwipeRefreshPlus;
-import com.gu.swiperefreshplush.R;
-import com.gu.swiperefreshplush.extention.MRefreshViewController;
+import com.gu.swiperefreshplus.extention.MRefreshViewController;
+import com.gu.swiperefreshplus.R;
 
 /**
  * A simple {@link Fragment} subclass.

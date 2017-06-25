@@ -5,7 +5,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gu.swiperefreshplush.MainActivity"
+    tools:context="com.gu.swiperefreshplus.com.gu.swiperefreshplus.MainActivity"
     android:orientation="vertical"
     >
     <android.support.design.widget.AppBarLayout

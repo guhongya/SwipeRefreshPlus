@@ -1,17 +1,10 @@
-package com.gu.swiperefreshplush;
+package com.gu.swiperefreshplus;
 
-import android.app.Fragment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-
-import com.gu.swiperefreshplush.fragment.DataPresenter;
-import com.gu.swiperefreshplush.fragment.ListFragment;
-import com.gu.swiperefreshplush.fragment.RecycleFragment;
 
 public class MainActivity extends AppCompatActivity {
     private ViewPager mContent;
