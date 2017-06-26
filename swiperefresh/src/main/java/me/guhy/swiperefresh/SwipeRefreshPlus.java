@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.gu.swiperefresh;
+package me.guhy.swiperefresh;
 
 import android.content.Context;
 import android.support.annotation.ColorInt;
@@ -33,7 +33,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import com.gu.swiperefresh.Utils.Log;
+import me.guhy.swiperefresh.Utils.Log;
 
 import static android.support.v4.widget.ViewDragHelper.INVALID_POINTER;
 

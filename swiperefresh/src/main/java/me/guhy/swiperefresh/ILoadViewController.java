@@ -1,4 +1,4 @@
-package com.gu.swiperefresh;
+package me.guhy.swiperefresh;
 
 import android.view.View;
 

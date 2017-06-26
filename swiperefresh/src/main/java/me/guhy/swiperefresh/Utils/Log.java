@@ -1,4 +1,4 @@
-package com.gu.swiperefresh.Utils;
+package me.guhy.swiperefresh.Utils;
 
 /**
  * Created by gu on 2016/12/23.

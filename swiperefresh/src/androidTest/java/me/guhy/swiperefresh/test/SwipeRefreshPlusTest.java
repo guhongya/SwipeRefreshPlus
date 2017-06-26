@@ -1,4 +1,4 @@
-package com.gu.swiperefresh.test;
+package me.guhy.swiperefresh.test;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,7 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.gu.swiperefresh.*;
+import me.guhy.swiperefresh.*;
 
 import org.junit.Rule;
 import org.junit.Test;

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply from: 'maven.gradle'
+apply from: 'bintray.gradle'
 group = 'com.github.guhongya'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -9,7 +10,7 @@ android {
         minSdkVersion 11
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0.4"
+        versionName "1.0.6"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 

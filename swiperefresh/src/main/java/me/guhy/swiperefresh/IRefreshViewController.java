@@ -1,8 +1,8 @@
-package com.gu.swiperefresh;
+package me.guhy.swiperefresh;
 
 import android.view.View;
 
-import com.gu.swiperefresh.Utils.Size;
+import me.guhy.swiperefresh.Utils.Size;
 
 /**
  * Created by guhongya on 2017/4/9.

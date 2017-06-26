@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.apkfuns.logutils.LogUtils;
-import com.gu.swiperefresh.SwipeRefreshPlus;
+import me.guhy.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplus.extention.MRefreshViewController;
 import com.gu.swiperefreshplus.R;
 

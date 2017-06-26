@@ -11,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.apkfuns.logutils.LogUtils;
-import com.gu.swiperefresh.IRefreshViewController;
-import com.gu.swiperefresh.SwipeRefreshPlus;
-import com.gu.swiperefresh.ZIndex;
+import me.guhy.swiperefresh.IRefreshViewController;
+import me.guhy.swiperefresh.SwipeRefreshPlus;
+import me.guhy.swiperefresh.ZIndex;
 
 /**
  * Created by GUHY on 2017/4/18.

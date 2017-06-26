@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.gu.swiperefresh.ILoadViewController;
-import com.gu.swiperefresh.SwipeRefreshPlus;
+import me.guhy.swiperefresh.ILoadViewController;
+import me.guhy.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplus.R;
 
 /**

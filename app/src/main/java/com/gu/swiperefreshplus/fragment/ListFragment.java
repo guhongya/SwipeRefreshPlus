@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.gu.swiperefresh.SwipeRefreshPlus;
+import me.guhy.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplus.R;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.gu.swiperefresh;
+package me.guhy.swiperefresh;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

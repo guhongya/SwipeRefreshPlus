@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.gu.swiperefresh;
+package me.guhy.swiperefresh;
 
 import android.content.Context;
 import android.util.DisplayMetrics;

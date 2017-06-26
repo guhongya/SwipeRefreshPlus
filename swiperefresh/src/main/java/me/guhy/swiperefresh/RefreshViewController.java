@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.gu.swiperefresh;
+package me.guhy.swiperefresh;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -26,7 +26,7 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 
-import com.gu.swiperefresh.Utils.Size;
+import me.guhy.swiperefresh.Utils.Size;
 
 
 /**

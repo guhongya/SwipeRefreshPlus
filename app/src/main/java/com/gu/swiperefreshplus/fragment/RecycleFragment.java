@@ -24,7 +24,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.gu.swiperefresh.SwipeRefreshPlus;
+import me.guhy.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplus.SimpleRecycleAdapter;
 import com.gu.swiperefreshplus.extention.LoadMoreController;
 import com.gu.swiperefreshplus.extention.MRefreshViewController;

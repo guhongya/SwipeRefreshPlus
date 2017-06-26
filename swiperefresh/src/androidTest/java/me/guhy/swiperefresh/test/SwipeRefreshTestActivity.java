@@ -1,4 +1,4 @@
-package com.gu.swiperefresh.test;
+package me.guhy.swiperefresh.test;
 
 import android.app.Activity;
 import android.os.Bundle;
