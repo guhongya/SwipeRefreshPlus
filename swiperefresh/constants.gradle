@@ -22,7 +22,7 @@ ext {
 
     mavenGroup = 'me.guhy'
     mavenArtifactId = 'swiperefreshplus'
-    mavenVersion = '1.0.6'
+    mavenVersion = '1.0.7'
 
     bintrayOrg = 'guhy'
 
