@@ -56,7 +56,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext(), swipeRefreshPlush));
         mRefreshViewController=new MRefreshViewController(container.getContext(),swipeRefreshPlush);
         mRefreshViewController.setBackgroundColor(getActivity().getResources().getColor(R.color.colorAccent));
-        swipeRefreshPlush.setRefreshViewController(mRefreshViewController);
+       // swipeRefreshPlush.setRefreshViewController(mRefreshViewController);
         new DataPresenter(this);
         setHasOptionsMenu(true);
         iniView();
