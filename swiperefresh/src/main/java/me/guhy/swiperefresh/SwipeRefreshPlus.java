@@ -110,7 +110,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     /**
      * 设置滑动监听
      *
-     * @param onRefreshListener
+     * @param onRefreshListener 刷新回调
      */
     public void setOnRefreshListener(OnRefreshListener onRefreshListener) {
         this.mListener = onRefreshListener;
@@ -130,7 +130,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     /**
      * refresh progress color
      *
-     * @param colorResIds
+     * @param colorResIds 一组颜色Id
      */
     public void setRefreshColorResources(@ColorRes int... colorResIds) {
         final Context context = getContext();
@@ -144,7 +144,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     /**
      * 设置progress 颜色
      *
-     * @param colors
+     * @param colors 一组颜色
      */
     public void setRefreshColors(@ColorInt int... colors) {
         ensureTarget();
@@ -156,7 +156,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     /**
      * 设置loadmore 颜色
      *
-     * @param colorResIds
+     * @param colorResIds 一组颜色
      */
     public void setLoadMoreColorResources(@ColorRes int... colorResIds) {
         final Context context = getContext();
@@ -178,7 +178,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     /**
      * 是否显示refresh
      *
-     * @param refresh
+     * @param refresh 刷新标志
      */
     public void setRefresh(boolean refresh) {
         ensureTarget();
@@ -186,9 +186,8 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     }
 
     /**
-     * 是否显示loadmore
      *
-     * @param show
+     * @param show 是否显示loadmore
      */
     public void setLoadMore(boolean show) {
         mLoadViewController.setLoadMore(show);
@@ -197,8 +196,8 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     /**
      * 设置没有更多提示view
      *
-     * @param view
-     * @param layoutParams
+     * @param view 数据加载完毕没有更多数据时显示
+     * @param layoutParams view 的LayoutParams
      */
     public void setNoMoreView(View view, LayoutParams layoutParams) {
         mNoMoreView = view;
@@ -247,9 +246,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     }
 
     /**
-     * todo
-     *
-     * @param controller
+     * @param controller refreshview 的控制类
      */
     public void setRefreshViewController(IRefreshViewController controller) {
         this.mRefreshController = controller;
@@ -718,12 +715,6 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
 
-    /**
-     * @param child
-     * @param target
-     * @param nestedScrollAxes 滚动标志
-     * @return
-     */
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         return REFRESH_MODE != SwipeRefreshMode.MODE_NONE && !mRefreshController.isRefresh()
@@ -778,9 +769,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     /**
      * parent 消耗的值
      *
-     * @param target
-     * @param dx
-     * @param dy       y方向的移动距离>0向上滑
+     * @param target  target view
+     * @param dx       x distance
+     * @param dy       y方向的移动距离
      * @param consumed parent消耗的值
      */
     @Override

@@ -218,7 +218,7 @@ public class ProgressDrawable extends Drawable {
      * The first color will also be the color of the bar that grows in response
      * to a user swipe gesture.
      *
-     * @param colors
+     * @param colors 一组颜色值
      */
     public void setColorSchemeColors(int... colors) {
         mRing.setColors(colors);
