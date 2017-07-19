@@ -508,7 +508,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
                     return false;
                 }
                 mInitialDownY = ev.getY(pointerIndex);
-                initOrResetVelocityTracker();
+                initVelocityTracker();
                 mVelocityTracker.addMovement(ev);
                 break;
 
@@ -530,14 +530,16 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
                 break;
 
             case MotionEvent.ACTION_UP:
-                final VelocityTracker velocityTracker = mVelocityTracker;
-                velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                float initialVelocity = velocityTracker.getYVelocity(mActivePointerId);
-                Log.d(TAG, "fling:" + initialVelocity);
-                if (Math.abs(initialVelocity) > mMinimumVelocity) {
-                    flingWithNestedDispatch(0, -initialVelocity);
+                if(mVelocityTracker!=null) {
+                    final VelocityTracker velocityTracker = mVelocityTracker;
+                    velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+                    float initialVelocity = velocityTracker.getYVelocity(mActivePointerId);
+                    Log.d(TAG, "fling:" + initialVelocity);
+                    if (Math.abs(initialVelocity) > mMinimumVelocity) {
+                        flingWithNestedDispatch(0, -initialVelocity);
+                    }
+                    releaseVelocityTracker();
                 }
-                releaseVelocityTracker();
                 break;
             case MotionEvent.ACTION_CANCEL:
                 mIsBeingDragUp = false;
@@ -573,7 +575,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         addView(mRefreshView);
     }
 
-    private void initOrResetVelocityTracker() {
+    private void initVelocityTracker() {
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
         } else {

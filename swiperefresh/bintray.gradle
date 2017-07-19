@@ -29,7 +29,7 @@ bintray {
     configurations = [ 'archives' ]
 
     pkg {
-        repo = projectName
+        repo = 'Android'
         name = mavenArtifactId
         userOrg = bintrayOrg
         licenses = [ 'Apache-2.0' ]
