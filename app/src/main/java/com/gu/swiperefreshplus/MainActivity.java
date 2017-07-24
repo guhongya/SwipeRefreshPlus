@@ -2,9 +2,12 @@ package com.gu.swiperefreshplus;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+
+import com.gu.swiperefreshplus.extention.RefreshViewLayout;
 
 public class MainActivity extends AppCompatActivity {
     private ViewPager mContent;

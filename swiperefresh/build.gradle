@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
-apply from: 'maven.gradle'
-apply from: 'bintray.gradle'
-group = 'com.github.guhongya'
+apply from: 'constants.gradle'
+apply plugin: 'com.novoda.bintray-release'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolVersion
@@ -21,8 +20,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+            abortOnError false
+    }
 }
-
+publish {
+    userOrg = 'guhongya'
+    repoName='Maven'
+    groupId = 'me.guhy'
+    artifactId = 'SwipeRefreshPlus'
+    publishVersion = "$mavenVersion"
+    desc = 'Android swipe refresh widget'
+    website = 'https://github.com/guhongya/SwipeRefreshPlus'
+}
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -31,13 +41,4 @@ dependencies {
     compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
     testCompile 'junit:junit:4.12'
     androidTestCompile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
-}
-allprojects {
-    tasks.withType(Javadoc) {
-        options{
-            encoding "UTF-8"
-            charSet 'UTF-8'
-            links "http://docs.oracle.com/javase/8/docs/api"
-        }
-    }
 }

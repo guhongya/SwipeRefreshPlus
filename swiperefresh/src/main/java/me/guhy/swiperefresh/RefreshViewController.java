@@ -244,7 +244,7 @@ public class RefreshViewController implements IRefreshViewController {
     /**
      * 根据用户下拉距离，判断是否应该刷新
      *
-     * @param overscrollTop
+     * @param overscrollTop 总下拉距离
      */
     public void finishPullRefresh(float overscrollTop) {
         if (overscrollTop > mTotalDragDistance) {
@@ -288,7 +288,7 @@ public class RefreshViewController implements IRefreshViewController {
         if (refreshing && isRefresh != refreshing) {
             // scale and show
             isRefresh = refreshing;
-            int endTarget = 0;
+            int endTarget = mSpinnerOffsetEnd;
 
             setTargetOffsetTopAndBottom(endTarget - mCurrentTargetOffsetTop,
                     true /* requires update */);
@@ -324,7 +324,6 @@ public class RefreshViewController implements IRefreshViewController {
     /**
      * Pre API 11, this does an alpha animation.
      *
-     * @param progress
      */
     void setAnimationProgress(float progress) {
         if (isAlphaUsedForScale()) {

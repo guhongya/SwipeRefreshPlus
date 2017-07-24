@@ -1,9 +1,9 @@
-<com.gu.swiperefresh.SwipeRefreshPlus xmlns:android="http://schemas.android.com/apk/res/android"
+<me.guhy.swiperefresh.SwipeRefreshPlus xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/normal_view_refresh"
-    tools:context="com.gu.swiperefreshplus.com.gu.swiperefreshplus.fragment.NormalViewFragment">
+    >
 
 
     <TextView
@@ -13,4 +13,4 @@
         android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment"
         />
-</com.gu.swiperefresh.SwipeRefreshPlus>
+</me.guhy.swiperefresh.SwipeRefreshPlus>

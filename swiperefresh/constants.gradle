@@ -15,14 +15,12 @@
  */
 
 ext {
-    projectName = 'Android'
+    repoName = 'Android'
     projectDesc = 'pull down and pull up to refresh for android'
-
     githubUrl = 'https://github.com/guhongya/SwipeRefreshPlus'
-
     mavenGroup = 'me.guhy'
     mavenArtifactId = 'SwipeRefreshPlus'
-    mavenVersion = '1.0.6'
+    mavenVersion = '1.0.7-a'
 
     bintrayOrg = 'guhy'
 
