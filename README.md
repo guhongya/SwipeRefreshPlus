@@ -16,15 +16,9 @@
 ## 使用
 ### 基本使用
 gradle:
-   
-	allprojects { 
-      repositories { 
-          ...			
-          maven { url 'https://jitpack.io' } 
-      } 
-	}
+
 	dependencies {
-	        compile 'com.github.guhongya:SwipeRefreshPlus:1.0.6'
+	        compile 'me.guhy:SwipeRefreshPlus:1.0.8'
 	}
   
 设置监听  

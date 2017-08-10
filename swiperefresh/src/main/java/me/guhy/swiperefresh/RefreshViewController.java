@@ -288,7 +288,7 @@ public class RefreshViewController implements IRefreshViewController {
         if (refreshing && isRefresh != refreshing) {
             // scale and show
             isRefresh = refreshing;
-            int endTarget = mSpinnerOffsetEnd;
+            int endTarget = mSpinnerOffsetEnd+mOriginalOffsetTop;
 
             setTargetOffsetTopAndBottom(endTarget - mCurrentTargetOffsetTop,
                     true /* requires update */);
