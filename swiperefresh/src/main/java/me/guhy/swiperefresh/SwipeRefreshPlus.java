@@ -513,7 +513,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
                 if (mActivePointerId == INVALID_POINTER) {
                     return false;
                 }
-                mVelocityTracker.addMovement(ev);
+                if(mVelocityTracker!=null) {
+                    mVelocityTracker.addMovement(ev);
+                }
                 pointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     return false;
@@ -583,7 +585,6 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     private void releaseVelocityTracker() {
         if (mVelocityTracker != null) {
             mVelocityTracker.recycle();
-            mVelocityTracker = null;
         }
     }
 
