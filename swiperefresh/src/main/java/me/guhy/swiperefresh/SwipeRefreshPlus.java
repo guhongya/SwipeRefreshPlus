@@ -585,6 +585,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     private void releaseVelocityTracker() {
         if (mVelocityTracker != null) {
             mVelocityTracker.recycle();
+            mVelocityTracker=null;
         }
     }
 
