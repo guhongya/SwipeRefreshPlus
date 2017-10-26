@@ -46,7 +46,7 @@ public class LoadViewController implements ILoadViewController {
     final DisplayMetrics metrics;
     private final DecelerateInterpolator mDecelerateInterpolator;
     private Context mContext;
-    private View mParent;
+    private SwipeRefreshPlus mParent;
     private CircleImageView mCircleImageView;
     private ProgressDrawable mProgress;
     private int mDefaultProgressColor;
@@ -89,7 +89,7 @@ public class LoadViewController implements ILoadViewController {
         }
     };
 
-    public LoadViewController(Context context, View parent) {
+    public LoadViewController(Context context, SwipeRefreshPlus parent) {
         this.mContext = context;
         this.mParent = parent;
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorAccent});

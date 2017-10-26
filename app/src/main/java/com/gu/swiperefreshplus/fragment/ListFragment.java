@@ -8,13 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import me.guhy.swiperefresh.SwipeRefreshPlus;
 import com.gu.swiperefreshplus.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import me.guhy.swiperefresh.SwipeRefreshPlus;
 
 
 public class ListFragment extends Fragment implements DemoContact.View {
@@ -74,6 +75,7 @@ public class ListFragment extends Fragment implements DemoContact.View {
     @Override
     public void onDataAdded(int from, int to) {
         onDataChange();
+        mSwipeRefreshPlus.setLoadMore(false);
     }
 
     private void iniView(){
@@ -102,7 +104,6 @@ public class ListFragment extends Fragment implements DemoContact.View {
                         @Override
                         public void run() {
                             presenter.loadMore();
-                            mSwipeRefreshPlus.setLoadMore(false);
                         }
                     }, 1500);
                 }

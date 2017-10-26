@@ -6,7 +6,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolVersion
 
     defaultConfig {
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
         versionName "$mavenVersion"

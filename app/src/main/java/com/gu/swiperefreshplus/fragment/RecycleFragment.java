@@ -24,18 +24,18 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import me.guhy.swiperefresh.SwipeRefreshPlus;
+import com.gu.swiperefreshplus.R;
 import com.gu.swiperefreshplus.SimpleRecycleAdapter;
 import com.gu.swiperefreshplus.extention.LoadMoreController;
 import com.gu.swiperefreshplus.extention.MRefreshViewController;
-import com.gu.swiperefreshplus.R;
 
 import java.util.List;
+
+import me.guhy.swiperefresh.SwipeRefreshPlus;
 
 
 public class RecycleFragment extends Fragment implements DemoContact.View {
     private RecyclerView recycleContent;
-
     private SimpleRecycleAdapter recycleAdapter;
     private SwipeRefreshPlus swipeRefreshPlush;
     private List<Integer> datas;
@@ -95,7 +95,7 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                         @Override
                         public void run() {
                             presenter.loadMore();
-                            swipeRefreshPlush.setLoadMore(false);
+                            //swipeRefreshPlush.setLoadMore(false);
                         }
                     }, 1500);
                 }
@@ -120,7 +120,6 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
         if(from==0){
             recycleContent.scrollToPosition(0);
         }
-        swipeRefreshPlush.setRefresh(false);
         int id=datas.get(0);
         Glide.with(this).asBitmap().load(id).listener(new RequestListener<Bitmap>() {
             @Override
@@ -141,6 +140,8 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                 return false;
             }
         }).submit();
+        swipeRefreshPlush.setRefresh(false);
+        swipeRefreshPlush.setLoadMore(false);
     }
 
     @Override
