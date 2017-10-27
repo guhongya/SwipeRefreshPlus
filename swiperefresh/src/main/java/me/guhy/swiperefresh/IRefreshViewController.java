@@ -2,8 +2,6 @@ package me.guhy.swiperefresh;
 
 import android.view.View;
 
-import me.guhy.swiperefresh.Utils.Size;
-
 /**
  * Created by guhongya on 2017/4/9.
  * refreshview 的管理接口
@@ -56,6 +54,5 @@ public interface IRefreshViewController {
     void setRefreshListener(SwipeRefreshPlus.OnRefreshListener mListener);
 
     void setRefreshing(boolean refresh);
-
 
 }

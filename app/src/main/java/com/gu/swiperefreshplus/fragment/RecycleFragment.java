@@ -77,7 +77,6 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                     @Override
                     public void run() {
                         presenter.refresh();
-                        //swipeRefreshPlush.showNoMore(false);
                         LogUtils.d(swipeRefreshPlush.getLoadViewController().isLoading());
                     }
                 }, 1000);
@@ -95,7 +94,6 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                         @Override
                         public void run() {
                             presenter.loadMore();
-                            //swipeRefreshPlush.setLoadMore(false);
                         }
                     }, 1500);
                 }

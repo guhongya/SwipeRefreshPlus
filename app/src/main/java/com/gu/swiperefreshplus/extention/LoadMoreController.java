@@ -6,18 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.gu.swiperefreshplus.R;
+
 import me.guhy.swiperefresh.ILoadViewController;
 import me.guhy.swiperefresh.SwipeRefreshPlus;
-import com.gu.swiperefreshplus.R;
 
 /**
  * Created by GUHY on 2017/4/18.
  */
 
 public class LoadMoreController implements ILoadViewController {
-    private int mDefaultHeight=80;
+    private int mDefaultHeight = 80;
     private int mMaxHeight;
-    private int mDefaultThreshold=60;
+    private int mDefaultThreshold = 60;
 
     private View mDefaultView;
     private Context mContext;
@@ -28,39 +29,40 @@ public class LoadMoreController implements ILoadViewController {
     private boolean isLoading;
     private View mParent;
 
-    public LoadMoreController(Context context,View parent){
-        mContext=context;
-        this.mParent=parent;
-        DisplayMetrics metrics=context.getResources().getDisplayMetrics();
-        mMaxHeight=metrics.heightPixels;
-        mDefaultHeight*=metrics.density;
-        mDefaultThreshold*=metrics.density;
+
+    public LoadMoreController(Context context, View parent) {
+        mContext = context;
+        this.mParent = parent;
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        mMaxHeight = metrics.heightPixels;
+        mDefaultHeight *= metrics.density;
+        mDefaultThreshold *= metrics.density;
     }
 
     @Override
     public void reset() {
-        mCurrentOffsetToTop=0;
+        mCurrentOffsetToTop = 0;
     }
 
     @Override
     public View create() {
-        View view= LayoutInflater.from(mContext).inflate(R.layout.item_load_more,null);
-        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,mDefaultHeight));
-        mDefaultView=view;
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_load_more, null);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mDefaultHeight));
+        mDefaultView = view;
         return view;
     }
 
     @Override
     public int finishPullRefresh(float totalDistance) {
-        if(mCurrentOffsetToTop>mDefaultThreshold||(totalDistance+mCurrentOffsetToTop)>mDefaultThreshold){
-            if(!isNoMore&&!isLoading) {
-                isLoading=true;
+        if (mCurrentOffsetToTop > mDefaultThreshold || (totalDistance + mCurrentOffsetToTop) > mDefaultThreshold) {
+            if (!isNoMore && !isLoading) {
+                isLoading = true;
                 mOnRefreshListener.onPullUpToRefresh();
             }
-            int dis= (int) (mDefaultHeight-mCurrentOffsetToTop);
-            mCurrentOffsetToTop=mDefaultHeight;
+            int dis = (int) (mDefaultHeight - mCurrentOffsetToTop);
+            mCurrentOffsetToTop = mDefaultHeight;
             return dis;
-        }else{
+        } else {
             return 0;
         }
     }
@@ -77,7 +79,7 @@ public class LoadMoreController implements ILoadViewController {
 
     @Override
     public int move(int height) {
-        if(height>0) {
+        if (height > 0) {
             if (mCurrentOffsetToTop < mMaxHeight && mCurrentOffsetToTop >= 0) {
                 int dis = (int) (height * (mMaxHeight - mCurrentOffsetToTop) / (2 * mMaxHeight));
                 if (mCurrentOffsetToTop + dis < mMaxHeight) {
@@ -89,11 +91,11 @@ public class LoadMoreController implements ILoadViewController {
                     return result;
                 }
             }
-        }else{
-            mCurrentOffsetToTop+=height;
-            if(mCurrentOffsetToTop<0){
-                return (int) (height-mCurrentOffsetToTop);
-            }else{
+        } else {
+            mCurrentOffsetToTop += height;
+            if (mCurrentOffsetToTop < 0) {
+                return (int) (height - mCurrentOffsetToTop);
+            } else {
                 return height;
             }
         }
@@ -102,13 +104,13 @@ public class LoadMoreController implements ILoadViewController {
 
     @Override
     public void setRefreshListener(SwipeRefreshPlus.OnRefreshListener mListener) {
-        mOnRefreshListener=mListener;
+        mOnRefreshListener = mListener;
     }
 
     @Override
     public void showNoMore(boolean show) {
-        isNoMore=show;
-        isLoading=false;
+        isNoMore = show;
+        isLoading = false;
     }
 
     @Override
@@ -118,18 +120,26 @@ public class LoadMoreController implements ILoadViewController {
 
     @Override
     public void setLoadMore(boolean loading) {
-        if (loading){
-            mParent.scrollBy(0,mDefaultHeight);
-        }else{
-            mParent.scrollBy(0,-(int) mCurrentOffsetToTop);
-            reset();
+        if (isLoading != loading) {
+            isLoading = loading;
+            if (isLoading) {
+                mParent.scrollBy(0, mDefaultHeight);
+            } else {
+                mParent.scrollBy(0, -(int) mCurrentOffsetToTop);
+                reset();
+            }
+            isLoading = loading;
         }
-        isLoading=loading;
     }
 
     @Override
     public boolean isLoading() {
         return isLoading;
+    }
+
+    @Override
+    public void stopAnimation() {
+        mDefaultView.setVisibility(View.INVISIBLE);
     }
 
 }

@@ -137,17 +137,24 @@ public class LoadViewController implements ILoadViewController {
 
     @Override
     public void setLoadMore(boolean loading) {
-        isLoading = loading;
-        if (loading) {
-            animateShowLoadMore(mLoadMoreListener);
-        } else {
-            animateHideLoadMore(null);
+        if (isLoading != loading) {
+            isLoading = loading;
+            if (loading) {
+                animateShowLoadMore(mLoadMoreListener);
+            } else {
+                animateHideLoadMore(null);
+            }
         }
     }
 
     @Override
     public boolean isLoading() {
         return isLoading;
+    }
+
+    @Override
+    public void stopAnimation() {
+        mProgress.stop();
     }
 
     /**

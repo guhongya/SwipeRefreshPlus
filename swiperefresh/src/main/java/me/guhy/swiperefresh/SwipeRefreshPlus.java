@@ -17,6 +17,8 @@ package me.guhy.swiperefresh;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Looper;
+import android.os.MessageQueue;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
@@ -34,9 +36,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ListView;
 import android.widget.OverScroller;
-import android.widget.ScrollView;
 
 import me.guhy.swiperefresh.Utils.Log;
 
@@ -45,7 +45,7 @@ import static android.support.v4.widget.ViewDragHelper.INVALID_POINTER;
 /**
  * Created by gu on 2016/11/13.
  * 仿照 SwipeRefreshLayout 添加了滑动到底部时的事件回调
- * 可添加的字子view 可以是 AbsListView 的子类，或者NestedScrollingChild的实现类
+ * 可添加的子view 可以是 AbsListView 的子类，或者NestedScrollingChild的实现类
  * 当添加了子view 没有实现 NestedScrollingChild 或者子view 是 AbsListView的子类并且sdk《21 时，不会响应子view requestDisallowInterceptTouchEvent 的请求
  * 当targetview 内容不满一屏时，用户向上滑动屏幕 不会触发回调事件
  */
@@ -64,6 +64,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     private View mRefreshView;
     private View mLoadMoreView;
     private View mTarget;
+    private View mScrollView;
     //上拉距离
     private float mUpTotalUnconsumed;
     //下拉距离
@@ -194,32 +195,29 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
      * @param show 是否显示loadmore
      */
     public void setLoadMore(boolean show) {
-        int height=mLoadViewController.getCurrentHeight();
-        mLoadViewController.setLoadMore(show);
-        if(!show){
-            if(mTarget instanceof AbsListView){
-                if(Build.VERSION.SDK_INT>18){
-                    ((AbsListView) mTarget).scrollListBy(height);
-                }else{
-                    ListView listView = (ListView) mTarget;
-                    final int firstPosition = listView.getFirstVisiblePosition();
-                    if (firstPosition == ListView.INVALID_POSITION) {
-                        return;
+        final int height = mLoadViewController.getCurrentHeight();
+        boolean oldStatus = mLoadViewController.isLoading();
+        if (show) {
+            mLoadViewController.setLoadMore(show);
+        }
+        if (oldStatus && !show) {
+            mLoadViewController.stopAnimation();
+            Looper.myQueue().addIdleHandler(new MessageQueue.IdleHandler() {
+                @Override
+                public boolean queueIdle() {
+                    mLoadViewController.setLoadMore(false);
+                    if (mScrollView instanceof AbsListView) {
+                        if (Build.VERSION.SDK_INT > 18) {
+                            ((AbsListView) mScrollView).scrollListBy(height);
+                        } else {
+                            mScrollView.scrollBy(0, height);
+                        }
+                    } else {
+                        mScrollView.scrollBy(0, height);
                     }
-                    final View firstView = listView.getChildAt(0);
-                    if (firstView == null) {
-                        return;
-                    }
-                    final int newTop = firstView.getTop() +height;
-                    listView.setSelectionFromTop(firstPosition, newTop);
+                    return false;
                 }
-            }else{
-                if(mTarget instanceof ScrollView){
-                    ((ScrollView)mTarget).smoothScrollBy(height,200);
-                }else{
-                    mTarget.scrollBy(0,height);
-                }
-            }
+            });
         }
     }
 
@@ -228,7 +226,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
      */
     public void stopLoading() {
         mRefreshController.setRefreshing(false);
-        mLoadViewController.setLoadMore(false);
+        setLoadMore(false);
     }
 
     /**
@@ -313,6 +311,15 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         if (!enable) {
             reset();
         }
+    }
+
+    /**
+     * 设置可滑动view
+     *
+     * @param target
+     */
+    public void setScrollView(View target) {
+        this.mScrollView = target;
     }
 
     @Override
@@ -869,7 +876,6 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
      * parent end
      ************************************/
 
-    /*******************************************************************/
     /**
      * targrt view 是否能向上滑动
      *
@@ -877,16 +883,16 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
      */
     private boolean canChildScrollUp() {
         if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (mTarget instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) mTarget;
+            if (mScrollView instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) mScrollView;
                 return absListView.getChildCount() > 0
                         && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
                         .getTop() < absListView.getPaddingTop());
             } else {
-                return mTarget.canScrollVertically(-1) || mTarget.getScrollY() > 0;
+                return mScrollView.canScrollVertically(-1) || mScrollView.getScrollY() > 0;
             }
         } else {
-            return mTarget.canScrollVertically(-1);
+            return mScrollView.canScrollVertically(-1);
         }
     }
 
@@ -897,17 +903,17 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
      */
     private boolean canChildScrollDown() {
         if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (mTarget instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) mTarget;
+            if (mScrollView instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) mScrollView;
                 int count = absListView.getChildCount();
                 //return absListView.canScrollList(-1);
                 int position = absListView.getLastVisiblePosition();
                 return (count > position + 1) || absListView.getChildAt(position).getBottom() <= absListView.getPaddingBottom();
             } else {
-                return mTarget.canScrollVertically(1);
+                return mScrollView.canScrollVertically(1);
             }
         } else {
-            return mTarget.canScrollVertically(1);
+            return mScrollView.canScrollVertically(1);
         }
     }
 
@@ -942,6 +948,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
                     mTarget = child;
                     break;
                 }
+            }
+            if (mScrollView == null) {
+                mScrollView = mTarget;
             }
         }
     }

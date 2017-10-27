@@ -41,4 +41,9 @@ public interface ILoadViewController {
     void setLoadMore(boolean loading);
 
     boolean isLoading();
+
+    /**
+     * 停止所有动画
+     */
+    void stopAnimation();
 }

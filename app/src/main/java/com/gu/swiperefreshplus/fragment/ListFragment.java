@@ -30,6 +30,7 @@ public class ListFragment extends Fragment implements DemoContact.View {
     private ArrayList<Map<String,Integer>> mAdapterDatas;
     private String[] from=new String[]{"src"};
     private int[] to=new int[]{R.id.item_content};
+
     public ListFragment() {
         // Required empty public constructor
     }
@@ -80,6 +81,7 @@ public class ListFragment extends Fragment implements DemoContact.View {
 
     private void iniView(){
         mSwipeRefreshPlus.setRefreshColorResources(new int[]{R.color.colorPrimary});
+        //mSwipeRefreshPlus.setLoadViewController(new LoadMoreController(getActivity(), mSwipeRefreshPlus));
         mSwipeRefreshPlus.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
             @Override
             public void onPullDownToRefresh() {
