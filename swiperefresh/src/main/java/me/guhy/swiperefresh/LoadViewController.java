@@ -233,7 +233,7 @@ public class LoadViewController implements ILoadViewController {
 
     public void showNoMore(boolean show) {
         mShowNoMore = show;
-        isLoading = false;
+        //isLoading = false;
         if (mProgress.isRunning())
             mProgress.stop();
     }
