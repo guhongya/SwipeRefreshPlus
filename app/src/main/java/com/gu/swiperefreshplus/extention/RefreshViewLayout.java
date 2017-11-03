@@ -105,10 +105,14 @@ public class RefreshViewLayout extends FrameLayout {
 
         //ViewCompat.offsetTopAndBottom(mProgressView,offset-mProgressView.getTop());
         mDampAnimator.removeAllListeners();
-        if(mOffsetAnimator!=null&&mOffsetAnimator.isRunning())mOffsetAnimator.cancel();
+        if(mOffsetAnimator!=null&&mOffsetAnimator.isRunning()) {
+            mOffsetAnimator.cancel();
+        }
         mResertFrom=mTotalOffset;
         if(mTotalOffset>0){
-            if(mDampAnimator.isRunning())mDampAnimator.cancel();
+            if(mDampAnimator.isRunning()) {
+                mDampAnimator.cancel();
+            }
             mDampAnimator.start();
             int offset=(mDefaultThreshold-mProgressView.getMeasuredHeight())/2;
             mOffsetAnimator=ValueAnimator.ofInt(0,offset);

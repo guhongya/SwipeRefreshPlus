@@ -132,9 +132,13 @@ public class RecycleFragment extends Fragment implements DemoContact.View {
                 int color= palette.getVibrantColor(Color.WHITE);
                 if(color==Color.WHITE) {
                     color = palette.getMutedColor(Color.WHITE);
-                    if(color==Color.WHITE)color=palette.getDominantColor(Color.WHITE);
+                    if(color==Color.WHITE) {
+                        color = palette.getDominantColor(Color.WHITE);
+                    }
                 }
-                if(color!=Color.WHITE) mRefreshViewController.setBackgroundColor(color);
+                if(color!=Color.WHITE) {
+                    mRefreshViewController.setBackgroundColor(color);
+                }
                 return false;
             }
         }).submit();

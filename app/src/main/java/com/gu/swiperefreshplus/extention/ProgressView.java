@@ -64,7 +64,9 @@ public class ProgressView extends View {
     }
     public void disappear(boolean disappear){
         if(disappear){
-            if(mAlphaAnimatoe.isRunning())mAlphaAnimatoe.cancel();
+            if(mAlphaAnimatoe.isRunning()) {
+                mAlphaAnimatoe.cancel();
+            }
             mAlphaAnimatoe.removeAllUpdateListeners();
             mAlphaAnimatoe.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override

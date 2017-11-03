@@ -431,7 +431,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        final int action = MotionEventCompat.getActionMasked(event);
+        final int action = event.getActionMasked();
         int pointerIndex;
         if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
             mReturningToStart = false;
@@ -530,7 +530,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         ensureTarget();
 
-        final int action = MotionEventCompat.getActionMasked(ev);
+        final int action = ev.getActionMasked();
         int pointerIndex;
 
         if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
@@ -573,7 +573,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
                 startDragging(y);
                 break;
 
-            case MotionEventCompat.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_POINTER_UP:
                 onSecondaryPointerUp(ev);
                 break;
 

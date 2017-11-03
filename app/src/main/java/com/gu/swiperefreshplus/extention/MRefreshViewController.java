@@ -158,7 +158,9 @@ public class MRefreshViewController implements IRefreshViewController {
     public void setTargetOffsetTopAndBottom(int i, boolean b) {
         LogUtils.d(i);
         //if(mPullDownAnimation.isRunning())mPullDownAnimation.cancel();
-        if(mPullUpAnimation.isRunning())mPullUpAnimation.cancel();
+        if(mPullUpAnimation.isRunning()) {
+            mPullUpAnimation.cancel();
+        }
         ViewCompat.offsetTopAndBottom(mParent, i);
         mCurrentOffsetTop = mRefreshViewLayout.getTop();
     }
@@ -186,7 +188,9 @@ public class MRefreshViewController implements IRefreshViewController {
 
     public void setBackgroundColor(@ColorInt int color){
         mBackgroundColor=color;
-        if(mRefreshViewLayout !=null) mRefreshViewLayout.setBackgroundColor(color);
+        if(mRefreshViewLayout !=null) {
+            mRefreshViewLayout.setBackgroundColor(color);
+        }
     }
 
     private void innitAnimation() {
