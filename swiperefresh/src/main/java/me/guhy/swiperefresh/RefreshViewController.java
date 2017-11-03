@@ -26,8 +26,6 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 
-import me.guhy.swiperefresh.Utils.Size;
-
 
 /**
  * Created by gu on 2016/12/19.
@@ -135,6 +133,7 @@ public class RefreshViewController implements IRefreshViewController {
     }
 
     //创建refresh view
+    @Override
     public View create() {
         mCircleView = new CircleImageView(mContext, CIRCLE_BG_LIGHT);
         mProgress = new ProgressDrawable(mContext, mParent);
@@ -147,6 +146,7 @@ public class RefreshViewController implements IRefreshViewController {
     }
 
     //refresh 结束，资源清理
+    @Override
     public void reset() {
         mCircleView.clearAnimation();
         mProgress.stop();
@@ -171,16 +171,19 @@ public class RefreshViewController implements IRefreshViewController {
         mProgress.setColorSchemeColors(colors);
     }
 
+    @Override
     public void startPulling() {
         mProgress.setAlpha(STARTING_PROGRESS_ALPHA);
     }
 
 
+    @Override
     public boolean isRefresh() {
         return isRefresh;
     }
 
     //下拉时，refresh动画
+    @Override
     public void showPullRefresh(float overscrollTop) {
         mProgress.showArrow(true);
         float originalDragPercent = overscrollTop / mTotalDragDistance;
@@ -228,8 +231,8 @@ public class RefreshViewController implements IRefreshViewController {
         setTargetOffsetTopAndBottom(targetY - mCurrentTargetOffsetTop, true /* requires update */);
     }
 
+    @Override
     public void setTargetOffsetTopAndBottom(int offset, boolean requiresUpdate) {
-        // mCircleView.bringToFront();
         ViewCompat.offsetTopAndBottom(mCircleView, offset);
         mCurrentTargetOffsetTop = mCircleView.getTop();
         if (requiresUpdate && android.os.Build.VERSION.SDK_INT < 11) {
@@ -237,6 +240,7 @@ public class RefreshViewController implements IRefreshViewController {
         }
     }
 
+    @Override
     public int getCurrentTargetOffsetTop() {
         return mCurrentTargetOffsetTop;
     }
@@ -246,6 +250,7 @@ public class RefreshViewController implements IRefreshViewController {
      *
      * @param overscrollTop 总下拉距离
      */
+    @Override
     public void finishPullRefresh(float overscrollTop) {
         if (overscrollTop > mTotalDragDistance) {
             setRefreshing(true, true /* notify */);
@@ -279,6 +284,7 @@ public class RefreshViewController implements IRefreshViewController {
         }
     }
 
+    @Override
     public void setRefreshListener(SwipeRefreshPlus.OnRefreshListener scrollListener) {
         this.mListener = scrollListener;
     }

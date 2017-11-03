@@ -101,7 +101,6 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         super(context, attrs);
         mLoadViewController = new LoadViewController(context, this);
         mRefreshController = new RefreshViewController(context, this);
-        //   mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         final ViewConfiguration configuration = ViewConfiguration.get(getContext());
         mTouchSlop = configuration.getScaledTouchSlop();
         mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
@@ -299,6 +298,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
             case ZIndex.NORMAL:
                 addView(mRefreshView);
                 break;
+            default:
+                addView(mRefreshView);
+                break;
         }
         if (mListener != null) {
             mRefreshController.setRefreshListener(mListener);
@@ -333,19 +335,21 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         Log.d(TAG, "onLayout: " + getChildCount());
         final int width = getMeasuredWidth();
         final int height = getMeasuredHeight();
-        if (getChildCount() == 0)
+        if (getChildCount() == 0) {
             return;
-        if (mTarget == null)
+        }
+        if (mTarget == null) {
             ensureTarget();
-        if (mTarget == null)
+        }
+        if (mTarget == null) {
             return;
+        }
         final View child = mTarget;
         final int childLeft = getPaddingLeft();
         final int childRight = getPaddingRight();
         final int childTop = getPaddingTop();
         final int childBottom = getPaddingBottom();
         final int childWidth = width - childLeft - childRight;
-        //   final int childHeight=child.getMeasuredHeight();
         final int childHeight = height - childTop - childBottom;
         child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
         final int circleWidth = mRefreshView.getMeasuredWidth();
@@ -369,7 +373,6 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
             if (!canChildScrollDown() && canLoadMore()) {
-                //showLoadMoreView(mLoadMoreView.getHeight());
                 int dis = mLoadViewController.finishPullRefresh(mScroller.getFinalY() - mScroller.getCurrY());
                 scrollBy(0, dis);
                 mScroller.abortAnimation();
@@ -404,17 +407,17 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (mTarget == null)
+        if (mTarget == null) {
             ensureTarget();
-        if (mTarget == null)
+        }
+        if (mTarget == null) {
             return;
+        }
         mTarget.measure(MeasureSpec.makeMeasureSpec(
                 getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
                 MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
                 getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
         measureChild(mRefreshView);
-//        mRefreshView.measure(MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getWidth(), MeasureSpec.EXACTLY),
-//                MeasureSpec.makeMeasureSpec(mRefreshController.getRefreshViewSize().getHeight(), MeasureSpec.EXACTLY));
         measureChild(mLoadMoreView);
         circleViewIndex = -1;
         // Get the index of the circleview.
@@ -463,7 +466,6 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
             case MotionEvent.ACTION_MOVE: {
                 pointerIndex = event.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
-                    // Log.e(LOG_TAG, "Got ACTION_MOVE event but have an invalid active pointer id.");
                     return false;
                 }
 
@@ -501,7 +503,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
                     final float y = event.getY(pointerIndex);
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     mIsBeingDragUp = false;
-                    if (overscrollTop > 0) mRefreshController.finishPullRefresh(overscrollTop);
+                    if (overscrollTop > 0) {
+                        mRefreshController.finishPullRefresh(overscrollTop);
+                    }
                 }
                 if (mIsBeingDragDown) {
                     final float y = event.getY(pointerIndex);
@@ -635,8 +639,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     }
 
     private void measureChild(View view) {
-        if (view == null)
+        if (view == null) {
             return;
+        }
         LayoutParams lp = view.getLayoutParams();
         int width, height;
         width = getMeasureSpec(lp.width, getMeasuredWidth());
@@ -646,12 +651,13 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
 
     private int getMeasureSpec(int size, int parentSize) {
         int result;
-        if (size == LayoutParams.MATCH_PARENT)
+        if (size == LayoutParams.MATCH_PARENT) {
             result = MeasureSpec.makeMeasureSpec(parentSize, MeasureSpec.EXACTLY);
-        else if (size == LayoutParams.WRAP_CONTENT)
+        } else if (size == LayoutParams.WRAP_CONTENT) {
             result = MeasureSpec.makeMeasureSpec(parentSize, MeasureSpec.AT_MOST);
-        else
+        } else {
             result = MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY);
+        }
         return result;
     }
 
@@ -801,8 +807,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow);
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
-        if (mRefreshController.isRefresh())
+        if (mRefreshController.isRefresh()) {
             return;
+        }
         if (dy < 0 && !canChildScrollUp() && canRefresh()) {
             mUpTotalUnconsumed += Math.abs(dy);
             //moveSpinner(mUpTotalUnconsumed);
@@ -906,7 +913,6 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
             if (mScrollView instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) mScrollView;
                 int count = absListView.getChildCount();
-                //return absListView.canScrollList(-1);
                 int position = absListView.getLastVisiblePosition();
                 return (count > position + 1) || absListView.getChildAt(position).getBottom() <= absListView.getPaddingBottom();
             } else {
@@ -919,8 +925,9 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
 
 
     private void showLoadMoreView(int height) {
-        if (mLoadMoreView.getVisibility() != VISIBLE)
+        if (mLoadMoreView.getVisibility() != VISIBLE) {
             mLoadMoreView.setVisibility(VISIBLE);
+        }
         scrollBy(0, mLoadViewController.move(height));
     }
 
@@ -956,17 +963,19 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     }
 
     private boolean canRefresh() {
-        if (REFRESH_MODE == SwipeRefreshMode.MODE_BOTH || REFRESH_MODE == SwipeRefreshMode.MODE_REFRESH_ONLY)
+        if (REFRESH_MODE == SwipeRefreshMode.MODE_BOTH || REFRESH_MODE == SwipeRefreshMode.MODE_REFRESH_ONLY) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     private boolean canLoadMore() {
         if ((REFRESH_MODE == SwipeRefreshMode.MODE_BOTH || REFRESH_MODE == SwipeRefreshMode.MODE_LOADMODE) && canChildScrollUp()) {
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
 

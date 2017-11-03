@@ -18,7 +18,7 @@
 gradle:
 
 	dependencies {
-	        compile 'me.guhy:SwipeRefreshPlus:1.0.8'
+	         compile 'me.guhy:SwipeRefreshPlus:1.0.9-RC2'
 	}
   
 设置监听  
