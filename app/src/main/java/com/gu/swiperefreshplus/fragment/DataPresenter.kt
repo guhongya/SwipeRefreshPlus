@@ -1,65 +1,58 @@
-package com.gu.swiperefreshplus.fragment;
+package com.gu.swiperefreshplus.fragment
 
-import com.gu.swiperefreshplus.R;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.gu.swiperefreshplus.R
+import java.util.Random
+import kotlin.collections.ArrayList
 
 /**
  * Created by gu on 2016/12/22.
  */
 
-public class DataPresenter implements DemoContact.Presenter {
-    List<Integer> datas;
-    private Random mRandom;
-    private DemoContact.View view;
-    private int[] dataSource=new int[]{R.mipmap.pic1,R.mipmap.pic2,R.mipmap.pic3,R.mipmap.pic4,R.mipmap.pic5};
-    public DataPresenter(DemoContact.View view){
-        this.view=view;
-        datas=new ArrayList<>();
-        mRandom=new Random();
-        view.setPresenter(this);
+class DataPresenter(private var view: DemoContact.View?) : DemoContact.Presenter {
+    internal var datas: MutableList<Int>
+    private val mRandom: Random
+    private val dataSource = intArrayOf(R.mipmap.pic1, R.mipmap.pic2, R.mipmap.pic3, R.mipmap.pic4, R.mipmap.pic5)
+
+    init {
+        datas = ArrayList()
+        mRandom = Random()
+        view?.setPresenter(this)
     }
-    @Override
-    public void refresh() {
+
+    override fun refresh() {
         //datas.clear();
-        List<Integer> tem=generatorData(1);
-        datas.addAll(0,tem);
-       view.onDataAdded(0,tem.size());
+        val tem = generatorData(1)
+        datas.addAll(0, tem)
+        view!!.onDataAdded(0, tem.size)
     }
 
-    @Override
-    public void loadMore() {
-        List<Integer> tem=generatorData(5);
-        datas.addAll(tem);
-       // view.onDataChange();
-        view.onDataAdded(datas.size()-tem.size(),datas.size());
+    override fun loadMore() {
+        val tem = generatorData(5)
+        datas.addAll(tem)
+        // view.onDataChange();
+        view!!.onDataAdded(datas.size - tem.size, datas.size)
     }
 
-    @Override
-    public List getData() {
-        return datas;
+    override fun getData(): List<Int> {
+        return datas
     }
 
-    @Override
-    public void bind() {
-        datas.addAll(generatorData(10));
+    override fun bind() {
+        datas.addAll(generatorData(10))
     }
 
-    @Override
-    public void unbind() {
-        view=null;
+    override fun unbind() {
+        view = null
     }
 
-    private List generatorData(int n){
-        Long num=System.currentTimeMillis();
-        List<Integer> resul=new ArrayList<>();
-        for(int i=0;i<n;i++){
-            mRandom.setSeed(num);
-            num=mRandom.nextLong();
-            resul.add(dataSource[Math.abs(num.intValue())%5]);
+    private fun generatorData(n: Int): List<Int> {
+        var num: Long? = System.currentTimeMillis()
+        val resul = ArrayList<Int>()
+        for (i in 0 until n) {
+            mRandom.setSeed(num!!)
+            num = mRandom.nextLong()
+            resul.add(dataSource[Math.abs(num.toInt()) % 5])
         }
-        return resul;
+        return resul
     }
 }

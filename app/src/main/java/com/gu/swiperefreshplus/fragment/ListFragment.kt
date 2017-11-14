@@ -1,128 +1,103 @@
-package com.gu.swiperefreshplus.fragment;
+package com.gu.swiperefreshplus.fragment
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-
-import com.gu.swiperefreshplus.R;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import me.guhy.swiperefresh.SwipeRefreshPlus;
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ListView
+import android.widget.SimpleAdapter
+import com.gu.swiperefreshplus.R
+import me.guhy.swiperefresh.SwipeRefreshPlus
+import java.util.*
 
 
-public class ListFragment extends Fragment implements DemoContact.View {
-    private ListView mListView;
-    private SimpleAdapter mSimplaeAdaptr;
-    private SwipeRefreshPlus mSwipeRefreshPlus;
-    private List<Integer> datas;
-    int count=0;
-    int page=3;
-    View noMoreView;
-    private DemoContact.Presenter presenter;
-    private ArrayList<Map<String,Integer>> mAdapterDatas;
-    private String[] from=new String[]{"src"};
-    private int[] to=new int[]{R.id.item_content};
-
-    public ListFragment() {
-        // Required empty public constructor
-    }
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+class ListFragment : Fragment(), DemoContact.View {
+    private var mListView: ListView? = null
+    private var mSimplaeAdaptr: SimpleAdapter? = null
+    private var mSwipeRefreshPlus: SwipeRefreshPlus? = null
+    private var datas: List<Int>? = null
+    internal var count = 0
+    internal var page = 3
+    private var noMoreView: View?=null
+    private var presenter: DemoContact.Presenter? = null
+    private var mAdapterDatas: ArrayList<Map<String, Int>>? = null
+    private val from = arrayOf("src")
+    private val to = intArrayOf(R.id.item_content)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_list, container, false);
-       // View view=inflater.inflate(R.layout.fragment_list, container, false);
-        mListView=(ListView) view.findViewById(R.id.list_content);
-        mSwipeRefreshPlus =(SwipeRefreshPlus) view.findViewById(R.id.list_swipe_refresh);
-        mAdapterDatas=new ArrayList<>();
-        mSimplaeAdaptr=new SimpleAdapter(getActivity(),mAdapterDatas,R.layout.item_recycle_content,from,to);
-        mListView.setAdapter(mSimplaeAdaptr);
-        new DataPresenter(this);
-        iniView();
-        return view;
+        val view = inflater!!.inflate(R.layout.fragment_list, container, false)
+        // View view=inflater.inflate(R.layout.fragment_list, container, false);
+        mListView = view.findViewById<View>(R.id.list_content) as ListView
+        mSwipeRefreshPlus = view.findViewById<View>(R.id.list_swipe_refresh) as SwipeRefreshPlus
+        mAdapterDatas = ArrayList()
+        mSimplaeAdaptr = SimpleAdapter(activity, mAdapterDatas, R.layout.item_recycle_content, from, to)
+        mListView!!.adapter = mSimplaeAdaptr
+        DataPresenter(this)
+        iniView()
+        return view
     }
 
 
-    @Override
-    public void onDetach() {
-        mSwipeRefreshPlus.setEnabled(false);
-        super.onDetach();
+    override fun onDetach() {
+        mSwipeRefreshPlus!!.isEnabled = false
+        super.onDetach()
     }
 
-    @Override
-    public void onDataChange() {
-        mAdapterDatas.clear();
-        for(Integer src:datas){
-            Map<String ,Integer> tem=new HashMap<>(1);
-            tem.put(from[0],src);
-            mAdapterDatas.add(tem);
+    override fun onDataChange() {
+        mAdapterDatas!!.clear()
+        for (src in datas!!) {
+            val tem = HashMap<String, Int>(1)
+            tem.put(from[0], src)
+            mAdapterDatas!!.add(tem)
         }
-        mSimplaeAdaptr.notifyDataSetChanged();
+        mSimplaeAdaptr!!.notifyDataSetChanged()
     }
 
-    @Override
-    public void onDataAdded(int from, int to) {
-        onDataChange();
-        mSwipeRefreshPlus.setLoadMore(false);
+    override fun onDataAdded(from: Int, to: Int) {
+        onDataChange()
+        mSwipeRefreshPlus!!.setLoadMore(false)
     }
 
-    private void iniView(){
-        mSwipeRefreshPlus.setRefreshColorResources(new int[]{R.color.colorPrimary});
+    private fun iniView() {
+        mSwipeRefreshPlus!!.setRefreshColorResources(*intArrayOf(R.color.colorPrimary))
         //mSwipeRefreshPlus.setLoadViewController(new LoadMoreController(getActivity(), mSwipeRefreshPlus));
-        mSwipeRefreshPlus.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
-            @Override
-            public void onPullDownToRefresh() {
-                mSwipeRefreshPlus.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        presenter.refresh();
-                        mSwipeRefreshPlus.setRefresh(false);
-                        mSwipeRefreshPlus.showNoMore(false);
-                    }
-                },1000);
+        mSwipeRefreshPlus!!.setOnRefreshListener(object : SwipeRefreshPlus.OnRefreshListener {
+            override fun onPullDownToRefresh() {
+                mSwipeRefreshPlus!!.postDelayed({
+                    presenter!!.refresh()
+                    mSwipeRefreshPlus!!.setRefresh(false)
+                    mSwipeRefreshPlus!!.showNoMore(false)
+                }, 1000)
             }
 
-            @Override
-            public void onPullUpToRefresh() {
-                count++;
+            override fun onPullUpToRefresh() {
+                count++
                 if (count >= page) {
-                    mSwipeRefreshPlus.showNoMore(true);
+                    mSwipeRefreshPlus!!.showNoMore(true)
 
                 } else {
-                    mSwipeRefreshPlus.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            presenter.loadMore();
-                        }
-                    }, 1500);
+                    mSwipeRefreshPlus!!.postDelayed({ presenter!!.loadMore() }, 1500)
                 }
             }
-        });
-        noMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.item_no_more, null, false);
-        ViewGroup.LayoutParams layoutParams=new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        noMoreView.setPadding(10,10,10,10);
-        mSwipeRefreshPlus.setNoMoreView(noMoreView,layoutParams);
-        presenter.refresh();
-    }
-    @Override
-    public void setPresenter(DemoContact.Presenter presenter) {
-        this.presenter=presenter;
-        presenter.bind();
-        datas=presenter.getData();
+        })
+        noMoreView = LayoutInflater.from(activity).inflate(R.layout.item_no_more, null, false)
+        val layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT)
+        noMoreView!!.setPadding(10, 10, 10, 10)
+        mSwipeRefreshPlus!!.setNoMoreView(noMoreView as View, layoutParams)
+        presenter!!.refresh()
     }
 
-}
+    override fun setPresenter(presenter: DemoContact.Presenter) {
+        this.presenter = presenter
+        presenter.bind()
+        datas = presenter.getData()
+    }
+
+}// Required empty public constructor

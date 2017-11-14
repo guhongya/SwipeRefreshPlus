@@ -1,12 +1,13 @@
-<me.guhy.swiperefresh.SwipeRefreshPlus android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<me.guhy.swiperefresh.SwipeRefreshPlus xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/swipe_refresh"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recycle_content"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"/>
-    </me.guhy.swiperefresh.SwipeRefreshPlus>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycle_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" />
+</me.guhy.swiperefresh.SwipeRefreshPlus>
 

@@ -1,176 +1,138 @@
-package com.gu.swiperefreshplus.fragment;
+package com.gu.swiperefreshplus.fragment
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.graphics.Palette;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.apkfuns.logutils.LogUtils;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.gu.swiperefreshplus.R;
-import com.gu.swiperefreshplus.SimpleRecycleAdapter;
-import com.gu.swiperefreshplus.extention.LoadMoreController;
-import com.gu.swiperefreshplus.extention.MRefreshViewController;
-
-import java.util.List;
-
-import me.guhy.swiperefresh.SwipeRefreshPlus;
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v7.graphics.Palette
+import android.support.v7.widget.*
+import android.view.*
+import com.apkfuns.logutils.LogUtils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.gu.swiperefreshplus.R
+import com.gu.swiperefreshplus.SimpleRecycleAdapter
+import com.gu.swiperefreshplus.extention.LoadMoreController
+import com.gu.swiperefreshplus.extention.MRefreshViewController
+import me.guhy.swiperefresh.SwipeRefreshPlus
 
 
-public class RecycleFragment extends Fragment implements DemoContact.View {
-    private RecyclerView recycleContent;
-    private SimpleRecycleAdapter recycleAdapter;
-    private SwipeRefreshPlus swipeRefreshPlush;
-    private List<Integer> datas;
-    int count = 0;
-    int page = 4;
-    View noMoreView;
-    DemoContact.Presenter presenter;
-    private MRefreshViewController mRefreshViewController;
+class RecycleFragment : Fragment(), DemoContact.View {
+    private var recycleContent: RecyclerView? = null
+    private var recycleAdapter: SimpleRecycleAdapter? = null
+    private var swipeRefreshPlush: SwipeRefreshPlus? = null
+    private var datas: List<Int>? = null
+    internal var count = 0
+    internal var page = 4
+    private var noMoreView: View?=null
+    private var presenter: DemoContact.Presenter?=null
+    private var mRefreshViewController: MRefreshViewController? = null
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        LogUtils.d("recycle created");
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        LogUtils.d("recycle created")
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_recycle, container, false);
-        recycleContent = (RecyclerView) view.findViewById(R.id.recycle_content);
-        swipeRefreshPlush = (SwipeRefreshPlus) view.findViewById(R.id.swipe_refresh);
-        swipeRefreshPlush.setLoadViewController(new LoadMoreController(container.getContext(), swipeRefreshPlush));
-        mRefreshViewController=new MRefreshViewController(container.getContext(),swipeRefreshPlush);
-        mRefreshViewController.setBackgroundColor(getActivity().getResources().getColor(R.color.colorAccent));
-        swipeRefreshPlush.setRefreshViewController(mRefreshViewController);
-        new DataPresenter(this);
-        setHasOptionsMenu(true);
-        iniView();
-        return view;
+        val view = inflater!!.inflate(R.layout.fragment_recycle, container, false)
+        recycleContent = view.findViewById<View>(R.id.recycle_content) as RecyclerView
+        swipeRefreshPlush = view.findViewById<View>(R.id.swipe_refresh) as SwipeRefreshPlus
+        swipeRefreshPlush!!.loadViewController = LoadMoreController(container!!.context, swipeRefreshPlush!!)
+        mRefreshViewController = MRefreshViewController(container.context, swipeRefreshPlush!!)
+        mRefreshViewController!!.setBackgroundColor(activity.resources.getColor(R.color.colorAccent))
+        swipeRefreshPlush!!.setRefreshViewController(mRefreshViewController as MRefreshViewController)
+        DataPresenter(this)
+        setHasOptionsMenu(true)
+        iniView()
+        return view
     }
 
-    private void iniView() {
-        recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recycleAdapter = new SimpleRecycleAdapter();
-        recycleAdapter.setData(datas);
-        recycleContent.setAdapter(recycleAdapter);
-        recycleContent.setItemAnimator(new DefaultItemAnimator());
-        swipeRefreshPlush.setRefreshColorResources(new int[]{R.color.colorPrimary});
-        swipeRefreshPlush.setOnRefreshListener(new SwipeRefreshPlus.OnRefreshListener() {
-            @Override
-            public void onPullDownToRefresh() {
-                swipeRefreshPlush.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        presenter.refresh();
-                        LogUtils.d(swipeRefreshPlush.getLoadViewController().isLoading());
-                    }
-                }, 1000);
+    private fun iniView() {
+        recycleContent!!.layoutManager = LinearLayoutManager(activity)
+        recycleAdapter = SimpleRecycleAdapter()
+        recycleAdapter!!.setData(datas!!)
+        recycleContent!!.adapter = recycleAdapter
+        recycleContent!!.itemAnimator = DefaultItemAnimator()
+        swipeRefreshPlush!!.setRefreshColorResources(*intArrayOf(R.color.colorPrimary))
+        swipeRefreshPlush!!.setOnRefreshListener(object : SwipeRefreshPlus.OnRefreshListener {
+            override fun onPullDownToRefresh() {
+                swipeRefreshPlush!!.postDelayed({
+                    presenter?.refresh()
+                    LogUtils.d(swipeRefreshPlush!!.loadViewController!!.isLoading)
+                }, 1000)
             }
 
-            @Override
-            public void onPullUpToRefresh() {
-                LogUtils.d("onloading");
-                count++;
+            override fun onPullUpToRefresh() {
+                LogUtils.d("onloading")
+                count++
                 if (count >= page) {
-                    swipeRefreshPlush.showNoMore(true);
+                    swipeRefreshPlush!!.showNoMore(true)
 
                 } else {
-                    swipeRefreshPlush.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            presenter.loadMore();
-                        }
-                    }, 1500);
+                    swipeRefreshPlush!!.postDelayed({ presenter?.loadMore() }, 1500)
                 }
             }
-        });
-        noMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.item_no_more, null, false);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        noMoreView.setPadding(10, 10, 10, 10);
-        swipeRefreshPlush.setNoMoreView(noMoreView, layoutParams);
+        })
+        noMoreView = LayoutInflater.from(activity).inflate(R.layout.item_no_more, null, false)
+        val layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT)
+        noMoreView?.setPadding(10, 10, 10, 10)
+        swipeRefreshPlush!!.setNoMoreView(noMoreView as View, layoutParams)
     }
 
-    @Override
-    public void onDataChange() {
-        recycleAdapter.notifyDataSetChanged();
+    override fun onDataChange() {
+        recycleAdapter!!.notifyDataSetChanged()
 
     }
 
-    @Override
-    public void onDataAdded(int from, int to) {
-        recycleAdapter.notifyItemRangeInserted(from,to-from);
-        if(from==0){
-            recycleContent.scrollToPosition(0);
+    override fun onDataAdded(from: Int, to: Int) {
+        recycleAdapter!!.notifyItemRangeInserted(from, to - from)
+        if (from == 0) {
+            recycleContent!!.scrollToPosition(0)
         }
-        int id=datas.get(0);
-        Glide.with(this).asBitmap().load(id).listener(new RequestListener<Bitmap>() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                return false;
+        val id = datas!![0]
+        Glide.with(this).asBitmap().load(id).listener(object : RequestListener<Bitmap> {
+            override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Bitmap>, isFirstResource: Boolean): Boolean {
+                return false
             }
 
-            @Override
-            public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                LogUtils.d("ok");
-                Palette palette=Palette.from(resource).generate();
-                int color= palette.getVibrantColor(Color.WHITE);
-                if(color==Color.WHITE) {
-                    color = palette.getMutedColor(Color.WHITE);
-                    if(color==Color.WHITE) {
-                        color = palette.getDominantColor(Color.WHITE);
+            override fun onResourceReady(resource: Bitmap, model: Any, target: Target<Bitmap>, dataSource: DataSource, isFirstResource: Boolean): Boolean {
+                LogUtils.d("ok")
+                val palette = Palette.from(resource).generate()
+                var color = palette.getVibrantColor(Color.WHITE)
+                if (color == Color.WHITE) {
+                    color = palette.getMutedColor(Color.WHITE)
+                    if (color == Color.WHITE) {
+                        color = palette.getDominantColor(Color.WHITE)
                     }
                 }
-                if(color!=Color.WHITE) {
-                    mRefreshViewController.setBackgroundColor(color);
+                if (color != Color.WHITE) {
+                    mRefreshViewController!!.setBackgroundColor(color)
                 }
-                return false;
+                return false
             }
-        }).submit();
-        swipeRefreshPlush.setRefresh(false);
-        swipeRefreshPlush.setLoadMore(false);
+        }).submit()
+        swipeRefreshPlush!!.setRefresh(false)
+        swipeRefreshPlush!!.setLoadMore(false)
     }
 
-    @Override
-    public void setPresenter(DemoContact.Presenter presenter) {
-        this.presenter = presenter;
-        presenter.bind();
-        datas = presenter.getData();
+    override fun setPresenter(presenter: DemoContact.Presenter) {
+        this.presenter = presenter
+        presenter.bind()
+        datas = presenter.getData()
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.recycleview_menu, menu);
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater!!.inflate(R.menu.recycleview_menu, menu)
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.liner_layout:
-                recycleContent.setLayoutManager(new LinearLayoutManager(getActivity()));
-                break;
-            case R.id.grid_layout:
-                recycleContent.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-                break;
-            case R.id.staggered_grid_layout:
-                recycleContent.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-                break;
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.liner_layout -> recycleContent!!.layoutManager = LinearLayoutManager(activity)
+            R.id.grid_layout -> recycleContent!!.layoutManager = GridLayoutManager(activity, 2)
+            R.id.staggered_grid_layout -> recycleContent!!.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         }
-        return true;
+        return true
     }
 }

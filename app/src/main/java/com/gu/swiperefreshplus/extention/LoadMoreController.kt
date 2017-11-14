@@ -1,145 +1,137 @@
-package com.gu.swiperefreshplus.extention;
+package com.gu.swiperefreshplus.extention
 
-import android.content.Context;
-import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.gu.swiperefreshplus.R;
-
-import me.guhy.swiperefresh.ILoadViewController;
-import me.guhy.swiperefresh.SwipeRefreshPlus;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.gu.swiperefreshplus.R
+import me.guhy.swiperefresh.ILoadViewController
+import me.guhy.swiperefresh.SwipeRefreshPlus
 
 /**
  * Created by GUHY on 2017/4/18.
  */
 
-public class LoadMoreController implements ILoadViewController {
-    private int mDefaultHeight = 80;
-    private int mMaxHeight;
-    private int mDefaultThreshold = 60;
+class LoadMoreController(private val mContext: Context, private val mParent: View) : ILoadViewController {
 
-    private View mDefaultView;
-    private Context mContext;
+    private var mDefaultHeight = 80
+    private val mMaxHeight: Int
+    private var mDefaultThreshold = 60
 
-    private float mCurrentOffsetToTop;
-    private SwipeRefreshPlus.OnRefreshListener mOnRefreshListener;
-    private boolean isNoMore;
-    private boolean isLoading;
-    private View mParent;
+    private var mDefaultView: View? = null
+
+    private var mCurrentOffsetToTop: Float = 0.toFloat()
+    private var mOnRefreshListener: SwipeRefreshPlus.OnRefreshListener? = null
+    private var isNoMore: Boolean = false
+    override var isLoading: Boolean = false
 
 
-    public LoadMoreController(Context context, View parent) {
-        mContext = context;
-        this.mParent = parent;
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        mMaxHeight = metrics.heightPixels;
-        mDefaultHeight *= metrics.density;
-        mDefaultThreshold *= metrics.density;
+    init {
+        val metrics = mContext.resources.displayMetrics
+        mMaxHeight = metrics.heightPixels
+        mDefaultHeight *= metrics.density.toInt()
+        mDefaultThreshold *= metrics.density.toInt()
     }
 
-    @Override
-    public void reset() {
-        mCurrentOffsetToTop = 0;
+    override fun reset() {
+        mCurrentOffsetToTop = 0f
     }
 
-    @Override
-    public View create() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_load_more, null);
-        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mDefaultHeight));
-        mDefaultView = view;
-        return view;
+    override fun create(): View {
+        val view = LayoutInflater.from(mContext).inflate(R.layout.item_load_more, null)
+        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mDefaultHeight)
+        mDefaultView = view
+        return view
     }
 
-    @Override
-    public int finishPullRefresh(float totalDistance) {
-        if (mCurrentOffsetToTop > mDefaultThreshold || (totalDistance + mCurrentOffsetToTop) > mDefaultThreshold) {
+    override fun finishPullRefresh(totalDistance: Float): Int {
+        if (mCurrentOffsetToTop > mDefaultThreshold || totalDistance + mCurrentOffsetToTop > mDefaultThreshold) {
             if (!isNoMore && !isLoading) {
-                isLoading = true;
-                mOnRefreshListener.onPullUpToRefresh();
+                isLoading = true
+                mOnRefreshListener!!.onPullUpToRefresh()
             }
-            int dis = (int) (mDefaultHeight - mCurrentOffsetToTop);
-            mCurrentOffsetToTop = mDefaultHeight;
-            return dis;
+            val dis = (mDefaultHeight - mCurrentOffsetToTop).toInt()
+            mCurrentOffsetToTop = mDefaultHeight.toFloat()
+            return dis
         } else {
-            return 0;
+            return 0
         }
     }
 
-    @Override
-    public int getDefaultHeight() {
-        return mDefaultHeight;
-    }
+    override var defaultHeight: Int
+        get() = mDefaultHeight
+        set(value) {}
+    override var currentHeight: Int
+        get() = mCurrentOffsetToTop.toInt()
+        set(value) {}
+    override var defaultView: View
+        get() = mDefaultView as View
+        set(value) {}
 
-    @Override
-    public int getCurrentHeight() {
-        return (int) mCurrentOffsetToTop;
-    }
+//    override fun getDefaultHeight(): Int {
+//        return mDefaultHeight
+//    }
+//
+//    override fun getCurrentHeight(): Int {
+//        return mCurrentOffsetToTop.toInt()
+//    }
 
-    @Override
-    public int move(int height) {
+    override fun move(height: Int): Int {
         if (height > 0) {
             if (mCurrentOffsetToTop < mMaxHeight && mCurrentOffsetToTop >= 0) {
-                int dis = (int) (height * (mMaxHeight - mCurrentOffsetToTop) / (2 * mMaxHeight));
+                val dis = (height * (mMaxHeight - mCurrentOffsetToTop) / (2 * mMaxHeight)).toInt()
                 if (mCurrentOffsetToTop + dis < mMaxHeight) {
-                    mCurrentOffsetToTop += dis;
-                    return dis;
+                    mCurrentOffsetToTop += dis.toFloat()
+                    return dis
                 } else {
-                    int result = (int) (mMaxHeight - mCurrentOffsetToTop);
-                    mCurrentOffsetToTop = mMaxHeight;
-                    return result;
+                    val result = (mMaxHeight - mCurrentOffsetToTop).toInt()
+                    mCurrentOffsetToTop = mMaxHeight.toFloat()
+                    return result
                 }
             }
         } else {
-            mCurrentOffsetToTop += height;
-            if (mCurrentOffsetToTop < 0) {
-                return (int) (height - mCurrentOffsetToTop);
+            mCurrentOffsetToTop += height.toFloat()
+            return if (mCurrentOffsetToTop < 0) {
+                (height - mCurrentOffsetToTop).toInt()
             } else {
-                return height;
+                height
             }
         }
-        return 0;
+        return 0
     }
 
-    @Override
-    public void setRefreshListener(SwipeRefreshPlus.OnRefreshListener mListener) {
-        mOnRefreshListener = mListener;
+    override fun setRefreshListener(mListener: SwipeRefreshPlus.OnRefreshListener) {
+        mOnRefreshListener = mListener
     }
 
-    @Override
-    public void showNoMore(boolean show) {
-        isNoMore = show;
-        isLoading = false;
+    override fun showNoMore(show: Boolean) {
+        isNoMore = show
+        isLoading = false
     }
 
-    @Override
-    public View getDefaultView() {
-        return mDefaultView;
-    }
+//    override fun getDefaultView(): View? {
+//        return mDefaultView
+//    }
 
-    @Override
-    public void setLoadMore(boolean loading) {
+    override fun setLoadMore(loading: Boolean) {
         if (isLoading != loading) {
-            isLoading = loading;
+            isLoading = loading
             if (isLoading) {
-                mParent.scrollBy(0, mDefaultHeight);
+                mParent.scrollBy(0, mDefaultHeight)
             } else {
-                mParent.scrollBy(0, -(int) mCurrentOffsetToTop);
-                reset();
+                mParent.scrollBy(0, -mCurrentOffsetToTop.toInt())
+                reset()
             }
-            isLoading = loading;
+            isLoading = loading
         }
     }
+//
+//    override fun isLoading(): Boolean {
+//        return isLoading
+//    }
 
-    @Override
-    public boolean isLoading() {
-        return isLoading;
-    }
-
-    @Override
-    public void stopAnimation() {
-        mDefaultView.setVisibility(View.INVISIBLE);
+    override fun stopAnimation() {
+        mDefaultView!!.visibility = View.INVISIBLE
     }
 
 }

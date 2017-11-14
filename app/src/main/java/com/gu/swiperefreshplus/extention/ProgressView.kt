@@ -1,111 +1,107 @@
-package com.gu.swiperefreshplus.extention;
+package com.gu.swiperefreshplus.extention
 
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.support.annotation.ColorInt;
-import android.view.View;
+import android.animation.ValueAnimator
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
+import android.support.annotation.ColorInt
+import android.view.View
 
 /**
  * Created by GUHY on 2017/6/21.
  */
 
-public class ProgressView extends View {
-    private static final int DEFAULT_DURATION=2500;
-    private static final int DISAPPEAR_DURATION=200;
+class ProgressView(context: Context) : View(context) {
 
-    private Paint mPaint;
-    private float mGap;
-    private Paint mStrokePaint;
-    private ValueAnimator mRotateAnimator;
-    private RectF mRectf;
-    private float mSwipeAngle=0;
-    private float mStartAngle=90f;
-    private ValueAnimator mAlphaAnimatoe;
-    private ValueAnimator.AnimatorUpdateListener mRotateListener=new ValueAnimator.AnimatorUpdateListener() {
-        @Override
-        public void onAnimationUpdate(ValueAnimator animation) {
-            float value= (float) animation.getAnimatedValue();
-            if(value<1) {
-                mSwipeAngle = 360 * value;
-            }else{
-                float angle=360*value%360;
-                mStartAngle=90+angle;
-                mSwipeAngle=360-angle;
+    private val mPaint: Paint
+    private val mGap: Float = 0.toFloat()
+    private val mStrokePaint: Paint
+    private val mRotateAnimator: ValueAnimator
+    private var mRectf: RectF? = null
+    private var mSwipeAngle = 0f
+    private var mStartAngle = 90f
+    private val mAlphaAnimatoe: ValueAnimator
+    private val mRotateListener = ValueAnimator.AnimatorUpdateListener { animation ->
+        val value = animation.animatedValue as Float
+        if (value < 1) {
+            mSwipeAngle = 360 * value
+        } else {
+            val angle = 360 * value % 360
+            mStartAngle = 90 + angle
+            mSwipeAngle = 360 - angle
+        }
+        invalidate()
+    }
+
+    init {
+        mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        mPaint.style = Paint.Style.FILL
+        mStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        mStrokePaint.style = Paint.Style.STROKE
+        mStrokePaint.strokeCap = Paint.Cap.SQUARE
+        mRotateAnimator = ValueAnimator.ofFloat(0f, 2.0f)
+        mRotateAnimator.duration = DEFAULT_DURATION.toLong()
+        mRotateAnimator.repeatMode = ValueAnimator.RESTART
+        mRotateAnimator.repeatCount = ValueAnimator.INFINITE
+        mRotateAnimator.addUpdateListener(mRotateListener)
+        mAlphaAnimatoe = ValueAnimator.ofFloat(1.0f, 0f)
+        mAlphaAnimatoe.duration = DISAPPEAR_DURATION.toLong()
+    }
+
+    fun setGap(gap: Float) {
+        mStrokePaint.strokeWidth = gap
+
+    }
+
+    fun setColor(@ColorInt color: Int) {
+        mPaint.color = color
+        mStrokePaint.color = color
+    }
+
+    fun disappear(disappear: Boolean) {
+        if (disappear) {
+            if (mAlphaAnimatoe.isRunning) {
+                mAlphaAnimatoe.cancel()
             }
-            invalidate();
-        }
-    };
-    public ProgressView(Context context) {
-        super(context);
-        mPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setStyle(Paint.Style.FILL);
-        mStrokePaint=new Paint(Paint.ANTI_ALIAS_FLAG);
-        mStrokePaint.setStyle(Paint.Style.STROKE);
-        mStrokePaint.setStrokeCap(Paint.Cap.SQUARE);
-        mRotateAnimator=ValueAnimator.ofFloat(0,2.0f);
-        mRotateAnimator.setDuration(DEFAULT_DURATION);
-        mRotateAnimator.setRepeatMode(ValueAnimator.RESTART);
-        mRotateAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        mRotateAnimator.addUpdateListener(mRotateListener);
-        mAlphaAnimatoe=ValueAnimator.ofFloat(1.0f,0);
-        mAlphaAnimatoe.setDuration(DISAPPEAR_DURATION);
-    }
-
-    public void setGap(float gap){
-        mStrokePaint.setStrokeWidth(gap);
-
-    }
-    public void setColor(@ColorInt int color){
-        mPaint.setColor(color);
-        mStrokePaint.setColor(color);
-    }
-    public void disappear(boolean disappear){
-        if(disappear){
-            if(mAlphaAnimatoe.isRunning()) {
-                mAlphaAnimatoe.cancel();
+            mAlphaAnimatoe.removeAllUpdateListeners()
+            mAlphaAnimatoe.addUpdateListener { animation ->
+                val alpha = animation.animatedValue as Float
+                this@ProgressView.alpha = alpha
             }
-            mAlphaAnimatoe.removeAllUpdateListeners();
-            mAlphaAnimatoe.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float alpha= (float) animation.getAnimatedValue();
-                    ProgressView.this.setAlpha(alpha);
-                }
-            });
-            mAlphaAnimatoe.start();
-        }
-        else{
+            mAlphaAnimatoe.start()
+        } else {
 
         }
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        mRectf=new RectF(0+10,0+10,getMeasuredWidth()-10,getMeasuredHeight()-10);
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        mRectf = RectF((0 + 10).toFloat(), (0 + 10).toFloat(), (measuredWidth - 10).toFloat(), (measuredHeight - 10).toFloat())
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawCircle(getWidth()/2,getHeight()/2, getWidth()/2*0.7f,mPaint);
-        canvas.drawArc(mRectf,mStartAngle,mSwipeAngle+5,false,mStrokePaint);
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        canvas.drawCircle((width / 2).toFloat(), (height / 2).toFloat(), width / 2 * 0.7f, mPaint)
+        canvas.drawArc(mRectf!!, mStartAngle, mSwipeAngle + 5, false, mStrokePaint)
     }
 
-    public void start(){
-        if(mRotateAnimator.isRunning()){
-            mRotateAnimator.cancel();
+    fun start() {
+        if (mRotateAnimator.isRunning) {
+            mRotateAnimator.cancel()
         }
-        mRotateAnimator.start();
+        mRotateAnimator.start()
     }
 
-    public void stop(){
-        mRotateAnimator.cancel();
-        mSwipeAngle=0;
-        mStartAngle=90;
-        invalidate();
+    fun stop() {
+        mRotateAnimator.cancel()
+        mSwipeAngle = 0f
+        mStartAngle = 90f
+        invalidate()
+    }
+
+    companion object {
+        private val DEFAULT_DURATION = 2500
+        private val DISAPPEAR_DURATION = 200
     }
 }
