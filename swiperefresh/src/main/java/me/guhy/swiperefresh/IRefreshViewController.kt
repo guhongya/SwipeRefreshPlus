@@ -14,20 +14,19 @@ interface IRefreshViewController {
     /**
      * @return refreshview 的z轴顺序
      */
-    @get:ZIndex
-    val zIndex: Int
+    fun getZIndex(): Int
 
     /**
      * @return refreshView 现在距顶部的距离
      */
-    val currentTargetOffsetTop: Int
+    fun getCurrentTargetOffsetTop(): Int
 
     /**
      * 是否正在刷新
      *
      * @return true:正在刷新 false:
      */
-    val isRefresh: Boolean
+    fun isRefresh(): Boolean
 
     /**
      * 重置refreshView 状态

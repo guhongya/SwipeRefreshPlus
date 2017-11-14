@@ -15,26 +15,26 @@ interface ILoadViewController {
      *
      * @return 高度
      */
-    var defaultHeight: Int
+    fun getDefaultHeight(): Int
 
     /**
      * loadview 现在高度
      *
      * @return 高度
      */
-    var currentHeight: Int
+    fun getCurrentHeight(): Int
 
     /**
      * 得到默认 loadmore view
      *
      * @return loadmore view
      */
-    var defaultView: View
+    fun getDefaultView(): View
 
     /**
      * @return 加载view是否正在显示
      */
-    var isLoading: Boolean
+    fun isLoading(): Boolean
 
     /**
      * 重置LoadView状态

@@ -58,8 +58,8 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
     private final NestedScrollingParentHelper mNestedScrollingParentHelper;
     private final int[] mParentScrollConsumed = new int[2];
     private final int[] mParentOffsetInWindow = new int[2];
-    int circleViewIndex = -1;
-    private int REFRESH_MODE = 1;
+    int circleViewIndex = ZIndex.NORMAL;
+    private int REFRESH_MODE = SwipeRefreshMode.MODE_BOTH;
     private OnRefreshListener mListener;
     private View mRefreshView;
     private View mLoadMoreView;

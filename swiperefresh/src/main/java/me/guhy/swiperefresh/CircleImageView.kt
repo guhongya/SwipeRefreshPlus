@@ -71,7 +71,7 @@ internal class CircleImageView(context: Context, color: Int) : ImageView(context
         }
     }
 
-    fun setAnimationListener(listener: Animation.AnimationListener) {
+    fun setAnimationListener(listener: Animation.AnimationListener?) {
         mListener = listener
     }
 

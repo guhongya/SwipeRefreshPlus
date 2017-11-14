@@ -17,10 +17,21 @@ import me.guhy.swiperefresh.ZIndex
  * Created by GUHY on 2017/4/18.
  */
 
-class MRefreshViewController(private val mContext: Context, private val mParent: View, override val zIndex: Int=ZIndex.NORMAL) : IRefreshViewController {
-    override val currentTargetOffsetTop: Int = 0
+class MRefreshViewController(private val mContext: Context, private val mParent: View) : IRefreshViewController {
+    override fun getZIndex(): Int {
+        return ZIndex.NORMAL
+    }
 
-    override val isRefresh: Boolean = false
+    override fun getCurrentTargetOffsetTop(): Int {
+        return mCurrentOffsetTop
+    }
+
+    override fun isRefresh(): Boolean {
+        return refreshing
+    }
+//    override val currentTargetOffsetTop: Int = 0
+//
+//    override val isRefresh: Boolean = false
 
     private val mOriginOffset: Int
     private val mTargetPosition: Int

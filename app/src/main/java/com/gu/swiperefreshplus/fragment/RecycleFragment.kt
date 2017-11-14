@@ -59,7 +59,7 @@ class RecycleFragment : Fragment(), DemoContact.View {
             override fun onPullDownToRefresh() {
                 swipeRefreshPlush!!.postDelayed({
                     presenter?.refresh()
-                    LogUtils.d(swipeRefreshPlush!!.loadViewController!!.isLoading)
+                    LogUtils.d(swipeRefreshPlush!!.loadViewController!!.isLoading())
                 }, 1000)
             }
 
