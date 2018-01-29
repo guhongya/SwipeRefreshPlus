@@ -73,23 +73,6 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
         }
     }
 
-//    override var defaultHeight: Int
-//        get() = mDefaultHeight
-//        set(value) {}
-//    override var currentHeight: Int
-//        get() = mCurrentOffsetToTop.toInt()
-//        set(value) {}
-//    override var defaultView: View
-//        get() = mDefaultView as View
-//        set(value) {}
-
-//    override fun getDefaultHeight(): Int {
-//        return mDefaultHeight
-//    }
-//
-//    override fun getCurrentHeight(): Int {
-//        return mCurrentOffsetToTop.toInt()
-//    }
 
     override fun move(height: Int): Int {
         if (height > 0) {
@@ -124,9 +107,7 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
         isLoading = false
     }
 
-//    override fun getDefaultView(): View? {
-//        return mDefaultView
-//    }
+
 
     override fun setLoadMore(loading: Boolean) {
         if (isLoading != loading) {
@@ -140,10 +121,7 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
             isLoading = loading
         }
     }
-//
-//    override fun isLoading(): Boolean {
-//        return isLoading
-//    }
+
 
     override fun stopAnimation() {
         mDefaultView!!.visibility = View.INVISIBLE

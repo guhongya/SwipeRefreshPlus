@@ -18,6 +18,7 @@ import me.guhy.swiperefresh.ZIndex
  */
 
 class MRefreshViewController(private val mContext: Context, private val mParent: View) : IRefreshViewController {
+
     override fun getZIndex(): Int {
         return ZIndex.NORMAL
     }

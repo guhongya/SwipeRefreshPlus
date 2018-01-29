@@ -17,8 +17,8 @@ class MainActivity : AppCompatActivity() {
 //        mTabLayout = findViewById<View>(R.id.tab_layout)
 //        mToolbar = findViewById<View>(R.id.tool_bar)
         setSupportActionBar(tool_bar)
-        vp_content!!.adapter = PagerAdapter(supportFragmentManager)
-        tab_layout!!.setupWithViewPager(vp_content)
+        vp_content.adapter = PagerAdapter(supportFragmentManager)
+        tab_layout.setupWithViewPager(vp_content)
     }
 
 }

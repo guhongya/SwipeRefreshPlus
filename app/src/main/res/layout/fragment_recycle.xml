@@ -1,10 +1,10 @@
 <me.guhy.swiperefresh.SwipeRefreshPlus xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/swipe_refresh"
+    android:id="@+id/swipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycle_content"
+        android:id="@+id/recycleContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="5dp"

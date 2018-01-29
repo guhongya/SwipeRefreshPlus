@@ -15,7 +15,7 @@ import android.view.View
 class ProgressView(context: Context) : View(context) {
 
     private val mPaint: Paint
-    private val mGap: Float = 0.toFloat()
+    private val mGap: Float = 0.0f
     private val mStrokePaint: Paint
     private val mRotateAnimator: ValueAnimator
     private var mRectf: RectF? = null
