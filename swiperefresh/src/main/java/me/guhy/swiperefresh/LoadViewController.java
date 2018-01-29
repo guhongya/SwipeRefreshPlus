@@ -79,9 +79,7 @@ public class LoadViewController implements ILoadViewController {
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            if (!mShowNoMore) {
-                beginLoading();
-            }
+            if (!mShowNoMore) beginLoading();
             isLoadAnimation = false;
         }
 
@@ -197,17 +195,14 @@ public class LoadViewController implements ILoadViewController {
     @Override
     public void reset() {
         isLoading = false;
-        if (mProgress.isRunning()) {
+        if (mProgress.isRunning())
             mProgress.stop();
-        }
         mCurrentHeight = 0;
     }
 
     @Override
     public int finishPullRefresh(float totalDistance) {
-        if (isLoadAnimation) {
-            return 0;
-        }
+        if (isLoadAnimation) return 0;
         //beginLoading();
         animateShowLoadMore(mLoadMoreListener);
         return 0;
@@ -236,12 +231,10 @@ public class LoadViewController implements ILoadViewController {
         reset();
     }
 
-    @Override
     public void showNoMore(boolean show) {
         mShowNoMore = show;
         //isLoading = false;
-        if (mProgress.isRunning()) {
+        if (mProgress.isRunning())
             mProgress.stop();
-        }
     }
 }

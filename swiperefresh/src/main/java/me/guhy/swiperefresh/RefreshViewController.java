@@ -368,8 +368,8 @@ public class RefreshViewController implements IRefreshViewController {
         };
         alpha.setDuration(ALPHA_ANIMATION_DURATION);
         // Clear out the previous animation listeners.
-        mCircleView.setAnimationListener(null);
         mCircleView.clearAnimation();
+        mCircleView.setAnimationListener(null);
         mCircleView.startAnimation(alpha);
         return alpha;
     }
@@ -430,8 +430,8 @@ public class RefreshViewController implements IRefreshViewController {
             }
         };
         mScaleDownAnimation.setDuration(SCALE_DOWN_DURATION);
-        mCircleView.setAnimationListener(listener);
         mCircleView.clearAnimation();
+        mCircleView.setAnimationListener(listener);
         mCircleView.startAnimation(mScaleDownAnimation);
     }
 

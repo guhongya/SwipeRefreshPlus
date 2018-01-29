@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.apkfuns.logutils.LogUtils;
-import me.guhy.swiperefresh.SwipeRefreshPlus;
-import com.gu.swiperefreshplus.extention.MRefreshViewController;
 import com.gu.swiperefreshplus.R;
+
+import me.guhy.swiperefresh.SwipeRefreshPlus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +25,7 @@ public class NormalViewFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_normal_view, container, false);
         mNormalRefresh= (SwipeRefreshPlus) view.findViewById(R.id.normal_view_refresh);
@@ -38,7 +38,7 @@ public class NormalViewFragment extends Fragment {
                 mNormalRefresh.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                       mNormalRefresh.setRefresh(false);
+                        mNormalRefresh.setRefresh(false);
                     }
                 },5000);
             }

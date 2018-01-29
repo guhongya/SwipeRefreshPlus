@@ -64,8 +64,7 @@ public class ProgressDrawable extends Drawable {
 
     // Maps to ProgressBar default style
     private static final int CIRCLE_DIAMETER = 40;
-    //should add up to 10 when + stroke_width
-    private static final float CENTER_RADIUS = 8.75f;
+    private static final float CENTER_RADIUS = 8.75f; //should add up to 10 when + stroke_width
     private static final float STROKE_WIDTH = 2.5f;
 
     // Maps to ProgressBar.Large style
@@ -246,7 +245,6 @@ public class ProgressDrawable extends Drawable {
         mRing.setAlpha(alpha);
     }
 
-    @Override
     public int getAlpha() {
         return mRing.getAlpha();
     }
@@ -272,20 +270,35 @@ public class ProgressDrawable extends Drawable {
         return PixelFormat.TRANSLUCENT;
     }
 
+//    @Override
+//    public boolean isRunning() {
+//        final ArrayList<Animation> animators = mAnimators;
+//        final int N = animators.size();
+//        for (int i = 0; i < N; i++) {
+//            final Animation animator = animators.get(i);
+//            if (animator.hasStarted() && !animator.hasEnded()) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
-
+    // @Override
     public void start() {
+        // mAnimation.resume();
         mRing.storeOriginals();
         // Already showing some part of the ring
         if (mRing.getEndTrim() != mRing.getStartTrim()) {
             mFinishing = true;
             mAnimation.setDuration(ANIMATION_DURATION / 2);
             mAnimation.start();
+            // mParent.st(mAnimation);
         } else {
             mRing.setColorIndex(0);
             mRing.resetOriginals();
             mAnimation.setDuration(ANIMATION_DURATION);
             mAnimation.start();
+            // mParent.startAnimation(mAnimation);
         }
     }
 
