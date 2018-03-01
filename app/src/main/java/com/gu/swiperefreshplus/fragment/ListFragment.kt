@@ -24,27 +24,25 @@ class ListFragment : Fragment(), DemoContact.View {
     private var mAdapterDatas: ArrayList<Map<String, Int>> = ArrayList()
     private val from = arrayOf("src")
     private val to = intArrayOf(R.id.item_content)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        val view = inflater!!.inflate(R.layout.fragment_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_list, container, false)
         // View view=inflater.inflate(R.layout.fragment_list, container, false);
 
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         mAdapterDatas = ArrayList()
         mSimplaeAdaptr = SimpleAdapter(activity, mAdapterDatas, R.layout.item_recycle_content, from, to)
         listContent.adapter = mSimplaeAdaptr
         DataPresenter(this)
         iniView()
-        return view
     }
 
-
     override fun onDetach() {
-        listSwipeRefresh!!.isEnabled = false
+        listSwipeRefresh.isEnabled = false
         super.onDetach()
     }
 
@@ -60,28 +58,28 @@ class ListFragment : Fragment(), DemoContact.View {
 
     override fun onDataAdded(from: Int, to: Int) {
         onDataChange()
-        listSwipeRefresh!!.setLoadMore(false)
+        listSwipeRefresh.setLoadMore(false)
     }
 
     private fun iniView() {
-        listSwipeRefresh!!.setRefreshColorResources(*intArrayOf(R.color.colorPrimary))
+        listSwipeRefresh.setRefreshColorResources(*intArrayOf(R.color.colorPrimary))
         //listSwipeRefresh.setLoadViewController(new LoadMoreController(getActivity(), listSwipeRefresh));
-        listSwipeRefresh!!.setOnRefreshListener(object : SwipeRefreshPlus.OnRefreshListener {
+        listSwipeRefresh.setOnRefreshListener(object : SwipeRefreshPlus.OnRefreshListener {
             override fun onPullDownToRefresh() {
-                listSwipeRefresh!!.postDelayed({
-                    presenter!!.refresh()
-                    listSwipeRefresh!!.setRefresh(false)
-                    listSwipeRefresh!!.showNoMore(false)
+                listSwipeRefresh.postDelayed({
+                    presenter?.refresh()
+                    listSwipeRefresh.setRefresh(false)
+                    listSwipeRefresh.showNoMore(false)
                 }, 1000)
             }
 
             override fun onPullUpToRefresh() {
                 count++
                 if (count >= page) {
-                    listSwipeRefresh!!.showNoMore(true)
+                    listSwipeRefresh.showNoMore(true)
 
                 } else {
-                    listSwipeRefresh!!.postDelayed({ presenter!!.loadMore() }, 1500)
+                    listSwipeRefresh.postDelayed({ presenter?.loadMore() }, 1500)
                 }
             }
         })
@@ -89,8 +87,8 @@ class ListFragment : Fragment(), DemoContact.View {
         val layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT)
         noMoreView!!.setPadding(10, 10, 10, 10)
-        listSwipeRefresh!!.setNoMoreView(noMoreView as View, layoutParams)
-        presenter!!.refresh()
+        listSwipeRefresh.setNoMoreView(noMoreView as View, layoutParams)
+        presenter?.refresh()
     }
 
     override fun setPresenter(presenter: DemoContact.Presenter) {

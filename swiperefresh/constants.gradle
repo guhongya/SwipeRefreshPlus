@@ -20,8 +20,7 @@ ext {
     githubUrl = 'https://github.com/guhongya/SwipeRefreshPlus'
     mavenGroup = 'me.guhy'
     mavenArtifactId = 'SwipeRefreshPlus'
-    mavenVersion = '1.0.9-RC2'
-
+    mavenVersion = '1.0.9'
     bintrayOrg = 'guhy'
 
 }
