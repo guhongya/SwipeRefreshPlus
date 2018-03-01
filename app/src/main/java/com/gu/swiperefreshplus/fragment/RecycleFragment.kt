@@ -33,20 +33,22 @@ class RecycleFragment : Fragment(), DemoContact.View {
     private var presenter: DemoContact.Presenter?=null
     private lateinit var mRefreshViewController: MRefreshViewController
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        LogUtils.d("recycle created")
-        // Inflate the layout for this fragment
-        val view = inflater!!.inflate(R.layout.fragment_recycle, container, false)
 
-        swipeRefresh.loadViewController = LoadMoreController(activity, swipeRefresh)
-        mRefreshViewController = MRefreshViewController(activity, swipeRefresh)
-        mRefreshViewController.setBackgroundColor(activity.resources.getColor(R.color.colorAccent))
-        swipeRefresh.setRefreshViewController(mRefreshViewController as MRefreshViewController)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_recycle, container, false)
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        swipeRefresh.loadViewController = LoadMoreController(activity!!, swipeRefresh)
+        mRefreshViewController = MRefreshViewController(activity!!, swipeRefresh)
+        mRefreshViewController.setBackgroundColor(activity!!.resources.getColor(R.color.colorAccent))
+        swipeRefresh.setRefreshViewController(mRefreshViewController)
         DataPresenter(this)
         setHasOptionsMenu(true)
         iniView()
-        return view
     }
 
     private fun iniView() {
@@ -109,7 +111,7 @@ class RecycleFragment : Fragment(), DemoContact.View {
                     }
                 }
                 if (color != Color.WHITE) {
-                    mRefreshViewController!!.setBackgroundColor(color)
+                    mRefreshViewController.setBackgroundColor(color)
                 }
                 return false
             }

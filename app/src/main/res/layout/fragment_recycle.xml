@@ -1,4 +1,6 @@
-<me.guhy.swiperefresh.SwipeRefreshPlus xmlns:android="http://schemas.android.com/apk/res/android"
+
+<me.guhy.swiperefresh.SwipeRefreshPlus
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/swipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,4 +12,5 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp" />
 </me.guhy.swiperefresh.SwipeRefreshPlus>
+
 

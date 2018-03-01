@@ -1,6 +1,6 @@
-package me.guhy.swiperefresh
+package me.guhy.swiperefresh;
 
-import android.view.View
+import android.view.View;
 
 /**
  * Created by guhongya on 2017/4/9.
@@ -9,41 +9,41 @@ import android.view.View
  * 创建refreshview,并负责refreshview的显示，消失动画
  */
 
-interface IRefreshViewController {
-
-    /**
-     * @return refreshview 的z轴顺序
-     */
-    fun getZIndex(): Int
-
-    /**
-     * @return refreshView 现在距顶部的距离
-     */
-    fun getCurrentTargetOffsetTop(): Int
-
-    /**
-     * 是否正在刷新
-     *
-     * @return true:正在刷新 false:
-     */
-    fun isRefresh(): Boolean
-
+public interface IRefreshViewController {
     /**
      * 重置refreshView 状态
      */
-    fun reset()
+    void reset();
 
     /**
      * 创建refreshView
      *
      * @return refreshView
      */
-    fun create(): View
+    View create();
+
+    /**
+     * @return refreshview 的z轴顺序
+     */
+    @ZIndex
+    int getZIndex();
+
+    /**
+     * @return refreshView 现在距顶部的距离
+     */
+    int getCurrentTargetOffsetTop();
+
+    /**
+     * 是否正在刷新
+     *
+     * @return true:正在刷新 false:
+     */
+    boolean isRefresh();
 
     /**
      * 开始下拉
      */
-    fun startPulling()
+    void startPulling();
 
 
     /**
@@ -51,14 +51,14 @@ interface IRefreshViewController {
      *
      * @param overscrollTop 下拉总距离
      */
-    fun showPullRefresh(overscrollTop: Float)
+    void showPullRefresh(float overscrollTop);
 
     /**
      * 下拉结束，根据下拉距离，判断是否应该刷新
      *
      * @param overscrollTop 下拉总距离
      */
-    fun finishPullRefresh(overscrollTop: Float)
+    void finishPullRefresh(float overscrollTop);
 
     /**
      * 设置refreview 的top值
@@ -66,20 +66,20 @@ interface IRefreshViewController {
      * @param i refreshview 距离顶部的距离
      * @param b 是否提示父view 重绘
      */
-    fun setTargetOffsetTopAndBottom(i: Int, b: Boolean)
+    void setTargetOffsetTopAndBottom(int i, boolean b);
 
     /**
      * 设置refresh 监听回调
      *
      * @param mListener
      */
-    fun setRefreshListener(mListener: SwipeRefreshPlus.OnRefreshListener)
+    void setRefreshListener(SwipeRefreshPlus.OnRefreshListener mListener);
 
     /**
      * 设置 refresh 状态
      *
      * @param refresh
      */
-    fun setRefreshing(refresh: Boolean)
+    void setRefreshing(boolean refresh);
 
 }
