@@ -41,10 +41,6 @@ class ListFragment : Fragment(), DemoContact.View {
         iniView()
     }
 
-    override fun onDetach() {
-        listSwipeRefresh.isEnabled = false
-        super.onDetach()
-    }
 
     override fun onDataChange() {
         mAdapterDatas.clear()

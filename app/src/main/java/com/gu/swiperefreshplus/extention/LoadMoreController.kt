@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.apkfuns.logutils.LogUtils
 import com.gu.swiperefreshplus.R
 import me.guhy.swiperefresh.ILoadViewController
 import me.guhy.swiperefresh.SwipeRefreshPlus
@@ -33,7 +34,7 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
     private val mMaxHeight: Int
     private var mDefaultThreshold = 60
 
-    private var mDefaultView: View? = null
+    private lateinit var mDefaultView: View
 
     private var mCurrentOffsetToTop: Float = 0.toFloat()
     private var mOnRefreshListener: SwipeRefreshPlus.OnRefreshListener? = null
@@ -61,6 +62,9 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
 
     override fun finishPullRefresh(totalDistance: Float): Int {
         if (mCurrentOffsetToTop > mDefaultThreshold || totalDistance + mCurrentOffsetToTop > mDefaultThreshold) {
+            if(mDefaultView.visibility!=View.VISIBLE){
+                mDefaultView.visibility=View.VISIBLE
+            }
             if (!isNoMore && !isLoading) {
                 isLoading = true
                 mOnRefreshListener!!.onPullUpToRefresh()
@@ -75,6 +79,7 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
 
 
     override fun move(height: Int): Int {
+        LogUtils.d(mDefaultView.visibility)
         if (height > 0) {
             if (mCurrentOffsetToTop < mMaxHeight && mCurrentOffsetToTop >= 0) {
                 val dis = (height * (mMaxHeight - mCurrentOffsetToTop) / (2 * mMaxHeight)).toInt()
@@ -88,6 +93,9 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
                 }
             }
         } else {
+            if(mDefaultView.visibility!=View.VISIBLE){
+                mDefaultView.visibility=View.VISIBLE
+            }
             mCurrentOffsetToTop += height.toFloat()
             return if (mCurrentOffsetToTop < 0) {
                 (height - mCurrentOffsetToTop).toInt()
@@ -113,6 +121,7 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
         if (isLoading != loading) {
             isLoading = loading
             if (isLoading) {
+                mDefaultView.visibility=View.VISIBLE
                 mParent.scrollBy(0, mDefaultHeight)
             } else {
                 mParent.scrollBy(0, -mCurrentOffsetToTop.toInt())
@@ -124,7 +133,7 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
 
 
     override fun stopAnimation() {
-        mDefaultView!!.visibility = View.INVISIBLE
+        mDefaultView.visibility = View.INVISIBLE
     }
 
 }
