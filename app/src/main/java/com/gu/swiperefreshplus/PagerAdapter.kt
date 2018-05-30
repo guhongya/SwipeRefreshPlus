@@ -33,7 +33,7 @@ class PagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
             0 -> return "RecycleView"
             1 -> return "ListView"
             2 -> return "NormalView"
+            else-> return ""
         }
-        return ""
     }
 }

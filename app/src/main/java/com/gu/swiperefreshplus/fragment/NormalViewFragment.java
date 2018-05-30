@@ -26,7 +26,6 @@ public class NormalViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_normal_view, container, false);
         mNormalRefresh= (SwipeRefreshPlus) view.findViewById(R.id.normal_view_refresh);
         //mNormalRefresh.setRefreshViewController(new MRefreshViewController(container.getContext(),mNormalRefresh));

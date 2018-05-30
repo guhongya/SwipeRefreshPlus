@@ -158,9 +158,9 @@ class RefreshViewLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     companion object {
-        private val progressViewDiment = 40
-        private val DEFAULT_DAMP_DURATION = 500
-        private val DEFAULT_OFFSET_DUTION = 200
+        private const val progressViewDiment = 40
+        private const val DEFAULT_DAMP_DURATION = 500
+        private const val DEFAULT_OFFSET_DUTION = 200
     }
 
 }

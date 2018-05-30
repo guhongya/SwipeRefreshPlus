@@ -15,21 +15,19 @@ import kotlin.collections.ArrayList
 
 class ListFragment : Fragment(), DemoContact.View {
 
-    private var mSimplaeAdaptr: SimpleAdapter? = null
-    private var datas: List<Int>? = null
-    internal var count = 0
-    internal var page = 3
-    private var noMoreView: View?=null
-    private var presenter: DemoContact.Presenter? = null
+    private lateinit var mSimplaeAdaptr: SimpleAdapter
+    private lateinit var datas: List<Int>
+    private var noMoreView: View? = null
+    private lateinit var presenter: DemoContact.Presenter
     private var mAdapterDatas: ArrayList<Map<String, Int>> = ArrayList()
     private val from = arrayOf("src")
     private val to = intArrayOf(R.id.item_content)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_list, container, false)
-        // View view=inflater.inflate(R.layout.fragment_list, container, false);
+    internal var count = 0
+    internal var page = 3
 
-        return view
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,12 +42,12 @@ class ListFragment : Fragment(), DemoContact.View {
 
     override fun onDataChange() {
         mAdapterDatas.clear()
-        for (src in datas!!) {
+        for (src in datas) {
             val tem = HashMap<String, Int>(1)
             tem.put(from[0], src)
             mAdapterDatas.add(tem)
         }
-        mSimplaeAdaptr!!.notifyDataSetChanged()
+        mSimplaeAdaptr.notifyDataSetChanged()
     }
 
     override fun onDataAdded(from: Int, to: Int) {
@@ -63,9 +61,8 @@ class ListFragment : Fragment(), DemoContact.View {
         listSwipeRefresh.setOnRefreshListener(object : SwipeRefreshPlus.OnRefreshListener {
             override fun onPullDownToRefresh() {
                 listSwipeRefresh.postDelayed({
-                    presenter?.refresh()
-                    listSwipeRefresh.setRefresh(false)
-                    listSwipeRefresh.showNoMore(false)
+                    presenter.refresh()
+                    listSwipeRefresh.stopLoading()
                 }, 1000)
             }
 
@@ -75,7 +72,7 @@ class ListFragment : Fragment(), DemoContact.View {
                     listSwipeRefresh.showNoMore(true)
 
                 } else {
-                    listSwipeRefresh.postDelayed({ presenter?.loadMore() }, 1500)
+                    listSwipeRefresh.postDelayed({ presenter.loadMore() }, 1500)
                 }
             }
         })
@@ -84,7 +81,7 @@ class ListFragment : Fragment(), DemoContact.View {
                 ViewGroup.LayoutParams.WRAP_CONTENT)
         noMoreView!!.setPadding(10, 10, 10, 10)
         listSwipeRefresh.setNoMoreView(noMoreView as View, layoutParams)
-        presenter?.refresh()
+        presenter.refresh()
     }
 
     override fun setPresenter(presenter: DemoContact.Presenter) {

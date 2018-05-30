@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
 apply from: 'constants.gradle'
 apply plugin: 'com.novoda.bintray-release'
 
@@ -9,7 +8,7 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
         versionName "$mavenVersion"
 
@@ -44,7 +43,6 @@ dependencies {
     compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
     testCompile 'junit:junit:4.12'
     androidTestCompile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
     mavenCentral()

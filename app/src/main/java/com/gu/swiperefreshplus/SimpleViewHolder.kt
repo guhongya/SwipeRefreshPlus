@@ -17,7 +17,6 @@ class SimpleViewHolder(private val rootView: View) : RecyclerView.ViewHolder(roo
     }
 
     fun setData(id: Int) {
-        // mImageView.setImageDrawable(drawable);
         val lp = rootView.layoutParams as RecyclerView.LayoutParams
         if (lp is FlexboxLayoutManager.LayoutParams) {
             lp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT)

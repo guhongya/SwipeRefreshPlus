@@ -14,7 +14,7 @@ import android.view.View
 
 class ProgressView(context: Context) : View(context) {
 
-    private val mPaint: Paint
+    private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val mGap: Float = 0.0f
     private val mStrokePaint: Paint
     private val mRotateAnimator: ValueAnimator
@@ -35,7 +35,6 @@ class ProgressView(context: Context) : View(context) {
     }
 
     init {
-        mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         mPaint.style = Paint.Style.FILL
         mStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG)
         mStrokePaint.style = Paint.Style.STROKE
@@ -101,7 +100,7 @@ class ProgressView(context: Context) : View(context) {
     }
 
     companion object {
-        private val DEFAULT_DURATION = 2500
-        private val DISAPPEAR_DURATION = 200
+        private const val DEFAULT_DURATION = 2500
+        private const val DISAPPEAR_DURATION = 200
     }
 }

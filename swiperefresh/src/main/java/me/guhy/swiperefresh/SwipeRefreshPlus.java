@@ -271,7 +271,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         mLoadMoreView = mLoadViewController.create();
         // requestLayout();
         measureChild(mLoadMoreView);
-        addView(mLoadMoreView);
+        addView(mLoadMoreView,0);
         if (mListener != null) {
             mLoadViewController.setRefreshListener(mListener);
         }

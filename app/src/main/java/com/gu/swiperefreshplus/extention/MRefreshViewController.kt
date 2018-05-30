@@ -19,21 +19,6 @@ import me.guhy.swiperefresh.ZIndex
 
 class MRefreshViewController(private val mContext: Context, private val mParent: View) : IRefreshViewController {
 
-    override fun getZIndex(): Int {
-        return ZIndex.NORMAL
-    }
-
-    override fun getCurrentTargetOffsetTop(): Int {
-        return mCurrentOffsetTop
-    }
-
-    override fun isRefresh(): Boolean {
-        return refreshing
-    }
-//    override val currentTargetOffsetTop: Int = 0
-//
-//    override val isRefresh: Boolean = false
-
     private val mOriginOffset: Int
     private val mTargetPosition: Int
     private var mCurrentOffsetTop: Int = 0
@@ -93,6 +78,19 @@ class MRefreshViewController(private val mContext: Context, private val mParent:
         mOriginOffset = mCurrentOffsetTop
         innitAnimation()
 
+    }
+
+
+    override fun getZIndex(): Int {
+        return ZIndex.NORMAL
+    }
+
+    override fun getCurrentTargetOffsetTop(): Int {
+        return mCurrentOffsetTop
+    }
+
+    override fun isRefresh(): Boolean {
+        return refreshing
     }
 
     override fun reset() {

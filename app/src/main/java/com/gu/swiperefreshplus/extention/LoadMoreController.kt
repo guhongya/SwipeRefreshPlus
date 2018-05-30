@@ -14,6 +14,17 @@ import me.guhy.swiperefresh.SwipeRefreshPlus
  */
 
 class LoadMoreController(private val mContext: Context, private val mParent: View) : ILoadViewController {
+    private var mDefaultHeight = 80
+    private val mMaxHeight: Int
+    private var mDefaultThreshold = 60
+
+    private lateinit var mDefaultView: View
+
+    private var mCurrentOffsetToTop: Float = 0.toFloat()
+    private var mOnRefreshListener: SwipeRefreshPlus.OnRefreshListener? = null
+    private var isNoMore: Boolean = false
+    private var isLoading=false
+
     override fun getDefaultHeight(): Int {
         return mDefaultHeight;
     }
@@ -27,20 +38,8 @@ class LoadMoreController(private val mContext: Context, private val mParent: Vie
     }
 
     override fun getDefaultView(): View {
-        return mDefaultView!!
+        return mDefaultView
     }
-
-    private var mDefaultHeight = 80
-    private val mMaxHeight: Int
-    private var mDefaultThreshold = 60
-
-    private lateinit var mDefaultView: View
-
-    private var mCurrentOffsetToTop: Float = 0.toFloat()
-    private var mOnRefreshListener: SwipeRefreshPlus.OnRefreshListener? = null
-    private var isNoMore: Boolean = false
-    //override var isLoading: Boolean = false
-    private var isLoading=false;
 
     init {
         val metrics = mContext.resources.displayMetrics

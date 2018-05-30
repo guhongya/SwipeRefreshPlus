@@ -26,18 +26,17 @@ import me.guhy.swiperefresh.SwipeRefreshPlus
 
 class RecycleFragment : Fragment(), DemoContact.View {
     private lateinit var recycleAdapter: SimpleRecycleAdapter
-    private var datas: List<Int>? = null
-    internal var count = 0
-    internal var page = 4
-    private var noMoreView: View?=null
-    private var presenter: DemoContact.Presenter?=null
+    private lateinit var datas: List<Int>
+    private var noMoreView: View? = null
+    private lateinit var presenter: DemoContact.Presenter
     private lateinit var mRefreshViewController: MRefreshViewController
 
+    internal var count = 0
+    internal var page = 4
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_recycle, container, false)
 
-        return view
+        return inflater.inflate(R.layout.fragment_recycle, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,14 +53,14 @@ class RecycleFragment : Fragment(), DemoContact.View {
     private fun iniView() {
         recycleContent.layoutManager = LinearLayoutManager(activity)
         recycleAdapter = SimpleRecycleAdapter()
-        recycleAdapter.setData(datas!!)
+        recycleAdapter.setData(datas)
         recycleContent.adapter = recycleAdapter
         recycleContent.itemAnimator = DefaultItemAnimator()
         swipeRefresh.setRefreshColorResources(*intArrayOf(R.color.colorPrimary))
         swipeRefresh.setOnRefreshListener(object : SwipeRefreshPlus.OnRefreshListener {
             override fun onPullDownToRefresh() {
                 swipeRefresh.postDelayed({
-                    presenter?.refresh()
+                    presenter.refresh()
                     LogUtils.d(swipeRefresh.loadViewController!!.isLoading())
                 }, 1000)
             }
@@ -73,7 +72,7 @@ class RecycleFragment : Fragment(), DemoContact.View {
                     swipeRefresh.showNoMore(true)
 
                 } else {
-                    swipeRefresh.postDelayed({ presenter?.loadMore() }, 1500)
+                    swipeRefresh.postDelayed({ presenter.loadMore() }, 1500)
                 }
             }
         })
@@ -94,7 +93,7 @@ class RecycleFragment : Fragment(), DemoContact.View {
         if (from == 0) {
             recycleContent.scrollToPosition(0)
         }
-        val id = datas!![0]
+        val id = datas[0]
         Glide.with(this).asBitmap().load(id).listener(object : RequestListener<Bitmap> {
             override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Bitmap>, isFirstResource: Boolean): Boolean {
                 return false
@@ -116,8 +115,7 @@ class RecycleFragment : Fragment(), DemoContact.View {
                 return false
             }
         }).submit()
-        swipeRefresh.setRefresh(false)
-        swipeRefresh.setLoadMore(false)
+        swipeRefresh.stopLoading()
     }
 
     override fun setPresenter(presenter: DemoContact.Presenter) {

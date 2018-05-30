@@ -5,7 +5,7 @@ package com.gu.swiperefreshplus.fragment;
  * Created by gu on 2016/12/22.
  */
 
-public class DemoContact {
+ class DemoContact {
     interface View{
         fun onDataChange();
         fun onDataAdded(from:Int,to:Int);

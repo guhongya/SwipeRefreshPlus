@@ -8,29 +8,27 @@ import kotlin.collections.ArrayList
  * Created by gu on 2016/12/22.
  */
 
-class DataPresenter(private var view: DemoContact.View?) : DemoContact.Presenter {
-    internal var datas: MutableList<Int>
-    private val mRandom: Random
+class DataPresenter(var view: DemoContact.View) : DemoContact.Presenter {
+    internal var datas: ArrayList<Int> = ArrayList()
+    private val mRandom: Random = Random()
     private val dataSource = intArrayOf(R.mipmap.pic1, R.mipmap.pic2, R.mipmap.pic3, R.mipmap.pic4, R.mipmap.pic5)
+    private var mView:DemoContact.View?=null
 
     init {
-        datas = ArrayList()
-        mRandom = Random()
-        view?.setPresenter(this)
+        view.setPresenter(this)
+        mView=view
     }
 
     override fun refresh() {
-        //datas.clear();
         val tem = generatorData(1)
         datas.addAll(0, tem)
-        view!!.onDataAdded(0, tem.size)
+        mView?.onDataAdded(0, tem.size)
     }
 
     override fun loadMore() {
         val tem = generatorData(5)
         datas.addAll(tem)
-        // view.onDataChange();
-        view!!.onDataAdded(datas.size - tem.size, datas.size)
+        mView?.onDataAdded(datas.size - tem.size, datas.size)
     }
 
     override fun getData(): List<Int> {
@@ -42,7 +40,7 @@ class DataPresenter(private var view: DemoContact.View?) : DemoContact.Presenter
     }
 
     override fun unbind() {
-        view = null
+        mView=null
     }
 
     private fun generatorData(n: Int): List<Int> {
