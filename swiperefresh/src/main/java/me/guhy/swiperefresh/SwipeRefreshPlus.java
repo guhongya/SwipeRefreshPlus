@@ -505,9 +505,7 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
                     final float y = event.getY(pointerIndex);
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     mIsBeingDragUp = false;
-                    if (overscrollTop > 0) {
-                        mRefreshController.finishPullRefresh(overscrollTop);
-                    }
+                    mRefreshController.finishPullRefresh(overscrollTop);
                 }
                 if (mIsBeingDragDown) {
                     final float y = event.getY(pointerIndex);
