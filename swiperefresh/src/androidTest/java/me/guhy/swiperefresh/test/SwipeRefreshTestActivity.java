@@ -1,8 +1,8 @@
 package me.guhy.swiperefresh.test;
 
 import android.app.Activity;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 /**
  * Created by GUHY on 2017/4/10.

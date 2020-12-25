@@ -19,16 +19,16 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Looper;
 import android.os.MessageQueue;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.NestedScrollingChild;
-import android.support.v4.view.NestedScrollingChildHelper;
-import android.support.v4.view.NestedScrollingParent;
-import android.support.v4.view.NestedScrollingParentHelper;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.NestedScrollingChildHelper;
+import androidx.core.view.NestedScrollingParent;
+import androidx.core.view.NestedScrollingParentHelper;
+import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -40,7 +40,7 @@ import android.widget.OverScroller;
 
 import me.guhy.swiperefresh.Utils.Log;
 
-import static android.support.v4.widget.ViewDragHelper.INVALID_POINTER;
+import static androidx.customview.widget.ViewDragHelper.INVALID_POINTER;
 
 /**
  * Created by gu on 2016/11/13.
@@ -254,6 +254,8 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
             mLoadMoreView = mNoMoreView;
             addView(mNoMoreView, 0,mNoMoreView.getLayoutParams());
         } else if (!show&&mLoadMoreView!=mLoadViewController.getDefaultView()) {
+            scrollBy(0,-mLoadViewController.getCurrentHeight());
+            mLoadViewController.reset();
             detachViewFromParent(mLoadMoreView);
             removeDetachedView(mLoadMoreView,false);
             mLoadMoreView = mLoadViewController.getDefaultView();
@@ -613,6 +615,11 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
 
     void reset() {
         mRefreshController.reset();
+        int height = mLoadViewController.getCurrentHeight();
+        if(height>0){
+            clearAnimation();
+            scrollBy(0, -height);
+        }
         mLoadViewController.reset();
     }
 
@@ -644,8 +651,13 @@ public class SwipeRefreshPlus extends ViewGroup implements NestedScrollingParent
         }
         LayoutParams lp = view.getLayoutParams();
         int width, height;
-        width = getMeasureSpec(lp.width, getMeasuredWidth());
-        height = getMeasureSpec(lp.height, getMeasuredHeight());
+        if(lp!=null) {
+            width = getMeasureSpec(lp.width, getMeasuredWidth());
+            height = getMeasureSpec(lp.height, getMeasuredHeight());
+        }else{
+            width=getMeasureSpec(LayoutParams.MATCH_PARENT,getMeasuredWidth());
+            height=getMeasureSpec(LayoutParams.WRAP_CONTENT,getMeasuredHeight());
+        }
         view.measure(width, height);
     }
 

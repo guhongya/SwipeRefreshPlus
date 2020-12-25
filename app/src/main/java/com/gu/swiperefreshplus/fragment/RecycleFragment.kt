@@ -3,13 +3,8 @@ package com.gu.swiperefreshplus.fragment
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.graphics.Palette
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.*
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.apkfuns.logutils.LogUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -24,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_recycle.*
 import me.guhy.swiperefresh.SwipeRefreshPlus
 
 
-class RecycleFragment : Fragment(), DemoContact.View {
+class RecycleFragment : androidx.fragment.app.Fragment(), DemoContact.View {
     private lateinit var recycleAdapter: SimpleRecycleAdapter
     private lateinit var datas: List<Int>
     private var noMoreView: View? = null
@@ -51,11 +46,11 @@ class RecycleFragment : Fragment(), DemoContact.View {
     }
 
     private fun iniView() {
-        recycleContent.layoutManager = LinearLayoutManager(activity)
+        recycleContent.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         recycleAdapter = SimpleRecycleAdapter()
         recycleAdapter.setData(datas)
         recycleContent.adapter = recycleAdapter
-        recycleContent.itemAnimator = DefaultItemAnimator()
+        recycleContent.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         swipeRefresh.setRefreshColorResources(*intArrayOf(R.color.colorPrimary))
         swipeRefresh.setOnRefreshListener(object : SwipeRefreshPlus.OnRefreshListener {
             override fun onPullDownToRefresh() {
@@ -101,7 +96,7 @@ class RecycleFragment : Fragment(), DemoContact.View {
 
             override fun onResourceReady(resource: Bitmap, model: Any, target: Target<Bitmap>, dataSource: DataSource, isFirstResource: Boolean): Boolean {
                 LogUtils.d("ok")
-                val palette = Palette.from(resource).generate()
+                val palette = androidx.palette.graphics.Palette.from(resource).generate()
                 var color = palette.getVibrantColor(Color.WHITE)
                 if (color == Color.WHITE) {
                     color = palette.getMutedColor(Color.WHITE)
@@ -130,9 +125,9 @@ class RecycleFragment : Fragment(), DemoContact.View {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.liner_layout -> recycleContent.layoutManager = LinearLayoutManager(activity)
-            R.id.grid_layout -> recycleContent.layoutManager = GridLayoutManager(activity, 2)
-            R.id.staggered_grid_layout -> recycleContent.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            R.id.liner_layout -> recycleContent.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
+            R.id.grid_layout -> recycleContent.layoutManager = androidx.recyclerview.widget.GridLayoutManager(activity, 2)
+            R.id.staggered_grid_layout -> recycleContent.layoutManager = androidx.recyclerview.widget.StaggeredGridLayoutManager(2, androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL)
         }
         return true
     }

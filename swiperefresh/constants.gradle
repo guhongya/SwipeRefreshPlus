@@ -22,5 +22,4 @@ ext {
     mavenArtifactId = 'SwipeRefreshPlus'
     mavenVersion = '1.0.9'
     bintrayOrg = 'guhy'
-
 }

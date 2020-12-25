@@ -4,7 +4,6 @@ apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolVersion
 
     defaultConfig {
         minSdkVersion 14
@@ -12,7 +11,7 @@ android {
         versionCode 1
         versionName "$mavenVersion"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
     }
     buildTypes {
@@ -36,13 +35,12 @@ publish {
     website = 'https://github.com/guhongya/SwipeRefreshPlus'
 }
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
-    testCompile 'junit:junit:4.12'
-    androidTestCompile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
+    api "androidx.appcompat:appcompat:1.0.0"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation "androidx.recyclerview:recyclerview:1.0.0"
 }
 repositories {
     mavenCentral()

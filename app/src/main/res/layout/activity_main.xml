@@ -8,24 +8,24 @@
     tools:context="com.gu.swiperefreshplus.com.gu.swiperefreshplus.MainActivity"
     android:orientation="vertical"
     >
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:id="@+id/tool_bar"
             app:titleTextColor="#ffffff"
-            ></android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
-    <android.support.v4.view.ViewPager
+            ></androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/vp_content">
-       <android.support.design.widget.TabLayout
+       <com.google.android.material.tabs.TabLayout
            android:id="@+id/tab_layout"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           ></android.support.design.widget.TabLayout>
-    </android.support.v4.view.ViewPager>
+           ></com.google.android.material.tabs.TabLayout>
+    </androidx.viewpager.widget.ViewPager>
 </LinearLayout>

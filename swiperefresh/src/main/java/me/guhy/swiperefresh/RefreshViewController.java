@@ -17,8 +17,8 @@ package me.guhy.swiperefresh;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.ColorInt;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.ColorInt;
+import androidx.core.view.ViewCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;

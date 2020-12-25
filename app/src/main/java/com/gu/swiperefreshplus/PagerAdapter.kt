@@ -1,8 +1,8 @@
 package com.gu.swiperefreshplus
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 
 import com.gu.swiperefreshplus.fragment.ListFragment
 import com.gu.swiperefreshplus.fragment.NormalViewFragment
@@ -12,10 +12,10 @@ import com.gu.swiperefreshplus.fragment.RecycleFragment
  * Created by GUHY on 2017/4/5.
  */
 
-class PagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class PagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
 
-    override fun getItem(position: Int): Fragment? {
-        var fragment: Fragment? = null
+    override fun getItem(position: Int): androidx.fragment.app.Fragment? {
+        var fragment: androidx.fragment.app.Fragment? = null
         when (position) {
             0 -> fragment = RecycleFragment()
             1 -> fragment = ListFragment()

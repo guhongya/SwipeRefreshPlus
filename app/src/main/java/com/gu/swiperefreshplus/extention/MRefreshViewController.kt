@@ -4,8 +4,8 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
-import android.support.annotation.ColorInt
-import android.support.v4.view.ViewCompat
+import androidx.annotation.ColorInt
+import androidx.core.view.ViewCompat
 import android.view.View
 import android.view.ViewGroup
 import com.apkfuns.logutils.LogUtils

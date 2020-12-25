@@ -17,7 +17,7 @@ package me.guhy.swiperefresh;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -233,7 +233,9 @@ public class LoadViewController implements ILoadViewController {
 
     public void showNoMore(boolean show) {
         mShowNoMore = show;
-        //isLoading = false;
+        if(show) {
+            isLoading = false;
+        }
         if (mProgress.isRunning())
             mProgress.stop();
     }

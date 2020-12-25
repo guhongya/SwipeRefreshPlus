@@ -1,9 +1,9 @@
 package com.gu.swiperefreshplus
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 
 /**
@@ -17,7 +17,7 @@ class SimpleViewHolder(private val rootView: View) : RecyclerView.ViewHolder(roo
     }
 
     fun setData(id: Int) {
-        val lp = rootView.layoutParams as RecyclerView.LayoutParams
+        val lp = rootView.layoutParams as androidx.recyclerview.widget.RecyclerView.LayoutParams
         if (lp is FlexboxLayoutManager.LayoutParams) {
             lp.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT)
             lp.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)

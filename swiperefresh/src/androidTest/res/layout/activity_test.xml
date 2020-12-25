@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="360dp"
         android:id="@+id/swipe_refresh">
-        <android.support.v7.widget.RecyclerView
+        <androidx.appcompat.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/recycle_view"/>
